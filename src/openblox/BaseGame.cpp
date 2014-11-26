@@ -1,8 +1,10 @@
-#include "OpenBlox.h"
+#include "BaseGame.h"
 
 namespace OpenBlox{
 	static BaseGame *INSTANCE;
-	static lua_State *GlobalLuaState;
+
+	lua_State *BaseGame::GlobalLuaState = NULL;
+	Factory *BaseGame::InstanceFactory = NULL;
 
 	BaseGame::BaseGame(){
 		INSTANCE = this;
@@ -119,5 +121,9 @@ namespace OpenBlox{
 
 	lua_State* BaseGame::getGlobalState(){
 		return GlobalLuaState;
+	}
+
+	Factory* BaseGame::getInstanceFactory(){
+		return InstanceFactory;
 	}
 }

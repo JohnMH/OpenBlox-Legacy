@@ -4,7 +4,10 @@
 	#include <iostream>
 	#include <string>
 	#include <sstream>
+	#include <map>
+	#include <vector>
 
+	#include <cstdlib>
 	#include <cstring>
 
 	extern "C"{
@@ -15,6 +18,8 @@
 
 	//Helpers
 	#include "static_init.h"
+	#include "Utility.h"
+	#include "Factory.h"
 
 	#include "BaseGame.h"
 #endif

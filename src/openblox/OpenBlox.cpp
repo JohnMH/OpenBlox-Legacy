@@ -1,6 +1,7 @@
 #include "OpenBlox.h"
 
 int main(){
+	OpenBlox::BaseGame::InstanceFactory = new OpenBlox::Factory();
 	static_init::execute();
 
 	OpenBlox::BaseGame *game = new OpenBlox::BaseGame();
@@ -17,5 +18,6 @@ int main(){
 	}
 	lua_close(L);
 
+	OpenBlox::BaseGame::getInstanceFactory()->releaseTable();
 	return 0;
 }
