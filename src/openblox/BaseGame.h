@@ -1,7 +1,7 @@
 #ifndef OPENBLOX_BASEGAME_H_
 #define OPENBLOX_BASEGAME_H_
 
-namespace OpenBlox {
+namespace OpenBlox{
 	class BaseGame{
 		public:
 			BaseGame();

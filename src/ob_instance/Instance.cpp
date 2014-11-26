@@ -2,7 +2,7 @@
 
 namespace ob_instance{
 	STATIC_INIT(Instance){
-	    std::cout << "Static Initializer" << std::endl;
+
 	}
 
 	Instance::Instance(){
@@ -11,5 +11,9 @@ namespace ob_instance{
 
 	Instance::~Instance(){
 
+	}
+
+	Instance* Instance::newInstance(){
+		return new Instance();
 	}
 }
