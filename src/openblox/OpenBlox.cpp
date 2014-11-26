@@ -5,7 +5,7 @@ int main(){
 
 	OpenBlox::BaseGame *game = new OpenBlox::BaseGame();
 
-	lua_State *L = game->newLuaState();
+	lua_State *L = OpenBlox::BaseGame::getGlobalState();
 	char* script = "for i, v in pairs(_G) do print(i, v); end warn('Finished printing environment');";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){

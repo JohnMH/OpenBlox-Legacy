@@ -2,9 +2,11 @@
 
 namespace OpenBlox{
 	static BaseGame *INSTANCE;
+	static lua_State *GlobalLuaState;
 
 	BaseGame::BaseGame(){
 		INSTANCE = this;
+		GlobalLuaState = newLuaState();
 	}
 
 	BaseGame::~BaseGame(){
@@ -113,5 +115,9 @@ namespace OpenBlox{
 		lua_register(L, "warn", OpenBlox::warn);
 
 		return L;
+	}
+
+	static lua_State* BaseGame::getGlobalState(){
+		return GlobalLuaState;
 	}
 }

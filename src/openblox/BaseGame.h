@@ -11,6 +11,9 @@ namespace OpenBlox {
 			int warn(lua_State *L);
 			void handle_errors(lua_State *L);
 
+			static lua_State* getGlobalState();
+
+		private:
 			lua_State* newLuaState();
 	};
 }
