@@ -1,6 +1,8 @@
 #include "OpenBlox.h"
 
 int main(){
+	static_init::execute();
+
 	OpenBlox::BaseGame *game = new OpenBlox::BaseGame();
 
 	lua_State *L = game->newLuaState();
