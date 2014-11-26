@@ -117,7 +117,7 @@ namespace OpenBlox{
 		return L;
 	}
 
-	static lua_State* BaseGame::getGlobalState(){
+	lua_State* BaseGame::getGlobalState(){
 		return GlobalLuaState;
 	}
 }
