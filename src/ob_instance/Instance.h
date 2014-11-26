@@ -10,8 +10,6 @@ namespace ob_instance{
 			virtual ~Instance();
 
 			DECLARE_STATIC_INIT(Instance);
-		private:
-			static Instance* newInstance();
 	};
 }
 #endif
