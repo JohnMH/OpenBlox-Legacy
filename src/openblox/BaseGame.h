@@ -3,8 +3,6 @@
 
 #include "OpenBlox.h"
 
-#include "../ob_instance/DataModel.h"
-
 namespace ob_instance{
 	class DataModel;
 }

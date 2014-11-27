@@ -1,10 +1,25 @@
 #include "Instance.h"
 
 namespace ob_instance{
-	void Instance::wrap_lua(lua_State *L){
-		Instance ** udata = lua_newuserdata(L, sizeof(this));
-		*udata = this;
+	struct InstanceClassMaker: public OpenBlox::ClassMaker{
+		void* getInstance() const{
+			return NULL;
+		}
 
-		wrap_lua_impl(L);
+		bool isA(const ob_instance::Instance* obj){
+			return (dynamic_cast<const Instance*>(obj)) != 0;
+		}
+
+		bool isInstantiatable(){
+			return false;
+		}
+	};
+
+	STATIC_INIT(Instance){
+		OpenBlox::BaseGame::getInstanceFactory()->addClass("Instance", new InstanceClassMaker());
+	}
+
+	bool Instance::IsA(const char* name){
+		return OpenBlox::BaseGame::getInstanceFactory()->isA(this, name);
 	}
 }

@@ -5,9 +5,11 @@ namespace ob_instance{
 		void* getInstance() const{
 			return NULL;
 		}
-		bool isA(ob_instance::Instance* obj){
-			return (dynamic_cast<DataModel*>(obj)) != 0;
+
+		bool isA(const ob_instance::Instance* obj){
+			return (dynamic_cast<const DataModel*>(obj)) != 0;
 		}
+
 		bool isInstantiatable(){
 			return false;
 		}
@@ -15,6 +17,8 @@ namespace ob_instance{
 
 	STATIC_INIT(DataModel){
 		OpenBlox::BaseGame::getInstanceFactory()->addClass("DataModel", new DataModelClassMaker());
+
+		//std::cout << OpenBlox::BaseGame::getGlobalState() << std::endl;
 	}
 
 	DataModel::DataModel(){
@@ -25,7 +29,7 @@ namespace ob_instance{
 
 	}
 
-	void DataModel::wrap_lua_impl(lua_State *L){
+	void DataModel::wrap_lua(lua_State *L){
 
 	}
 }

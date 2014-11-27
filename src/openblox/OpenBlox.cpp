@@ -1,10 +1,14 @@
 #include "OpenBlox.h"
 
+#include "../ob_instance/DataModel.h"
+
 int main(){
 	OpenBlox::BaseGame::InstanceFactory = new OpenBlox::Factory();
 	static_init::execute();
 
 	OpenBlox::BaseGame *game = new OpenBlox::BaseGame();
+
+	std::cout << game->getDataModel()->IsA("Instance") << std::endl;
 
 	lua_State *L = OpenBlox::BaseGame::getGlobalState();
 	char* script = "for i, v in pairs(_G) do print(i, v); end warn('Finished printing environment');";

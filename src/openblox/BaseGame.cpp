@@ -1,5 +1,7 @@
 #include "BaseGame.h"
 
+#include "../ob_instance/DataModel.h"
+
 namespace OpenBlox{
 	static BaseGame *INSTANCE;
 
@@ -14,6 +16,10 @@ namespace OpenBlox{
 
 	BaseGame::~BaseGame(){
 		INSTANCE = NULL;
+	}
+
+	ob_instance::DataModel* BaseGame::getDataModel(){
+		return datamodel;
 	}
 
 	//TODO: Implement LogService print, warn, error

@@ -1,7 +1,9 @@
 #ifndef OB_INSTANCE_DATAMODEL_H_
 #define OB_INSTANCE_DATAMODEL_H_
 
-#include "Instances.h"
+#include "Instance.h"
+
+#include "../openblox/OpenBlox.h"
 
 namespace ob_instance{
 	class DataModel: public Instance{
@@ -11,7 +13,7 @@ namespace ob_instance{
 
 			DECLARE_STATIC_INIT(DataModel);
 
-			void wrap_lua_impl(lua_State *L);
+			void wrap_lua(lua_State *L);
 	};
 }
 #endif
