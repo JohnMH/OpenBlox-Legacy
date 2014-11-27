@@ -9,6 +9,7 @@ namespace OpenBlox{
 	BaseGame::BaseGame(){
 		INSTANCE = this;
 		GlobalLuaState = newLuaState();
+		datamodel = new ob_instance::DataModel();
 	}
 
 	BaseGame::~BaseGame(){

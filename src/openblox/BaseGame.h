@@ -2,6 +2,13 @@
 #define OPENBLOX_BASEGAME_H_
 
 #include "OpenBlox.h"
+
+#include "../ob_instance/DataModel.h"
+
+namespace ob_instance{
+	class DataModel;
+}
+
 namespace OpenBlox{
 	class Factory;
 
@@ -14,12 +21,15 @@ namespace OpenBlox{
 			int warn(lua_State *L);
 			void handle_errors(lua_State *L);
 
+			ob_instance::DataModel* getDataModel();
+
 			static lua_State *getGlobalState();
 			static Factory *getInstanceFactory();
 			static Factory *InstanceFactory;
 
 		private:
-			lua_State* newLuaState();
+			lua_State *newLuaState();
+			ob_instance::DataModel *datamodel;
 
 			static lua_State *GlobalLuaState;
 	};

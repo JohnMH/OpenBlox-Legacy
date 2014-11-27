@@ -12,9 +12,25 @@ namespace OpenBlox{
 		void* result = NULL;
 		std::map<const char*, ClassMaker*>::iterator it = lokupTable.find(key);
 
-		if(it != lokupTable.end())
-			result = (it->second)->getInstance();
+		if(it != lokupTable.end()){
+			ClassMaker* maker = it->second;
+			if(maker->isInstantiatable()){
+				result = maker->getInstance();
+			}
+		}
 		return result;
+	}
+
+	bool Factory::isA(ob_instance::Instance* obj, const char* className){
+		char* key = covertToLower(className);
+
+		std::map<const char*, ClassMaker*>::iterator it = lokupTable.find(key);
+
+		if(it != lokupTable.end()){
+			ClassMaker* maker = it->second;
+			return maker->isA(obj);
+		}
+		return false;
 	}
 
 	void Factory::releaseTable(){
