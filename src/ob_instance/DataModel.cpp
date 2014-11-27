@@ -18,7 +18,8 @@ namespace ob_instance{
 	STATIC_INIT(DataModel){
 		OpenBlox::BaseGame::getInstanceFactory()->addClass("DataModel", new DataModelClassMaker());
 
-		//std::cout << OpenBlox::BaseGame::getGlobalState() << std::endl;
+		lua_State *L = OpenBlox::BaseGame::getGlobalState();
+		//Register metatable
 	}
 
 	DataModel::DataModel(){

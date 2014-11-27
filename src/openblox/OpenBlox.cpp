@@ -4,9 +4,10 @@
 
 int main(){
 	OpenBlox::BaseGame::InstanceFactory = new OpenBlox::Factory();
-	static_init::execute();
 
 	OpenBlox::BaseGame *game = new OpenBlox::BaseGame();
+
+	static_init::execute();
 
 	std::cout << game->getDataModel()->IsA("Instance") << std::endl;
 
