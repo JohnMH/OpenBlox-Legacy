@@ -20,15 +20,9 @@ namespace ob_instance{
 
 		lua_State *L = OpenBlox::BaseGame::getGlobalState();
 
-
-		luaL_Reg metamethods[] = {
-			{"__tostring", Instance::lua_toString},
-			{NULL, NULL}
-		};
-
 		luaL_newmetatable(L, LuaClassName);
 
-		luaL_register(L, NULL, metamethods);
+		Instance::register_lua_metamethods(L);
 
 		lua_pushstring(L, "__index");
 		lua_newtable(L);

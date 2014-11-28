@@ -26,6 +26,7 @@ namespace ob_instance{
 		Archivable = true;
 		Name = ClassName;
 		Parent = NULL;
+		AlwaysTrue = true;
 
 		children = std::vector<Instance*>();
 	}
@@ -234,14 +235,20 @@ namespace ob_instance{
 	//Metamethods
 	Instance* Instance::checkInstance(lua_State* L, int index){
 		if(lua_isuserdata(L, index)){
-			Instance* inst = *(Instance**)lua_touserdata(L, 1);
-			return inst;
+			void* inst = lua_touserdata(L, index);
+			if(Instance* derived = static_cast<Instance*>(inst)){
+				try{
+					if(derived->AlwaysTrue == 0){
+					}else{
+						return derived;
+					}
+				}catch(...){}
+			}
 		}
 		return NULL;
 	}
 
 	int Instance::lua_toString(lua_State* L){
-		//Instance* inst = *(Instance**)lua_touserdata(L, 1);
 		Instance* inst = checkInstance(L, 1);
 		if(inst != NULL){
 			lua_pushstring(L, inst->toString());
@@ -252,71 +259,115 @@ namespace ob_instance{
 
 	//Methods
 	int Instance::lua_ClearAllChildren(lua_State* L){
-		Instance* inst = *(Instance**)lua_touserdata(L, 1);
+		Instance* inst = checkInstance(L, 1);
 		if(inst != NULL){
 			inst->ClearAllChildren();
+			return 0;
 		}
+		lua_pushstring(L,"Expected ':' not '.' calling member function ClearAllChildren");
+		lua_error(L);
 		return 0;
 	}
 
 	int Instance::lua_Clone(lua_State* L){
-		Instance* inst = *(Instance**)lua_touserdata(L, 1);
+		Instance* inst = checkInstance(L, 1);
 		if(inst != NULL){
 			Instance* newGuy = inst->Clone();
 			if(newGuy != NULL){
 				return newGuy->wrap_lua(L);
 			}
+			return 0;
 		}
+		lua_pushstring(L,"Expected ':' not '.' calling member function Clone");
+		lua_error(L);
 		return 0;
 	}
 
 	int Instance::lua_Destroy(lua_State* L){
-		Instance* inst = *(Instance**)lua_touserdata(L, 1);
+		Instance* inst = checkInstance(L, 1);
 		if(inst != NULL){
 			inst->Destroy();
+			return 0;
 		}
+		lua_pushstring(L,"Expected ':' not '.' calling member function Destroy");
+		lua_error(L);
 		return 0;
 	}
 
 	int Instance::lua_Remove(lua_State* L){
-		Instance* inst = *(Instance**)lua_touserdata(L, 1);
+		Instance* inst = checkInstance(L, 1);
 		if(inst != NULL){
 			inst->Remove();
+			return 0;
 		}
+		lua_pushstring(L,"Expected ':' not '.' calling member function Remove");
+		lua_error(L);
 		return 0;
 	}
 
 	int Instance::lua_FindFirstChild(lua_State* L){
-		Instance* inst = *(Instance**)lua_touserdata(L, 1);
+		Instance* inst = checkInstance(L, 1);
 		if(inst != NULL){
-
+			return 0;
 		}
+		lua_pushstring(L,"Expected ':' not '.' calling member function FindFirstChild");
+		lua_error(L);
 		return 0;
 	}
 
 	int Instance::lua_GetChildren(lua_State* L){
-		return 0;//TODO: Implement
+		Instance* inst = checkInstance(L, 1);
+		if(inst != NULL){
+			//TODO:Implement
+			return 0;
+		}
+		lua_pushstring(L,"Expected ':' not '.' calling member function GetChildren");
+		lua_error(L);
+		return 0;
 	}
 
 	int Instance::lua_GetFullName(lua_State* L){
-		Instance* inst = *(Instance**)lua_touserdata(L, 1);
+		Instance* inst = checkInstance(L, 1);
 		if(inst != NULL){
 			char* fullName = inst->GetFullName();
 			lua_pushstring(L, fullName);
 			return 1;
 		}
+		lua_pushstring(L,"Expected ':' not '.' calling member function GetFullName");
+		lua_error(L);
 		return 0;
 	}
 
 	int Instance::lua_IsA(lua_State* L){
-		return 0;//TODO: Implement
+		Instance* inst = checkInstance(L, 1);
+		if(inst != NULL){
+			//TODO:Implement
+			return 0;
+		}
+		lua_pushstring(L,"Expected ':' not '.' calling member function IsA");
+		lua_error(L);
+		return 0;
 	}
 
 	int Instance::lua_IsAncestorOf(lua_State* L){
-		return 0;//TODO: Implement
+		Instance* inst = checkInstance(L, 1);
+		if(inst != NULL){
+			//TODO:Implement
+			return 0;
+		}
+		lua_pushstring(L,"Expected ':' not '.' calling member function IsAncestorOf");
+		lua_error(L);
+		return 0;
 	}
 
 	int Instance::lua_IsDescendant(lua_State* L){
-		return 0;//TODO: Implement
+		Instance* inst = checkInstance(L, 1);
+		if(inst != NULL){
+			//TODO:Implement
+			return 0;
+		}
+		lua_pushstring(L,"Expected ':' not '.' calling member function IsDescendant");
+		lua_error(L);
+		return 0;
 	}
 }
