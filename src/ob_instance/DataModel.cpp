@@ -47,7 +47,7 @@ namespace ob_instance{
 	}
 
 	char* DataModel::ClassName = "DataModel";
-	char* DataModel::LuaClassName = "luaL_Instance_Instance";
+	char* DataModel::LuaClassName = "luaL_Instance_DataModel";
 
 	DataModel::DataModel() : Instance(){
 
