@@ -26,7 +26,7 @@ namespace ob_instance{
 		Archivable = true;
 		Name = ClassName;
 		Parent = NULL;
-		AlwaysTrue = true;
+		TypeHelper = 42;
 
 		children = std::vector<Instance*>();
 	}
@@ -235,14 +235,14 @@ namespace ob_instance{
 	//Metamethods
 	Instance* Instance::checkInstance(lua_State* L, int index){
 		if(lua_isuserdata(L, index)){
-			void* inst = lua_touserdata(L, index);
+			void* inst = *(void**)lua_touserdata(L, index);
 			if(Instance* derived = static_cast<Instance*>(inst)){
-				try{
-					if(derived->AlwaysTrue == 0){
-					}else{
-						return derived;
-					}
-				}catch(...){}
+				if(derived->TypeHelper == 42 || derived->TypeHelper == 1){
+					//std::cout << "is 42" << std::endl;
+					return derived;
+				}else{
+					std::cout << derived->TypeHelper << std::endl;
+				}
 			}
 		}
 		return NULL;

@@ -44,7 +44,7 @@ namespace ob_instance{
 			DECLARE_STATIC_INIT(Instance);
 		protected:
 			bool Archivable;
-			bool AlwaysTrue;
+			bool TypeHelper;
 			static char* ClassName;
 			static char* LuaClassName;
 			char* Name;
