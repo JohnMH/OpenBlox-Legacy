@@ -18,7 +18,7 @@ namespace ob_instance{
 			virtual char* GetFullName();
 			virtual bool IsA(const char *name);
 			virtual bool IsAncestorOf(Instance* descendant);
-			virtual bool isDescendantOf(Instance* ancestor);
+			virtual bool IsDescendantOf(Instance* ancestor);
 			//virtual Instance* WaitForChild(char* childName);
 
 			virtual char* toString();
@@ -26,7 +26,18 @@ namespace ob_instance{
 
 			virtual int wrap_lua(lua_State* L) = 0;
 
-			static int lua_Instance_toString(lua_State* L);
+			static int lua_toString(lua_State* L);
+
+			static int lua_ClearAllChildren(lua_State* L);
+			static int lua_Clone(lua_State* L);
+			static int lua_Destroy(lua_State* L);
+			static int lua_Remove(lua_State* L);
+			static int lua_FindFirstChild(lua_State* L);
+			static int lua_GetChildren(lua_State* L);
+			static int lua_GetFullName(lua_State* L);
+			static int lua_IsA(lua_State* L);
+			static int lua_IsAncestorOf(lua_State* L);
+			static int lua_IsDescendant(lua_State* L);
 
 			DECLARE_STATIC_INIT(Instance);
 		protected:
@@ -40,6 +51,8 @@ namespace ob_instance{
 
 			virtual void removeChild(Instance* kid);
 			virtual void addChild(Instance* kid);
+
+			static void register_lua_methods(lua_State* L);
 
 			std::vector<Instance*> children;
 	};

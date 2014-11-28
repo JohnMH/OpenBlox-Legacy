@@ -20,12 +20,9 @@ namespace ob_instance{
 
 		lua_State *L = OpenBlox::BaseGame::getGlobalState();
 
-		luaL_Reg methods[]{
-			{NULL, NULL}
-		};
 
 		luaL_Reg metamethods[] = {
-			{"__tostring", Instance::lua_Instance_toString},
+			{"__tostring", Instance::lua_toString},
 			{NULL, NULL}
 		};
 
@@ -40,7 +37,7 @@ namespace ob_instance{
 		lua_pushstring(L, ClassName);
 		lua_rawset(L, -3);
 
-		luaL_register(L, NULL, methods);
+		register_lua_methods(L);
 
 		lua_rawset(L, -3);
 		lua_pop(L, 1);
@@ -73,5 +70,9 @@ namespace ob_instance{
 
 	 char* DataModel::toString(){
 		 return ClassName;
+	 }
+
+	 void DataModel::register_lua_methods(lua_State* L){
+		 Instance::register_lua_methods(L);
 	 }
 }

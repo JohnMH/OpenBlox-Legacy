@@ -153,7 +153,7 @@ namespace ob_instance{
 		return false;
 	}
 
-	bool Instance::isDescendantOf(Instance* ancestor){
+	bool Instance::IsDescendantOf(Instance* ancestor){
 		if(ancestor == NULL){
 			return false;
 		}
@@ -199,13 +199,101 @@ namespace ob_instance{
 		return ClassName;
 	}
 
-	//METHODS FOR LUA
-	int Instance::lua_Instance_toString(lua_State* L){
+	void Instance::register_lua_methods(lua_State* L){
+		luaL_Reg methods[]{
+			{"ClearAllChildren", lua_ClearAllChildren},
+			{"Clone", lua_Clone},
+			{"Destroy", lua_Destroy},
+			{"Remove", lua_Remove},
+			{"FindFirstChild", lua_FindFirstChild},
+			{"GetChildren", lua_GetChildren},
+			{"GetFullName", lua_GetFullName},
+			{"IsA", lua_IsA},
+			{"IsAncestorOf", lua_IsAncestorOf},
+			{"IsDescendant", lua_IsDescendant},
+			{NULL, NULL}
+		};
+		luaL_register(L, NULL, methods);
+	}
+
+	//Lua Wrappers
+	//Metamethods
+	int Instance::lua_toString(lua_State* L){
 		Instance* inst = *(Instance**)lua_touserdata(L, 1);
 		if(inst != NULL){
 			lua_pushstring(L, inst->toString());
 			return 1;
 		}
 		return 0;
+	}
+
+	//Methods
+	int Instance::lua_ClearAllChildren(lua_State* L){
+		Instance* inst = *(Instance**)lua_touserdata(L, 1);
+		if(inst != NULL){
+			inst->ClearAllChildren();
+		}
+		return 0;
+	}
+
+	int Instance::lua_Clone(lua_State* L){
+		Instance* inst = *(Instance**)lua_touserdata(L, 1);
+		if(inst != NULL){
+			Instance* newGuy = inst->Clone();
+			if(newGuy != NULL){
+				return newGuy->wrap_lua(L);
+			}
+		}
+		return 0;
+	}
+
+	int Instance::lua_Destroy(lua_State* L){
+		Instance* inst = *(Instance**)lua_touserdata(L, 1);
+		if(inst != NULL){
+			inst->Destroy();
+		}
+		return 0;
+	}
+
+	int Instance::lua_Remove(lua_State* L){
+		Instance* inst = *(Instance**)lua_touserdata(L, 1);
+		if(inst != NULL){
+			inst->Remove();
+		}
+		return 0;
+	}
+
+	int Instance::lua_FindFirstChild(lua_State* L){
+		Instance* inst = *(Instance**)lua_touserdata(L, 1);
+		if(inst != NULL){
+
+		}
+		return 0;
+	}
+
+	int Instance::lua_GetChildren(lua_State* L){
+		return 0;//TODO: Implement
+	}
+
+	int Instance::lua_GetFullName(lua_State* L){
+		Instance* inst = *(Instance**)lua_touserdata(L, 1);
+		if(inst != NULL){
+			char* fullName = inst->GetFullName();
+			lua_pushstring(L, fullName);
+			return 1;
+		}
+		return 0;
+	}
+
+	int Instance::lua_IsA(lua_State* L){
+		return 0;//TODO: Implement
+	}
+
+	int Instance::lua_IsAncestorOf(lua_State* L){
+		return 0;//TODO: Implement
+	}
+
+	int Instance::lua_IsDescendant(lua_State* L){
+		return 0;//TODO: Implement
 	}
 }

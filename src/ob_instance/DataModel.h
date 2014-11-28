@@ -20,6 +20,8 @@ namespace ob_instance{
 			static char* ClassName;
 			static char* LuaClassName;
 
+			static void register_lua_methods(lua_State* L);
+
 			virtual Instance* cloneImpl();
 	};
 }
