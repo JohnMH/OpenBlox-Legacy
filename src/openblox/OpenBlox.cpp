@@ -21,7 +21,7 @@ int main(){
 
 	lua_pop(L, gm);
 
-	char* script = "print(game, Game, game:GetFullName());";
+	char* script = "print(game, Game, game.GetFullName);";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);

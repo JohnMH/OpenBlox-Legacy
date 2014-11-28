@@ -26,6 +26,8 @@ namespace ob_instance{
 
 			virtual int wrap_lua(lua_State* L) = 0;
 
+			static Instance* checkInstance(lua_State*, int index);
+
 			static int lua_toString(lua_State* L);
 
 			static int lua_ClearAllChildren(lua_State* L);
@@ -52,6 +54,7 @@ namespace ob_instance{
 			virtual void removeChild(Instance* kid);
 			virtual void addChild(Instance* kid);
 
+			static void register_lua_metamethods(lua_State* L);
 			static void register_lua_methods(lua_State* L);
 
 			std::vector<Instance*> children;

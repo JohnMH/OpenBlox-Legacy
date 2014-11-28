@@ -161,6 +161,12 @@ namespace ob_instance{
 	}
 
 	void Instance::setParent(Instance* parent){
+		if(parent == this){
+			std::string errMsg = "Attempt to set ";
+			errMsg = errMsg + GetFullName() + " as its own parent";
+			throw errMsg.c_str();
+			return;
+		}
 		if(Parent != NULL){
 			Parent->removeChild(this);
 		}
@@ -199,6 +205,14 @@ namespace ob_instance{
 		return ClassName;
 	}
 
+	void Instance::register_lua_metamethods(lua_State* L){
+		luaL_Reg metamethods[] = {
+			{"__tostring", Instance::lua_toString},
+			{NULL, NULL}
+		};
+		luaL_register(L, NULL, metamethods);
+	}
+
 	void Instance::register_lua_methods(lua_State* L){
 		luaL_Reg methods[]{
 			{"ClearAllChildren", lua_ClearAllChildren},
@@ -218,8 +232,17 @@ namespace ob_instance{
 
 	//Lua Wrappers
 	//Metamethods
+	Instance* Instance::checkInstance(lua_State* L, int index){
+		if(lua_isuserdata(L, index)){
+			Instance* inst = *(Instance**)lua_touserdata(L, 1);
+			return inst;
+		}
+		return NULL;
+	}
+
 	int Instance::lua_toString(lua_State* L){
-		Instance* inst = *(Instance**)lua_touserdata(L, 1);
+		//Instance* inst = *(Instance**)lua_touserdata(L, 1);
+		Instance* inst = checkInstance(L, 1);
 		if(inst != NULL){
 			lua_pushstring(L, inst->toString());
 			return 1;
