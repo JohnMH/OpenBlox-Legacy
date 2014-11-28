@@ -9,9 +9,11 @@ int main(){
 
 	static_init::execute();
 
-	std::cout << game->getDataModel()->IsA("Instance") << std::endl;
-
 	lua_State *L = OpenBlox::BaseGame::getGlobalState();
+
+	ob_instance::DataModel *dm = game->getDataModel();
+
+
 	char* script = "for i, v in pairs(_G) do print(i, v); end warn('Finished printing environment');";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){

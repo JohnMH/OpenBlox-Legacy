@@ -399,6 +399,7 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
       case OP_FORLOOP:
       case OP_FORPREP:
         checkreg(pt, a+3);
+        //No break at the end of case
         /* go through */
       case OP_JMP: {
         int dest = pc+1+b;

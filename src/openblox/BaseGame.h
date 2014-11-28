@@ -25,6 +25,8 @@ namespace OpenBlox{
 			static Factory *getInstanceFactory();
 			static Factory *InstanceFactory;
 
+			static BaseGame *getInstance();
+
 		private:
 			lua_State *newLuaState();
 			ob_instance::DataModel *datamodel;

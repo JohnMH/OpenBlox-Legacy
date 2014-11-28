@@ -106,7 +106,7 @@ namespace OpenBlox{
 		return 0;
 	}
 
-	lua_State* BaseGame::newLuaState(){
+	lua_State *BaseGame::newLuaState(){
 		lua_State *L = lua_open();
 		luaopen_base(L);
 		luaopen_table(L);
@@ -126,11 +126,15 @@ namespace OpenBlox{
 		return L;
 	}
 
-	lua_State* BaseGame::getGlobalState(){
+	lua_State *BaseGame::getGlobalState(){
 		return GlobalLuaState;
 	}
 
-	Factory* BaseGame::getInstanceFactory(){
+	Factory *BaseGame::getInstanceFactory(){
 		return InstanceFactory;
+	}
+
+	BaseGame *BaseGame::getInstance(){
+		return INSTANCE;
 	}
 }

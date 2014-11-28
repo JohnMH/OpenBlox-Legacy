@@ -13,7 +13,13 @@ namespace ob_instance{
 
 			DECLARE_STATIC_INIT(DataModel);
 
-			void wrap_lua(lua_State *L);
+			virtual char* toString();
+
+			int wrap_lua(lua_State *L);
+		protected:
+			static char* ClassName;
+
+			virtual Instance* cloneImpl();
 	};
 }
 #endif

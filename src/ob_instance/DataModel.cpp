@@ -16,13 +16,19 @@ namespace ob_instance{
 	};
 
 	STATIC_INIT(DataModel){
-		OpenBlox::BaseGame::getInstanceFactory()->addClass("DataModel", new DataModelClassMaker());
+		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new DataModelClassMaker());
 
 		lua_State *L = OpenBlox::BaseGame::getGlobalState();
-		//Register metatable
+
+		luaL_Reg methods[] = {
+			{"__tostring", lua_Instance_toString},
+			{NULL, NULL}
+		};
 	}
 
-	DataModel::DataModel(){
+	char* DataModel::ClassName = "DataModel";
+
+	DataModel::DataModel() : Instance(){
 
 	}
 
@@ -30,7 +36,15 @@ namespace ob_instance{
 
 	}
 
-	void DataModel::wrap_lua(lua_State *L){
+	Instance* DataModel::cloneImpl(){
+		return NULL;
+	}
+
+	int DataModel::wrap_lua(lua_State *L){
 
 	}
+
+	 char* DataModel::toString(){
+		 return ClassName;
+	 }
 }
