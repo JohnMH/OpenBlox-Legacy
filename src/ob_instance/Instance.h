@@ -16,7 +16,7 @@ namespace ob_instance{
 			virtual Instance* FindFirstChild(char* name, bool recursive = false);
 			virtual Instance** GetChildren();
 			virtual char* GetFullName();
-			virtual bool IsA(const char* name);
+			virtual bool IsA(const char *name);
 			virtual bool IsAncestorOf(Instance* descendant);
 			virtual bool isDescendantOf(Instance* ancestor);
 			//virtual Instance* WaitForChild(char* childName);
@@ -24,12 +24,15 @@ namespace ob_instance{
 			virtual char* toString();
 			virtual void setParent(Instance* parent);
 
-			virtual int wrap_lua(lua_State *L) = 0;
+			virtual int wrap_lua(lua_State* L) = 0;
+
+			static int lua_Instance_toString(lua_State* L);
 
 			DECLARE_STATIC_INIT(Instance);
 		protected:
 			bool Archivable;
 			static char* ClassName;
+			static char* LuaClassName;
 			char* Name;
 			Instance* Parent;
 

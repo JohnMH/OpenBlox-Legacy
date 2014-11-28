@@ -20,13 +20,34 @@ namespace ob_instance{
 
 		lua_State *L = OpenBlox::BaseGame::getGlobalState();
 
-		luaL_Reg methods[] = {
-			{"__tostring", lua_Instance_toString},
+		luaL_Reg methods[]{
 			{NULL, NULL}
 		};
+
+		luaL_Reg metamethods[] = {
+			{"__tostring", Instance::lua_Instance_toString},
+			{NULL, NULL}
+		};
+
+		luaL_newmetatable(L, LuaClassName);
+
+		luaL_register(L, NULL, metamethods);
+
+		lua_pushstring(L, "__index");
+		lua_newtable(L);
+
+		lua_pushstring(L, "ClassName");
+		lua_pushstring(L, ClassName);
+		lua_rawset(L, -3);
+
+		luaL_register(L, NULL, methods);
+
+		lua_rawset(L, -3);
+		lua_pop(L, 1);
 	}
 
 	char* DataModel::ClassName = "DataModel";
+	char* DataModel::LuaClassName = "luaL_Instance_Instance";
 
 	DataModel::DataModel() : Instance(){
 
@@ -41,7 +62,13 @@ namespace ob_instance{
 	}
 
 	int DataModel::wrap_lua(lua_State *L){
+		DataModel **udata = (DataModel **)lua_newuserdata(L, sizeof(DataModel*));
+		*udata = this;
 
+		luaL_getmetatable(L, LuaClassName);
+		lua_setmetatable(L, -2);
+
+		return 1;
 	}
 
 	 char* DataModel::toString(){

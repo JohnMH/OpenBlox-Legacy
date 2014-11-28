@@ -12,9 +12,16 @@ int main(){
 	lua_State *L = OpenBlox::BaseGame::getGlobalState();
 
 	ob_instance::DataModel *dm = game->getDataModel();
+	int gm = dm->wrap_lua(L);
+	lua_pushvalue(L, -gm);
+	lua_setglobal(L, "game");
 
+	lua_pushvalue(L, -gm);
+	lua_setglobal(L, "Game");
 
-	char* script = "for i, v in pairs(_G) do print(i, v); end warn('Finished printing environment');";
+	lua_pop(L, gm);
+
+	char* script = "print(game, Game);";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);

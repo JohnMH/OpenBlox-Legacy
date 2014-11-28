@@ -18,6 +18,7 @@ namespace ob_instance{
 			int wrap_lua(lua_State *L);
 		protected:
 			static char* ClassName;
+			static char* LuaClassName;
 
 			virtual Instance* cloneImpl();
 	};

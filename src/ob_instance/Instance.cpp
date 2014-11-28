@@ -20,6 +20,7 @@ namespace ob_instance{
 	}
 
 	char* Instance::ClassName = "Instance";
+	char* Instance::LuaClassName = "luaL_Instance_Instance";
 
 	Instance::Instance(){
 		Archivable = true;
@@ -198,8 +199,13 @@ namespace ob_instance{
 		return ClassName;
 	}
 
-	//STATIC METHODS FOR LUA
-	static int lua_Instance_toString(){
-
+	//METHODS FOR LUA
+	int Instance::lua_Instance_toString(lua_State* L){
+		Instance* inst = *(Instance**)lua_touserdata(L, 1);
+		if(inst != NULL){
+			lua_pushstring(L, inst->toString());
+			return 1;
+		}
+		return 0;
 	}
 }
