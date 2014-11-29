@@ -2,13 +2,6 @@
 
 #include "../ob_instance/DataModel.h"
 
-#include <GL/glew.h>
-
-#define GLFW_DLL
-#include "GLFW/glfw3.h"
-
-#include <pthread.h>
-
 GLFWwindow* window;
 OpenBlox::BaseGame* game;
 
@@ -27,19 +20,11 @@ void render(){
 	glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 	glMatrixMode(GL_MODELVIEW);
 
-	glLoadIdentity();
-	glRotatef((float)glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-
-	glBegin(GL_TRIANGLES);
-	{
-		glColor3f(1.f, 0.f, 0.f);
-		glVertex3f(-0.6f, -0.4f, 0.f);
-		glColor3f(0.f, 1.f, 0.f);
-		glVertex3f(0.6f, -0.4f, 0.f);
-		glColor3f(0.f, 0.f, 1.f);
-		glVertex3f(0.f, 0.6f, 0.f);
+	ob_instance::DataModel* dm = game->getDataModel();
+	if(dm != NULL){
+		dm->render();
+		dm->renderChildren();
 	}
-	glEnd();
 }
 
 void* luaThread(void* arg){
@@ -139,6 +124,7 @@ int main(){
 
 	glfwSetWindowSizeCallback(window, framebuffer_size_callback);
 	while(!glfwWindowShouldClose(window)){
+		//Fire RunService.Stepped, then RunService.RenderStepped
 		render();
 
 		glfwPollEvents();

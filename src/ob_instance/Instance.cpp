@@ -165,6 +165,20 @@ namespace ob_instance{
 		return ancestor->IsAncestorOf(this);
 	}
 
+	void Instance::render(){
+
+	}
+
+	void Instance::renderChildren(){
+		for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
+			Instance* kid = children[i];
+			if(kid != NULL){
+				kid->render();
+				kid->renderChildren();
+			}
+		}
+	}
+
 	char* Instance::toString(){
 		return Name;
 	}

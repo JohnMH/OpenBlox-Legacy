@@ -9,6 +9,8 @@ namespace ob_instance{
 			DataModel();
 			virtual ~DataModel();
 
+			virtual void render();
+
 			DECLARE_STATIC_INIT(DataModel);
 
 			int wrap_lua(lua_State* L);

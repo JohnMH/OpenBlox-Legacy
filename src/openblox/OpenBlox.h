@@ -19,6 +19,13 @@ extern "C"{
 	#include "../lua/lauxlib.h"
 }
 
+#include <GL/glew.h>
+
+#define GLFW_DLL
+#include "GLFW/glfw3.h"
+
+#include <pthread.h>
+
 //Helpers
 #include "static_init.h"
 #include "Utility.h"

@@ -22,6 +22,9 @@ namespace ob_instance{
 			virtual bool IsDescendantOf(Instance* ancestor);
 			//virtual Instance* WaitForChild(char* childName);
 
+			virtual void render();
+			virtual void renderChildren();
+
 			virtual char* toString();
 			virtual void setParent(Instance* parent);
 
