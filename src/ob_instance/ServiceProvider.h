@@ -19,7 +19,5 @@ namespace ob_instance{
 
 			static void register_lua_methods(lua_State* L);
 	};
-
 }
-
 #endif

@@ -5,7 +5,7 @@ namespace ob_instance{
 	InstanceBase::~InstanceBase(){}
 
 	struct InstanceClassMaker: public OpenBlox::ClassMaker{
-		void* getInstance() const{
+		ob_instance::Instance* getInstance() const{
 			return NULL;
 		}
 
@@ -139,7 +139,7 @@ namespace ob_instance{
 
 	bool Instance::IsAncestorOf(Instance* descendant){
 		if(descendant == NULL){
-			return false;
+			return true;
 		}
 		for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
 			Instance* kid = children[i];
@@ -238,7 +238,7 @@ namespace ob_instance{
 			{"GetFullName", lua_GetFullName},
 			{"IsA", lua_IsA},
 			{"IsAncestorOf", lua_IsAncestorOf},
-			{"IsDescendant", lua_IsDescendant},
+			{"IsDescendantOf", lua_IsDescendantOf},
 			{NULL, NULL}
 		};
 		luaL_register(L, NULL, methods);
@@ -358,8 +358,14 @@ namespace ob_instance{
 	int Instance::lua_IsA(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
 		if(inst != NULL){
-			//TODO:Implement
-			return 0;
+			const char* checkName = luaL_checkstring(L, 2);
+			if(checkName != NULL){
+				bool isIt = inst->IsA(checkName);
+				lua_pushboolean(L, isIt);
+				return 1;
+			}
+			lua_pushboolean(L, false);
+			return 1;
 		}
 		lua_pushstring(L,"Expected ':' not '.' calling member function IsA");
 		lua_error(L);
@@ -369,22 +375,46 @@ namespace ob_instance{
 	int Instance::lua_IsAncestorOf(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
 		if(inst != NULL){
-			//TODO:Implement
+			bool throwErrorIf = true;
+			Instance* otherInst = NULL;
+			if(lua_isnil(L, 2)){
+				throwErrorIf = false;
+			}else{
+				otherInst = checkInstance(L, 2);
+			}
+			if(otherInst != NULL || !throwErrorIf){
+				bool isIt = inst->IsAncestorOf(otherInst);
+				lua_pushboolean(L, isIt);
+				return 1;
+			}else{
+				return luaL_typerror(L, 2, "Instance");//TODO: Keep using "Instance" or switch to "userdata"?
+			}
 			return 0;
 		}
 		lua_pushstring(L,"Expected ':' not '.' calling member function IsAncestorOf");
-		lua_error(L);
-		return 0;
+		return lua_error(L);
 	}
 
-	int Instance::lua_IsDescendant(lua_State* L){
+	int Instance::lua_IsDescendantOf(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
 		if(inst != NULL){
-			//TODO:Implement
+			bool throwErrorIf = true;
+			Instance* otherInst = NULL;
+			if(lua_isnil(L, 2)){
+				throwErrorIf = false;
+			}else{
+				otherInst = checkInstance(L, 2);
+			}
+			if(otherInst != NULL || !throwErrorIf){
+				bool isIt = inst->IsDescendantOf(otherInst);
+				lua_pushboolean(L, isIt);
+				return 1;
+			}else{
+				return luaL_typerror(L, 2, "Instance");//TODO: Keep using "Instance" or switch to "userdata"?
+			}
 			return 0;
 		}
-		lua_pushstring(L,"Expected ':' not '.' calling member function IsDescendant");
-		lua_error(L);
-		return 0;
+		lua_pushstring(L,"Expected ':' not '.' calling member function DescendantOf");
+		return lua_error(L);
 	}
 }

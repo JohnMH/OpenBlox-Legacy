@@ -2,7 +2,7 @@
 
 namespace ob_instance{
 	struct DataModelClassMaker: public OpenBlox::ClassMaker{
-		void* getInstance() const{
+		ob_instance::Instance* getInstance() const{
 			return NULL;
 		}
 
@@ -57,7 +57,7 @@ namespace ob_instance{
 	}
 
 	int DataModel::wrap_lua(lua_State* L){
-		DataModel **udata = (DataModel**)lua_newuserdata(L, sizeof(DataModel*));
+		DataModel** udata = (DataModel**)lua_newuserdata(L, sizeof(DataModel*));
 		*udata = this;
 
 		luaL_getmetatable(L, LuaClassName);

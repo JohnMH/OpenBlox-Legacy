@@ -9,7 +9,7 @@
 
 namespace ob_instance{
 	struct ServiceProviderClassMaker: public OpenBlox::ClassMaker{
-		void* getInstance() const{
+		ob_instance::Instance* getInstance() const{
 			return NULL;
 		}
 
@@ -33,7 +33,7 @@ namespace ob_instance{
 
 		luaL_newmetatable(L, LuaClassName);
 
-		Instance::register_lua_metamethods(L);
+		register_lua_metamethods(L);
 
 		lua_pushstring(L, "__index");
 		lua_newtable(L);
@@ -74,6 +74,6 @@ namespace ob_instance{
 	}
 
 	void ServiceProvider::register_lua_methods(lua_State* L){
-		 Instance::register_lua_methods(L);
-	 }
+		Instance::register_lua_methods(L);
+	}
 }

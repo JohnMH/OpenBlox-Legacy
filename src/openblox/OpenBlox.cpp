@@ -1,6 +1,6 @@
 #include "OpenBlox.h"
 
-#include "ob_instance/DataModel.h"
+#include "../ob_instance/DataModel.h"
 
 int main(){
 	OpenBlox::BaseGame::InstanceFactory = new OpenBlox::Factory();
@@ -21,7 +21,7 @@ int main(){
 
 	lua_pop(L, gm);
 
-	char* script = "print(game, Game, game:GetFullName());";
+	char* script = "local tester = Instance.new('TestClass'); print(tester); print(game:IsAncestorOf(\"popcycle\"));";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);

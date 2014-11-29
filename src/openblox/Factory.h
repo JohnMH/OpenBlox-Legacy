@@ -9,7 +9,7 @@ namespace ob_instance{
 
 namespace OpenBlox{
 	struct ClassMaker{
-		virtual void* getInstance() const = 0;
+		virtual ob_instance::Instance* getInstance() const = 0;
 		virtual bool isA(const ob_instance::Instance* obj) = 0;
 		virtual bool isInstantiatable() = 0;
 		virtual bool isService() = 0;
@@ -21,7 +21,7 @@ namespace OpenBlox{
 			std::map<std::string, ClassMaker*> lokupTable;
 		public:
 			void addClass(const char* className, ClassMaker* const newClassMaker);
-			void* create(const char* className);
+			ob_instance::Instance* create(const char* className);
 			bool isA(const ob_instance::Instance* obj, const char* className);
 			void releaseTable();
 	};

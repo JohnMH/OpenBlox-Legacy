@@ -1,6 +1,6 @@
 #include "BaseGame.h"
 
-#include "ob_instance/DataModel.h"
+#include "../ob_instance/DataModel.h"
 
 namespace OpenBlox{
 	static BaseGame* INSTANCE;
@@ -35,7 +35,7 @@ namespace OpenBlox{
 		std::cerr << output << std::endl;
 	}
 
-	static void BaseGame::handle_lua_errors(lua_State* L){
+	void BaseGame::handle_lua_errors(lua_State* L){
 		const char* output = lua_tostring(L, -1);
 		if(INSTANCE != NULL){
 			INSTANCE->print_error(output);
@@ -120,7 +120,17 @@ namespace OpenBlox{
 	}
 
 	static int lua_newInstance(lua_State* L){
-		return 0;
+		const char* className = luaL_checkstring(L, 1);
+		if(className != NULL){
+			if(BaseGame::InstanceFactory != NULL){
+				ob_instance::Instance* newGuy = BaseGame::InstanceFactory->create(className);
+				if(newGuy != NULL){
+					return newGuy->wrap_lua(L);
+				}
+			}
+		}
+		lua_pushnil(L);
+		return 1;
 	}
 
 	lua_State* BaseGame::newLuaState(){
@@ -142,6 +152,7 @@ namespace OpenBlox{
 			{"new", lua_newInstance},
 			{NULL, NULL}
 		};
+		luaL_register(L, NULL, instancelib);
 		lua_setglobal(L, "Instance");
 
 		lua_register(L, "print", lua_print);

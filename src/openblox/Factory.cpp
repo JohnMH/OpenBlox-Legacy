@@ -1,6 +1,6 @@
 #include "Factory.h"
 
-#include "ob_instance/Instance.h"
+#include "../ob_instance/Instance.h"
 
 namespace OpenBlox{
 	void Factory::addClass(const char* className, ClassMaker* const newClassMaker){
@@ -9,11 +9,11 @@ namespace OpenBlox{
 		lokupTable[keystr] = newClassMaker;
 	}
 
-	void* Factory::create(const char* className){
+	ob_instance::Instance* Factory::create(const char* className){
 		char* key = covertToLower(className);
 		std::string keystr = std::string(key);
 
-		void* result = NULL;
+		ob_instance::Instance* result = NULL;
 		std::map<std::string, ClassMaker*>::iterator it = lokupTable.find(keystr);
 
 		if(it != lokupTable.end()){
