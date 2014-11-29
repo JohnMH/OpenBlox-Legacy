@@ -21,7 +21,7 @@ int main(){
 
 	lua_pop(L, gm);
 
-	char* script = "local tester = Instance.new('TestClass'); print(tester); print(game:IsAncestorOf(nil));";
+	char* script = "local tester = Instance.new('TestClass'); print(Instance.new('DataModel')); print(tester.ClassName, tester); print(game.ClassName, game);";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);

@@ -66,10 +66,6 @@ namespace ob_instance{
 		return 1;
 	}
 
-	 char* DataModel::toString(){
-		 return ClassName;
-	 }
-
 	 void DataModel::register_lua_methods(lua_State* L){
 		 ServiceProvider::register_lua_methods(L);
 	 }

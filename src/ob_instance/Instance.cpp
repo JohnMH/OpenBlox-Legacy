@@ -168,6 +168,10 @@ namespace ob_instance{
 		return ancestor->IsAncestorOf(this);
 	}
 
+	char* Instance::toString(){
+		return Name;
+	}
+
 	void Instance::setParent(Instance* parent){
 		if(ParentLocked){
 			std::string errMsg = "The Parent property of ";
@@ -213,10 +217,6 @@ namespace ob_instance{
 		if(kid != NULL){
 			children.push_back(kid);
 		}
-	}
-
-	char* Instance::toString(){
-		return ClassName;
 	}
 
 	void Instance::register_lua_metamethods(lua_State* L){

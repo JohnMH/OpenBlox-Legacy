@@ -11,8 +11,6 @@ namespace ob_instance{
 
 			DECLARE_STATIC_INIT(DataModel);
 
-			virtual char* toString();
-
 			int wrap_lua(lua_State* L);
 		protected:
 			static char* ClassName;
