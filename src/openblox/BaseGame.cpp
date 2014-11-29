@@ -49,14 +49,6 @@ namespace OpenBlox{
 		int n = lua_gettop(L);
 		int i;
 
-		lua_Debug ar;
-		if(lua_getstack(L, 1, &ar)){
-			lua_getinfo(L, "Sl", &ar);
-			if(ar.currentline > 0){
-				output = output + ar.short_src + ":" + ((std::ostringstream&)(std::ostringstream() << std::dec << ar.currentline)).str() + ": ";
-			}
-		}
-
 		lua_getglobal(L, "tostring");
 		for(i=1; i <= n; i++){
 			const char* s;
