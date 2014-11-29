@@ -27,7 +27,7 @@ void glfwRestoreWindow(GLFWwindow* win);
 void glfwMinimizeWindow(GLFWwindow* win);
 
 #if defined(__unix__) || defined(__linux__)
-	void glfwWindowMinSize(GLFWwindow* win);
+	void glfwWindowMinSize(GLFWwindow* win, int width, int height);
 #endif
 
 #endif

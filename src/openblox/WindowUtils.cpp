@@ -40,6 +40,21 @@
 	void glfwMinimizeWindow(GLFWwindow* window){
 		std::cout << "OpenBlox has not implemented glfwRestoreWindow for this platform." << std::endl;
 	}
+
+	void glfwWindowMinSize(GLFWwindow* win, int width, int height){
+		Window nativeWin = glfwGetX11Window(win);
+		Display* disp = glfwGetX11Display();
+
+		XSizeHints* hints = XAllocSizeHints();
+		hints->flags |= PMinSize;
+		hints->min_width = width;
+		hints->min_height = height;
+
+		XSetWMNormalHints(disp, nativeWin, hints);
+		XFree(hints);
+
+		XFlush(disp);
+	}
 #elif defined(__APPLE__)
 	void glfwSetWindowMinimumSize(GLFWwindow* window, int minX, int minY){
 		std::cout << "OpenBlox has not implemented glfwSetWindowMinimumSize for this platform." << std::endl;

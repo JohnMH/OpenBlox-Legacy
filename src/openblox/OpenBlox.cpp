@@ -116,6 +116,9 @@ int main(){
 		return 1;
 	}
 	glfwMaximizeWindow(window);
+	#if defined(__unix__) || defined(__linux__)
+	glfwWindowMinSize(window, 640, 480);
+	#endif
 
 	glfwMakeContextCurrent(window);
 
