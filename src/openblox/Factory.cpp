@@ -1,6 +1,6 @@
 #include "Factory.h"
 
-#include "../ob_instance/Instance.h"
+#include "ob_instance/Instance.h"
 
 namespace OpenBlox{
 	void Factory::addClass(const char* className, ClassMaker* const newClassMaker){

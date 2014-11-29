@@ -4,7 +4,12 @@
 #include "../openblox/OpenBlox.h"
 
 namespace ob_instance{
-	class Instance{
+	class InstanceBase{
+		public:
+			InstanceBase();
+			virtual ~InstanceBase();
+	};
+	class Instance: public InstanceBase{
 		public:
 			Instance();
 			virtual ~Instance();
@@ -44,11 +49,11 @@ namespace ob_instance{
 			DECLARE_STATIC_INIT(Instance);
 		protected:
 			bool Archivable;
-			bool TypeHelper;
 			static char* ClassName;
 			static char* LuaClassName;
 			char* Name;
 			Instance* Parent;
+			bool ParentLocked;
 
 			virtual Instance* cloneImpl() = 0;
 

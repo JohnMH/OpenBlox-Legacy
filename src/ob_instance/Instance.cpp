@@ -1,6 +1,9 @@
 #include "Instance.h"
 
 namespace ob_instance{
+	InstanceBase::InstanceBase(){}
+	InstanceBase::~InstanceBase(){}
+
 	struct InstanceClassMaker: public OpenBlox::ClassMaker{
 		void* getInstance() const{
 			return NULL;
@@ -11,6 +14,10 @@ namespace ob_instance{
 		}
 
 		bool isInstantiatable(){
+			return false;
+		}
+
+		bool isService(){
 			return false;
 		}
 	};
@@ -26,13 +33,13 @@ namespace ob_instance{
 		Archivable = true;
 		Name = ClassName;
 		Parent = NULL;
-		TypeHelper = 42;
+		ParentLocked = false;
 
 		children = std::vector<Instance*>();
 	}
 
 	Instance::~Instance(){
-
+		delete[] Name;
 	}
 
 	void Instance::ClearAllChildren(){
@@ -65,7 +72,7 @@ namespace ob_instance{
 
 	void Instance::Destroy(){
 		setParent(NULL);
-		//Lock parent property
+		ParentLocked = true;
 		//Disconnect all events
 		for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
 			Instance* kid = children[i];
@@ -162,10 +169,16 @@ namespace ob_instance{
 	}
 
 	void Instance::setParent(Instance* parent){
+		if(ParentLocked){
+			std::string errMsg = "The Parent property of ";
+			errMsg = errMsg + Name + " is locked.";
+			throw std::runtime_error(errMsg);
+			return;
+		}
 		if(parent == this){
 			std::string errMsg = "Attempt to set ";
 			errMsg = errMsg + GetFullName() + " as its own parent";
-			throw errMsg.c_str();
+			throw std::runtime_error(errMsg);
 			return;
 		}
 		if(Parent != NULL){
@@ -235,15 +248,19 @@ namespace ob_instance{
 	//Metamethods
 	Instance* Instance::checkInstance(lua_State* L, int index){
 		if(lua_isuserdata(L, index)){
-			void* inst = *(void**)lua_touserdata(L, index);
-			if(Instance* derived = static_cast<Instance*>(inst)){
-				if(derived->TypeHelper == 42 || derived->TypeHelper == 1){
-					//std::cout << "is 42" << std::endl;
-					return derived;
-				}else{
-					std::cout << derived->TypeHelper << std::endl;
+			Instance* inst = *(Instance**)lua_touserdata(L, index);
+			/*
+			try{
+				if(Instance* ins = dynamic_cast<Instance*>(inst)){
+					std::cout << "Is Instance" << std::endl;
+					return ins;
 				}
+			}catch(std::exception& e){
+				std::cout << "Bad Cast" << std::endl;
 			}
+			*/
+			//TODO: Actually do typechecking. Trust me, we don't want C++ calling stuff on random userdata.
+			return inst;
 		}
 		return NULL;
 	}

@@ -1,6 +1,4 @@
 #include "OpenBlox.h"
-#include <vector>
-
 
 #define DECLARE_STATIC_INIT(ClassName) \
    static void static_init_func(); \

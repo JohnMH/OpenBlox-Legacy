@@ -12,6 +12,7 @@ namespace OpenBlox{
 		virtual void* getInstance() const = 0;
 		virtual bool isA(const ob_instance::Instance* obj) = 0;
 		virtual bool isInstantiatable() = 0;
+		virtual bool isService() = 0;
 		virtual ~ClassMaker(){}
 	};
 

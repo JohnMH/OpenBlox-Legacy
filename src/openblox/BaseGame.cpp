@@ -1,12 +1,12 @@
 #include "BaseGame.h"
 
-#include "../ob_instance/DataModel.h"
+#include "ob_instance/DataModel.h"
 
 namespace OpenBlox{
-	static BaseGame *INSTANCE;
+	static BaseGame* INSTANCE;
 
-	lua_State *BaseGame::GlobalLuaState = NULL;
-	Factory *BaseGame::InstanceFactory = NULL;
+	lua_State* BaseGame::GlobalLuaState = NULL;
+	Factory* BaseGame::InstanceFactory = NULL;
 
 	BaseGame::BaseGame(){
 		INSTANCE = this;
@@ -23,35 +23,27 @@ namespace OpenBlox{
 	}
 
 	//TODO: Implement LogService print, warn, error
-	int BaseGame::print(lua_State *L){
-			std::string output = "";
+	void BaseGame::print(const char* output){
+		std::cout << output << std::endl;
+	}
 
-			int n = lua_gettop(L);
-			int i;
+	void BaseGame::warn(const char* output){
+		std::cout << output << std::endl;
+	}
 
-			lua_getglobal(L, "tostring");
-			for(i=1; i <= n; i++){
-				const char *s;
-				lua_pushvalue(L, -1);
-				lua_pushvalue(L, i);
-				lua_call(L, 1, 1);
-				s = lua_tostring(L, -1);
-				if(s == NULL){
-					return luaL_error(L, LUA_QL("tostring") " must return a string to " LUA_QL("print"));
-				}
-				if(i > 1){
-					output = output + "\t";
-				}
-				output = output + s;
-				lua_pop(L, 1);
-			}
+	void BaseGame::print_error(const char* output){
+		std::cerr << output << std::endl;
+	}
 
-			std::cout << output << std::endl;
-
-			return 0;
+	static void BaseGame::handle_lua_errors(lua_State* L){
+		const char* output = lua_tostring(L, -1);
+		if(INSTANCE != NULL){
+			INSTANCE->print_error(output);
 		}
+		lua_pop(L, 1);
+	}
 
-	int BaseGame::warn(lua_State *L){
+	static int lua_print(lua_State* L){
 		std::string output = "";
 
 		int n = lua_gettop(L);
@@ -67,7 +59,7 @@ namespace OpenBlox{
 
 		lua_getglobal(L, "tostring");
 		for(i=1; i <= n; i++){
-			const char *s;
+			const char* s;
 			lua_pushvalue(L, -1);
 			lua_pushvalue(L, i);
 			lua_call(L, 1, 1);
@@ -82,32 +74,57 @@ namespace OpenBlox{
 			lua_pop(L, 1);
 		}
 
-		std::cout << output << std::endl;
-
-		return 0;
-	}
-
-	void BaseGame::handle_errors(lua_State *L){
-		std::cerr << lua_tostring(L, -1) << std::endl;
-		lua_pop(L, 1);
-	}
-
-	static int print(lua_State *L){
 		if(INSTANCE != NULL){
-			return INSTANCE->print(L);
+			INSTANCE->print(output.c_str());
 		}
+
 		return 0;
 	}
 
-	static int warn(lua_State *L){
+	static int lua_warn(lua_State* L){
+		std::string output = "";
+
+		int n = lua_gettop(L);
+		int i;
+
+		lua_Debug ar;
+		if(lua_getstack(L, 1, &ar)){
+			lua_getinfo(L, "Sl", &ar);
+			if(ar.currentline > 0){
+				output = output + ar.short_src + ":" + ((std::ostringstream&)(std::ostringstream() << std::dec << ar.currentline)).str() + ": ";
+			}
+		}
+
+		lua_getglobal(L, "tostring");
+		for(i=1; i <= n; i++){
+			const char* s;
+			lua_pushvalue(L, -1);
+			lua_pushvalue(L, i);
+			lua_call(L, 1, 1);
+			s = lua_tostring(L, -1);
+			if(s == NULL){
+				return luaL_error(L, LUA_QL("tostring") " must return a string to " LUA_QL("print"));
+			}
+			if(i > 1){
+				output = output + "\t";
+			}
+			output = output + s;
+			lua_pop(L, 1);
+		}
+
 		if(INSTANCE != NULL){
-			return INSTANCE->warn(L);
+			INSTANCE->warn(output.c_str());
 		}
+
 		return 0;
 	}
 
-	lua_State *BaseGame::newLuaState(){
-		lua_State *L = lua_open();
+	static int lua_newInstance(lua_State* L){
+		return 0;
+	}
+
+	lua_State* BaseGame::newLuaState(){
+		lua_State* L = lua_open();
 		luaopen_base(L);
 		luaopen_table(L);
 		luaopen_string(L);
@@ -120,21 +137,28 @@ namespace OpenBlox{
 		lua_pushnil(L);
 		lua_setglobal(L, "loadfile");
 
-		lua_register(L, "print", OpenBlox::print);
-		lua_register(L, "warn", OpenBlox::warn);
+		lua_newtable(L);
+		luaL_Reg instancelib[]{
+			{"new", lua_newInstance},
+			{NULL, NULL}
+		};
+		lua_setglobal(L, "Instance");
+
+		lua_register(L, "print", lua_print);
+		lua_register(L, "warn", lua_warn);
 
 		return L;
 	}
 
-	lua_State *BaseGame::getGlobalState(){
+	lua_State* BaseGame::getGlobalState(){
 		return GlobalLuaState;
 	}
 
-	Factory *BaseGame::getInstanceFactory(){
+	Factory* BaseGame::getInstanceFactory(){
 		return InstanceFactory;
 	}
 
-	BaseGame *BaseGame::getInstance(){
+	BaseGame* BaseGame::getInstance(){
 		return INSTANCE;
 	}
 }

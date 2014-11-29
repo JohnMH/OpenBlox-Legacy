@@ -13,12 +13,16 @@ namespace ob_instance{
 		bool isInstantiatable(){
 			return false;
 		}
+
+		bool isService(){
+			return false;
+		}
 	};
 
 	STATIC_INIT(DataModel){
 		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new DataModelClassMaker());
 
-		lua_State *L = OpenBlox::BaseGame::getGlobalState();
+		lua_State* L = OpenBlox::BaseGame::getGlobalState();
 
 		luaL_newmetatable(L, LuaClassName);
 
@@ -40,7 +44,7 @@ namespace ob_instance{
 	char* DataModel::ClassName = "DataModel";
 	char* DataModel::LuaClassName = "luaL_Instance_DataModel";
 
-	DataModel::DataModel() : Instance(){
+	DataModel::DataModel() : ServiceProvider(){
 		Name = ClassName;
 	}
 
@@ -52,8 +56,8 @@ namespace ob_instance{
 		return NULL;
 	}
 
-	int DataModel::wrap_lua(lua_State *L){
-		DataModel **udata = (DataModel **)lua_newuserdata(L, sizeof(DataModel*));
+	int DataModel::wrap_lua(lua_State* L){
+		DataModel **udata = (DataModel**)lua_newuserdata(L, sizeof(DataModel*));
 		*udata = this;
 
 		luaL_getmetatable(L, LuaClassName);
@@ -67,6 +71,6 @@ namespace ob_instance{
 	 }
 
 	 void DataModel::register_lua_methods(lua_State* L){
-		 Instance::register_lua_methods(L);
+		 ServiceProvider::register_lua_methods(L);
 	 }
 }

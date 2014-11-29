@@ -1,12 +1,10 @@
 #ifndef OB_INSTANCE_DATAMODEL_H_
 #define OB_INSTANCE_DATAMODEL_H_
 
-#include "Instance.h"
-
-#include "../openblox/OpenBlox.h"
+#include "ServiceProvider.h"
 
 namespace ob_instance{
-	class DataModel: public Instance{
+	class DataModel: public ServiceProvider{
 		public:
 			DataModel();
 			virtual ~DataModel();
@@ -15,7 +13,7 @@ namespace ob_instance{
 
 			virtual char* toString();
 
-			int wrap_lua(lua_State *L);
+			int wrap_lua(lua_State* L);
 		protected:
 			static char* ClassName;
 			static char* LuaClassName;

@@ -15,23 +15,24 @@ namespace OpenBlox{
 			BaseGame();
 			virtual ~BaseGame();
 
-			int print(lua_State *L);
-			int warn(lua_State *L);
-			void handle_errors(lua_State *L);
+			void print(const char* output);
+			void warn(const char* output);
+			void print_error(const char* output);
+			void handle_lua_errors(lua_State* L);
 
 			ob_instance::DataModel* getDataModel();
 
-			static lua_State *getGlobalState();
-			static Factory *getInstanceFactory();
-			static Factory *InstanceFactory;
+			static lua_State* getGlobalState();
+			static Factory* getInstanceFactory();
+			static Factory* InstanceFactory;
 
-			static BaseGame *getInstance();
+			static BaseGame* getInstance();
 
 		private:
-			lua_State *newLuaState();
-			ob_instance::DataModel *datamodel;
+			lua_State* newLuaState();
+			ob_instance::DataModel* datamodel;
 
-			static lua_State *GlobalLuaState;
+			static lua_State* GlobalLuaState;
 	};
 }
 #endif
