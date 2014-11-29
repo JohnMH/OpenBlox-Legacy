@@ -20,7 +20,8 @@
 
 #include <GLFW/glfw3native.h>
 
-void glfwSetWindowMinimumSize(GLFWwindow* win, int minX, int minY);
 void glfwMaximizeWindow(GLFWwindow* win);
+void glfwRestoreWindow(GLFWwindow* win);
+void glfwMinimizeWindow(GLFWwindow* win);
 
 #endif

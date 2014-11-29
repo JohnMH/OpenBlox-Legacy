@@ -63,11 +63,8 @@ void glfw_error_callback(int error, const char* description){
 }
 
 void window_size_callback(GLFWwindow* window, int width, int height){
-	glfwMakeContextCurrent(window);
-	glViewport(0, 0, width, height);
-	glfwMakeContextCurrent(NULL);
-	//render();
-	//glfwSwapBuffers(window);
+	//glfwMakeContextCurrent(window);
+	//glViewport(0, 0, width, height);
 }
 
 void window_pos_callback(GLFWwindow* window, int x, int y){
@@ -80,8 +77,10 @@ void* renderThread(void* arg){
 		//Fire RunService.Stepped, then RunService.RenderStepped
 		glfwMakeContextCurrent(window);
 		render();
+
 		glfwSwapBuffers(window);
 		glfwMakeContextCurrent(NULL);
+
 		usleep(10);
 	}
 	pthread_exit(NULL);
@@ -116,6 +115,7 @@ int main(){
 		glfwTerminate();
 		return 1;
 	}
+	glfwMaximizeWindow(window);
 
 	glfwMakeContextCurrent(window);
 
@@ -151,8 +151,6 @@ int main(){
 	glfwSetWindowPosCallback(window, window_pos_callback);
 
 	glfwMakeContextCurrent(NULL);
-
-	glfwMaximizeWindow(window);
 
 	pthread_t render_thread;
 	val = pthread_create(&render_thread, NULL, renderThread, NULL);
