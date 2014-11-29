@@ -7,6 +7,7 @@ namespace OpenBlox{
 		char* key = covertToLower(className);
 		std::string keystr = std::string(key);
 		lokupTable[keystr] = newClassMaker;
+		registered.insert(registered.begin(), className);
 	}
 
 	ob_instance::Instance* Factory::create(const char* className){
@@ -23,6 +24,10 @@ namespace OpenBlox{
 			}
 		}
 		return result;
+	}
+
+	std::vector<const char*> Factory::getRegisteredMetatables(){
+		return registered;
 	}
 
 	bool Factory::isA(const ob_instance::Instance* obj, const char* className){

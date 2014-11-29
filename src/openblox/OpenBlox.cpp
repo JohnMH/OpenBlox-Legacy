@@ -12,6 +12,36 @@
 GLFWwindow* window;
 OpenBlox::BaseGame* game;
 
+void render(){
+	float ratio;
+	int width, height;
+
+	glfwGetFramebufferSize(window, &width, &height);
+	ratio = width / (float)height;
+
+	glViewport(0, 0, width, height);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+	glMatrixMode(GL_MODELVIEW);
+
+	glLoadIdentity();
+	glRotatef((float)glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
+
+	glBegin(GL_TRIANGLES);
+	{
+		glColor3f(1.f, 0.f, 0.f);
+		glVertex3f(-0.6f, -0.4f, 0.f);
+		glColor3f(0.f, 1.f, 0.f);
+		glVertex3f(0.6f, -0.4f, 0.f);
+		glColor3f(0.f, 0.f, 1.f);
+		glVertex3f(0.f, 0.6f, 0.f);
+	}
+	glEnd();
+}
+
 void* luaThread(void* arg){
 	lua_State* L = OpenBlox::BaseGame::getGlobalState();
 
@@ -25,7 +55,7 @@ void* luaThread(void* arg){
 
 	lua_pop(L, gm);
 
-	char* script = "local tester = Instance.new('TestClass'); print(Instance.new('DataModel')); print(tester.ClassName, tester); print(game.ClassName, game);";
+	char* script = "local tester = Instance.new('TestClass'); print(Instance.new('DataModel')); print(tester.ClassName, tester); print(game.ClassName, game); print(game:GetFullName()); print(getmetatable(game))";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);
@@ -47,6 +77,7 @@ void glfw_error_callback(int error, const char* description){
 void framebuffer_size_callback(GLFWwindow* window, int width, int height){
 	glfwMakeContextCurrent(window);
 	glViewport(0, 0, width, height);
+	render();
 }
 
 int main(){
@@ -96,39 +127,19 @@ int main(){
 		return 1;
 	}
 
+	const GLubyte* vendor = glGetString(GL_VENDOR);
 	const GLubyte* renderer = glGetString(GL_RENDERER);
 	const GLubyte* version = glGetString(GL_VERSION);
+	const GLubyte* shading_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+	std::cout << "Vendor: " << vendor << std::endl;
 	std::cout << "Renderer: " << renderer << std::endl;
 	std::cout << "OpenGL Version: " << version << std::endl;
+	std::cout << "Shading Language Version: " << shading_version << std::endl;
 
+	glfwSetWindowSizeCallback(window, framebuffer_size_callback);
 	while(!glfwWindowShouldClose(window)){
-		float ratio;
-		int width, height;
-
-		glfwGetFramebufferSize(window, &width, &height);
-		ratio = width / (float)height;
-
-		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-		glMatrixMode(GL_MODELVIEW);
-
-		glLoadIdentity();
-		glRotatef((float)glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-
-		glBegin(GL_TRIANGLES);
-		{
-			glColor3f(1.f, 0.f, 0.f);
-			glVertex3f(-0.6f, -0.4f, 0.f);
-			glColor3f(0.f, 1.f, 0.f);
-			glVertex3f(0.6f, -0.4f, 0.f);
-			glColor3f(0.f, 0.f, 1.f);
-			glVertex3f(0.f, 0.6f, 0.f);
-		}
-		glEnd();
+		render();
 
 		glfwPollEvents();
 		glfwSwapBuffers(window);

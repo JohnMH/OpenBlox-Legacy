@@ -222,6 +222,10 @@ namespace ob_instance{
 			{NULL, NULL}
 		};
 		luaL_register(L, NULL, metamethods);
+
+		lua_pushstring(L, "__metatable");
+		lua_pushstring(L, "This metatable is locked");
+		lua_rawset(L, -3);
 	}
 
 	void Instance::register_lua_methods(lua_State* L){
@@ -245,19 +249,21 @@ namespace ob_instance{
 	//Metamethods
 	Instance* Instance::checkInstance(lua_State* L, int index){
 		if(lua_isuserdata(L, index)){
-			Instance* inst = *(Instance**)lua_touserdata(L, index);
-			/*
-			try{
-				if(Instance* ins = dynamic_cast<Instance*>(inst)){
-					std::cout << "Is Instance" << std::endl;
-					return ins;
+			std::vector<const char*> existing = OpenBlox::BaseGame::getInstanceFactory()->getRegisteredMetatables();
+			unsigned size = existing.size();
+			void* udata = lua_touserdata(L, index);
+			int meta = lua_getmetatable(L, index);
+			if(meta != 0){
+				for(unsigned i = 0; i<size; i++){
+					std::string name = std::string("luaL_Instance_") + existing[i];
+					luaL_getmetatable(L, name.c_str());
+					if(lua_rawequal(L, -1, -2)){
+						lua_pop(L, 3);
+						return *(Instance**)udata;
+					}
+					lua_pop(L, 1);
 				}
-			}catch(std::exception& e){
-				std::cout << "Bad Cast" << std::endl;
 			}
-			*/
-			//TODO: Actually do typechecking. Trust me, we don't want C++ calling stuff on random userdata.
-			return inst;
 		}
 		return NULL;
 	}
@@ -268,7 +274,8 @@ namespace ob_instance{
 			lua_pushstring(L, inst->toString());
 			return 1;
 		}
-		return 0;
+		lua_pushstring(L, "NULL");
+		return 1;
 	}
 
 	//Methods
@@ -278,9 +285,7 @@ namespace ob_instance{
 			inst->ClearAllChildren();
 			return 0;
 		}
-		lua_pushstring(L,"Expected ':' not '.' calling member function ClearAllChildren");
-		lua_error(L);
-		return 0;
+		return luaL_error(L, COLONERR, "ClearAllChildren");
 	}
 
 	int Instance::lua_Clone(lua_State* L){
@@ -292,9 +297,7 @@ namespace ob_instance{
 			}
 			return 0;
 		}
-		lua_pushstring(L,"Expected ':' not '.' calling member function Clone");
-		lua_error(L);
-		return 0;
+		return luaL_error(L, COLONERR, "Clone");
 	}
 
 	int Instance::lua_Destroy(lua_State* L){
@@ -303,9 +306,7 @@ namespace ob_instance{
 			inst->Destroy();
 			return 0;
 		}
-		lua_pushstring(L,"Expected ':' not '.' calling member function Destroy");
-		lua_error(L);
-		return 0;
+		return luaL_error(L, COLONERR, "Destroy");
 	}
 
 	int Instance::lua_Remove(lua_State* L){
@@ -314,9 +315,7 @@ namespace ob_instance{
 			inst->Remove();
 			return 0;
 		}
-		lua_pushstring(L,"Expected ':' not '.' calling member function Remove");
-		lua_error(L);
-		return 0;
+		return luaL_error(L, COLONERR, "Remove");
 	}
 
 	int Instance::lua_FindFirstChild(lua_State* L){
@@ -324,9 +323,7 @@ namespace ob_instance{
 		if(inst != NULL){
 			return 0;
 		}
-		lua_pushstring(L,"Expected ':' not '.' calling member function FindFirstChild");
-		lua_error(L);
-		return 0;
+		return luaL_error(L, COLONERR, "FindFirstChild");
 	}
 
 	int Instance::lua_GetChildren(lua_State* L){
@@ -335,9 +332,7 @@ namespace ob_instance{
 			//TODO:Implement
 			return 0;
 		}
-		lua_pushstring(L,"Expected ':' not '.' calling member function GetChildren");
-		lua_error(L);
-		return 0;
+		return luaL_error(L, COLONERR, "GetChildren");
 	}
 
 	int Instance::lua_GetFullName(lua_State* L){
@@ -347,9 +342,7 @@ namespace ob_instance{
 			lua_pushstring(L, fullName);
 			return 1;
 		}
-		lua_pushstring(L,"Expected ':' not '.' calling member function GetFullName");
-		lua_error(L);
-		return 0;
+		return luaL_error(L, COLONERR, "GetFullName");
 	}
 
 	int Instance::lua_IsA(lua_State* L){
@@ -364,9 +357,7 @@ namespace ob_instance{
 			lua_pushboolean(L, false);
 			return 1;
 		}
-		lua_pushstring(L,"Expected ':' not '.' calling member function IsA");
-		lua_error(L);
-		return 0;
+		return luaL_error(L, COLONERR, "IsA");
 	}
 
 	int Instance::lua_IsAncestorOf(lua_State* L){
@@ -384,12 +375,11 @@ namespace ob_instance{
 				lua_pushboolean(L, isIt);
 				return 1;
 			}else{
-				return luaL_typerror(L, 2, "Instance");//TODO: Keep using "Instance" or switch to "userdata"?
+				return luaL_typerror(L, 2, "Instance");
 			}
 			return 0;
 		}
-		lua_pushstring(L,"Expected ':' not '.' calling member function IsAncestorOf");
-		return lua_error(L);
+		return luaL_error(L, COLONERR, "IsAncestorOf");
 	}
 
 	int Instance::lua_IsDescendantOf(lua_State* L){
@@ -407,11 +397,10 @@ namespace ob_instance{
 				lua_pushboolean(L, isIt);
 				return 1;
 			}else{
-				return luaL_typerror(L, 2, "Instance");//TODO: Keep using "Instance" or switch to "userdata"?
+				return luaL_typerror(L, 2, "Instance");
 			}
 			return 0;
 		}
-		lua_pushstring(L,"Expected ':' not '.' calling member function DescendantOf");
-		return lua_error(L);
+		return luaL_error(L, COLONERR, "IsDescendantOf");;
 	}
 }

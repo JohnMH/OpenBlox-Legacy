@@ -2,6 +2,7 @@
 #define OB_INSTANCE_INSTANCE_H_
 
 #include "../openblox/OpenBlox.h"
+#include "constants.h"
 
 namespace ob_instance{
 	class Instance{
