@@ -4,12 +4,7 @@
 #include "../openblox/OpenBlox.h"
 
 namespace ob_instance{
-	class InstanceBase{
-		public:
-			InstanceBase();
-			virtual ~InstanceBase();
-	};
-	class Instance: public InstanceBase{
+	class Instance{
 		public:
 			Instance();
 			virtual ~Instance();

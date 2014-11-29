@@ -1,9 +1,6 @@
 #include "Instance.h"
 
 namespace ob_instance{
-	InstanceBase::InstanceBase(){}
-	InstanceBase::~InstanceBase(){}
-
 	struct InstanceClassMaker: public OpenBlox::ClassMaker{
 		ob_instance::Instance* getInstance() const{
 			return NULL;

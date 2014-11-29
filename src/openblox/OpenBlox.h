@@ -7,6 +7,8 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <stdexcept>
+#include <thread>
 
 #include <cstdlib>
 #include <cstring>
