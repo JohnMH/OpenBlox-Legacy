@@ -2,6 +2,9 @@
 
 #include "../ob_instance/DataModel.h"
 
+#include <unistd.h>
+#include "WindowUtils.h"
+
 GLFWwindow* window;
 OpenBlox::BaseGame* game;
 
@@ -59,10 +62,30 @@ void glfw_error_callback(int error, const char* description){
 	std::cout << "[GRAPHICS]" << description << std::endl;
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height){
+void window_size_callback(GLFWwindow* window, int width, int height){
 	glfwMakeContextCurrent(window);
 	glViewport(0, 0, width, height);
-	render();
+	glfwMakeContextCurrent(NULL);
+	//render();
+	//glfwSwapBuffers(window);
+}
+
+void window_pos_callback(GLFWwindow* window, int x, int y){
+	//render();
+	//glfwSwapBuffers(window);
+}
+
+void* renderThread(void* arg){
+	while(!glfwWindowShouldClose(window)){
+		//Fire RunService.Stepped, then RunService.RenderStepped
+		glfwMakeContextCurrent(window);
+		render();
+		glfwSwapBuffers(window);
+		glfwMakeContextCurrent(NULL);
+		usleep(10);
+	}
+	pthread_exit(NULL);
+	return NULL;
 }
 
 int main(){
@@ -112,27 +135,40 @@ int main(){
 		return 1;
 	}
 
-	const GLubyte* vendor = glGetString(GL_VENDOR);
-	const GLubyte* renderer = glGetString(GL_RENDERER);
-	const GLubyte* version = glGetString(GL_VERSION);
-	const GLubyte* shading_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
+	{
+		const GLubyte* vendor = glGetString(GL_VENDOR);
+		const GLubyte* renderer = glGetString(GL_RENDERER);
+		const GLubyte* version = glGetString(GL_VERSION);
+		const GLubyte* shading_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
 
-	std::cout << "Vendor: " << vendor << std::endl;
-	std::cout << "Renderer: " << renderer << std::endl;
-	std::cout << "OpenGL Version: " << version << std::endl;
-	std::cout << "Shading Language Version: " << shading_version << std::endl;
+		std::cout << "Vendor: " << vendor << std::endl;
+		std::cout << "Renderer: " << renderer << std::endl;
+		std::cout << "OpenGL Version: " << version << std::endl;
+		std::cout << "Shading Language Version: " << shading_version << std::endl;
+	}
 
-	glfwSetWindowSizeCallback(window, framebuffer_size_callback);
+	glfwSetWindowSizeCallback(window, window_size_callback);
+	glfwSetWindowPosCallback(window, window_pos_callback);
+
+	glfwMakeContextCurrent(NULL);
+
+	glfwMaximizeWindow(window);
+
+	pthread_t render_thread;
+	val = pthread_create(&render_thread, NULL, renderThread, NULL);
+	if(val){
+		std::cerr << "Failed to create render thread." << std::endl;
+		glfwTerminate();
+		return 1;
+	}
+
 	while(!glfwWindowShouldClose(window)){
-		//Fire RunService.Stepped, then RunService.RenderStepped
-		render();
-
 		glfwPollEvents();
-		glfwSwapBuffers(window);
 	}
 
 	void* status;
 	pthread_join(lua_thread, &status);
+	pthread_join(render_thread, &status);
 
 	glfwDestroyWindow(window);
 	OpenBlox::BaseGame::getInstanceFactory()->releaseTable();
