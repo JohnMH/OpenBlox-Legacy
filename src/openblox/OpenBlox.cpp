@@ -104,13 +104,9 @@ void* renderThread(void* arg){
 
 	while(!glfwWindowShouldClose(window)){
 		//Fire RunService.Stepped, then RunService.RenderStepped
-		glfwMakeContextCurrent(window);
 		render();
 
 		glfwSwapBuffers(window);
-		glfwMakeContextCurrent(NULL);
-
-		//mywait(10);
 	}
 	pthread_exit(NULL);
 	return NULL;
