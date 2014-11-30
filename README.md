@@ -1,4 +1,4 @@
-OpenBlox [![Build Status](https://travis-ci.org/JohnMHarrisJr/OpenBlox.svg)](https://travis-ci.org/JohnMHarrisJr/OpenBlox)
+OpenBlox
 ========
 
 An open source implementation of the ROBLOX API made for standalone games.
