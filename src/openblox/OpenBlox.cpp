@@ -124,7 +124,7 @@ void* renderThread(void* arg){
 			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		}
 		#endif
-		glfwWindowHint(GLFW_SAMPLES, 2);
+		glfwWindowHint(GLFW_SAMPLES, OPENBLOX_AA_SAMPLES);
 
 		if(!OpenBlox::createGLContext()){
 			return 1;

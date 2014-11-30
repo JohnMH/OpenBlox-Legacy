@@ -1,7 +1,7 @@
 #ifndef OPENBLOX_OPENBLOX_H_
 #define OPENBLOX_OPENBLOX_H_
 
-//#define OPENBLOX_JNI //Remove the comments from this to compile for Android
+#include "OpenBloxConfig.h"
 
 #include <iostream>
 #include <string>

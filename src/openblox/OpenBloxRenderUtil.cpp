@@ -13,7 +13,6 @@ namespace OpenBlox{
 
 	void getFramebufferSize(int* width, int* height){
 		if(window == NULL){
-			std::cerr << "Window is NULL!" << std::endl;
 			return;
 		}
 		glfwGetFramebufferSize(window, width, height);
@@ -22,7 +21,7 @@ namespace OpenBlox{
 	bool createGLContext(){
 		window = glfwCreateWindow(640, 480, "OpenBlox", NULL, NULL);
 		if(!window){
-			std::cerr << "Could not create window." << std::endl;
+			LOGE("[GLFW] Could not create window.");
 			glfwTerminate();
 			return false;
 		}
