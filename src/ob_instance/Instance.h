@@ -32,7 +32,13 @@ namespace ob_instance{
 
 			static Instance* checkInstance(lua_State*, int index);
 
+			static int lua_index(lua_State* L);
+			static int lua_newindex(lua_State* L);
+
 			static int lua_toString(lua_State* L);
+
+			static int lua_getName(lua_State* L);
+			static int lua_setName(lua_State* L);
 
 			static int lua_ClearAllChildren(lua_State* L);
 			static int lua_Clone(lua_State* L);
@@ -61,6 +67,8 @@ namespace ob_instance{
 
 			static void register_lua_metamethods(lua_State* L);
 			static void register_lua_methods(lua_State* L);
+			static void register_lua_property_setters(lua_State* L);
+			static void register_lua_property_getters(lua_State* L);
 
 			std::vector<Instance*> children;
 	};
