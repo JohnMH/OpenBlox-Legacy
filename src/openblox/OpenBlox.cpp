@@ -3,6 +3,8 @@
 #include "../ob_instance/DataModel.h"
 
 #include <unistd.h>
+#include <stdio.h>
+
 #include "WindowUtils.h"
 
 #include "OpenBloxRenderUtil.h"
@@ -80,7 +82,7 @@ void size_callback(int width, int height){
 
 #ifndef OPENBLOX_JNI
 void glfw_error_callback(int error, const char* description){
-	std::cout << "[GLFW] " << description << std::endl;
+	LOGE("[GLFW] %s", description);
 }
 
 void glfw_window_size_callback(GLFWwindow* window, int width, int height){
@@ -90,17 +92,6 @@ void glfw_window_size_callback(GLFWwindow* window, int width, int height){
 void* renderThread(void* arg){
 	GLFWwindow* window = OpenBlox::getWindow();
 	glfwMakeContextCurrent(window);
-	{
-		const GLubyte* vendor = glGetString(GL_VENDOR);
-		const GLubyte* renderer = glGetString(GL_RENDERER);
-		const GLubyte* version = glGetString(GL_VERSION);
-		const GLubyte* shading_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
-
-		std::cout << "Vendor: " << vendor << std::endl;
-		std::cout << "Renderer: " << renderer << std::endl;
-		std::cout << "OpenGL Version: " << version << std::endl;
-		std::cout << "Shading Language Version: " << shading_version << std::endl;
-	}
 
 	while(!glfwWindowShouldClose(window)){
 		//Fire RunService.Stepped, then RunService.RenderStepped
@@ -115,7 +106,7 @@ void* renderThread(void* arg){
 	int main(){
 		glfwSetErrorCallback(glfw_error_callback);
 		if(!glfwInit()){
-			std::cerr << "Failed to initialize GLFW3." << std::endl;
+			LOGE("[GLFW] Failed to initialize library.");
 			return 1;
 		}
 
@@ -145,18 +136,30 @@ void* renderThread(void* arg){
 
 		glewExperimental = GL_TRUE;
 		if(glewInit() != GLEW_OK){
-			std::cerr << "Failed to initialize GLEW." << std::endl;
+			LOGE("[GLFW] Failed to initialize GLEW.");
 			glfwTerminate();
 			return 1;
 		}
 
 		glfwSetWindowSizeCallback(window, glfw_window_size_callback);
 
+		{
+			const GLubyte* vendor = glGetString(GL_VENDOR);
+			const GLubyte* renderer = glGetString(GL_RENDERER);
+			const GLubyte* version = glGetString(GL_VERSION);
+			const GLubyte* shading_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+			LOGI("[GL] Vendor: %s", vendor);
+			LOGI("[GL] Renderer: %s", renderer);
+			LOGI("[GL] OpenGL Version: %s", version);
+			LOGI("[GL] Shading Language Version: %s", shading_version);
+		}
+
 		pthread_t render_thread;
 		int val;
 		val = pthread_create(&render_thread, NULL, renderThread, NULL);
 		if(val){
-			std::cerr << "Failed to create render thread." << std::endl;
+			LOGE("[CORE] Failed to create render thread.");
 			glfwTerminate();
 			return 1;
 		}
@@ -166,7 +169,7 @@ void* renderThread(void* arg){
 		pthread_t lua_thread;
 		val = pthread_create(&lua_thread, NULL, luaThread, NULL);
 		if(val){
-			std::cerr << "Failed to create logic thread." << std::endl;
+			LOGE("[CORE] Failed to create logic thread.");
 			glfwTerminate();
 			return 1;
 		}
