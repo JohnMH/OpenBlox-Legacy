@@ -1,6 +1,8 @@
 #ifndef OPENBLOX_WINDOWUTILS_H_
 #define OPENBLOX_WINDOWUTILS_H_
 
+#ifndef OPENBLOX_JNI
+
 #include <iostream>
 
 #ifndef _glfw3_h_
@@ -25,9 +27,11 @@
 void glfwMaximizeWindow(GLFWwindow* win);
 void glfwRestoreWindow(GLFWwindow* win);
 void glfwMinimizeWindow(GLFWwindow* win);
+void glfwFocusWindow(GLFWwindow* win);
 
 #if defined(__unix__) || defined(__linux__)
 	void glfwWindowMinSize(GLFWwindow* win, int width, int height);
 #endif
 
+#endif
 #endif

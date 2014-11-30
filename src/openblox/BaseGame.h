@@ -3,6 +3,10 @@
 
 #include "OpenBlox.h"
 
+#ifndef OPENBLOX_JNI
+#define notDefined
+#endif
+
 namespace ob_instance{
 	class DataModel;
 }

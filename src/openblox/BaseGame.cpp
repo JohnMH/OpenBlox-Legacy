@@ -24,15 +24,15 @@ namespace OpenBlox{
 
 	//TODO: Implement LogService print, warn, error
 	void BaseGame::print(const char* output){
-		std::cout << output << std::endl;
+		LOGI(output);
 	}
 
 	void BaseGame::warn(const char* output){
-		std::cout << output << std::endl;
+		LOGW(output);
 	}
 
 	void BaseGame::print_error(const char* output){
-		std::cerr << output << std::endl;
+		LOGE(output);
 	}
 
 	void BaseGame::handle_lua_errors(lua_State* L){
