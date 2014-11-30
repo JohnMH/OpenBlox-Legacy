@@ -1,6 +1,6 @@
 #include "Vector3.h"
 
-namespace ob_instance{
+namespace ob_type{
 	Vector3::Vector3(){
 		x = 0;
 		y = 0;

@@ -4,7 +4,7 @@
 #include "../openblox/OpenBlox.h"
 #include <cmath>
 
-namespace ob_instance{
+namespace ob_type{
 	class Vector3{
 		public:
 			Vector3();
