@@ -25,19 +25,40 @@ namespace ob_instance{
 		lua_State* L = OpenBlox::BaseGame::getGlobalState();
 
 		luaL_newmetatable(L, LuaClassName);
+		register_lua_metamethods(L);
 
-		Instance::register_lua_metamethods(L);
+		lua_pushstring(L, "__metatable");
+		lua_pushstring(L, "This metatable is locked");
+		lua_rawset(L, -3);
 
-		lua_pushstring(L, "__index");
+		// methods
+		lua_pushstring(L, "__methods");
 		lua_newtable(L);
-
-		lua_pushstring(L, "ClassName");
-		lua_pushstring(L, ClassName);
-		lua_rawset(L, -3);
-
 		register_lua_methods(L);
-
 		lua_rawset(L, -3);
+
+		// property getters
+		lua_pushstring(L, "__propertygetters");
+		lua_newtable(L);
+		register_lua_property_getters(L);
+		lua_rawset(L, -3);
+
+		// property setters
+		lua_pushstring(L, "__propertysetters");
+		lua_newtable(L);
+		register_lua_property_setters(L);
+		lua_rawset(L, -3);
+
+		// item get
+		lua_pushstring(L, "__index");
+		lua_pushcfunction(L, lua_index);
+		lua_rawset(L, -3);
+
+		// item set
+		lua_pushstring(L, "__newindex");
+		lua_pushcfunction(L, lua_newindex);
+		lua_rawset(L, -3);
+
 		lua_pop(L, 1);
 	}
 
@@ -73,7 +94,7 @@ namespace ob_instance{
 	}
 
 	int DataModel::wrap_lua(lua_State* L){
-		DataModel** udata = (DataModel**)lua_newuserdata(L, sizeof(DataModel*));
+		Instance** udata = (Instance**)lua_newuserdata(L, sizeof(*this));
 		*udata = this;
 
 		luaL_getmetatable(L, LuaClassName);
@@ -82,7 +103,23 @@ namespace ob_instance{
 		return 1;
 	}
 
-	 void DataModel::register_lua_methods(lua_State* L){
-		 ServiceProvider::register_lua_methods(L);
-	 }
+	void DataModel::register_lua_property_setters(lua_State* L){
+		luaL_Reg properties[]{
+				{NULL, NULL}
+		};
+		luaL_register(L, NULL, properties);
+		Instance::register_lua_property_setters(L);
+	}
+
+	void DataModel::register_lua_property_getters(lua_State* L){
+			luaL_Reg properties[]{
+					{NULL, NULL}
+			};
+			luaL_register(L, NULL, properties);
+			Instance::register_lua_property_getters(L);
+		}
+
+	void DataModel::register_lua_methods(lua_State* L){
+		ServiceProvider::register_lua_methods(L);
+	}
 }
