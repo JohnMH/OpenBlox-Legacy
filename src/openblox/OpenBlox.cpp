@@ -42,7 +42,7 @@ void* luaThread(void* arg){
 
 	lua_pop(L, gm);
 
-	char* script = "local tester = Instance.new('TestClass'); print(Instance.new('DataModel')); print(tester.ClassName, tester); print(game.ClassName, game); print(game:GetFullName()); print(getmetatable(game))";
+	char* script = "local cam = Instance.new('Camera'); ";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);

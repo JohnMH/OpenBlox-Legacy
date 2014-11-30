@@ -1,13 +1,13 @@
-#include "TestClass.h"
+#include "Camera.h"
 
 namespace ob_instance{
-	struct TestClassClassMaker: public OpenBlox::ClassMaker{
+	struct CameraClassMaker: public OpenBlox::ClassMaker{
 		ob_instance::Instance* getInstance() const{
-			return new TestClass();
+			return new Camera;
 		}
 
 		bool isA(const ob_instance::Instance* obj){
-			return (dynamic_cast<const TestClass*>(obj)) != 0;
+			return (dynamic_cast<const Camera*>(obj)) != 0;
 		}
 
 		bool isInstantiatable(){
@@ -19,8 +19,8 @@ namespace ob_instance{
 		}
 	};
 
-	STATIC_INIT(TestClass){
-		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new TestClassClassMaker());
+	STATIC_INIT(Camera){
+		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new CameraClassMaker());
 
 		lua_State* L = OpenBlox::BaseGame::getGlobalState();
 
@@ -41,19 +41,19 @@ namespace ob_instance{
 		lua_pop(L, 1);
 	}
 
-	char* TestClass::ClassName = "TestClass";
-	char* TestClass::LuaClassName = "luaL_Instance_TestClass";
+	char* Camera::ClassName = "Camera";
+	char* Camera::LuaClassName = "luaL_Instance_Camera";
 
-	TestClass::TestClass() : Instance(){
+	Camera::Camera() : Instance(){
 		Name = ClassName;
 	}
 
-	TestClass::~TestClass(){
+	Camera::~Camera(){
 
 	}
 
-	int TestClass::wrap_lua(lua_State* L){
-		TestClass** udata = (TestClass**)lua_newuserdata(L, sizeof(TestClass*));
+	int Camera::wrap_lua(lua_State* L){
+		Camera** udata = (Camera**)lua_newuserdata(L, sizeof(Camera*));
 		*udata = this;
 
 		luaL_getmetatable(L, LuaClassName);
@@ -62,8 +62,8 @@ namespace ob_instance{
 		return 1;
 	}
 
-	Instance* TestClass::cloneImpl(){
-		TestClass* newGuy = new TestClass();
+	Instance* Camera::cloneImpl(){
+		Camera* newGuy = new Camera;
 		newGuy->Name = Name;
 		return newGuy;
 	}
