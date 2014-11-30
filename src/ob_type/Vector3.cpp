@@ -98,6 +98,6 @@ namespace ob_instance{
 		if(other == NULL){
 			return NULL;
 		}
-		return sub(other)->getMagnitude() <= epsilon;
+		return sub(other)->magnitude <= epsilon;
 	}
 }

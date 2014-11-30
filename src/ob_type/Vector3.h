@@ -1,7 +1,7 @@
 #ifndef OB_TYPE_VECTOR3_H_
 #define OB_TYPE_VECTOR3_H_
 
-#include "OpenBlox.h"
+#include "../openblox/OpenBlox.h"
 #include <cmath>
 
 namespace ob_instance{
