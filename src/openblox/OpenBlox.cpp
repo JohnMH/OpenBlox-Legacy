@@ -80,7 +80,7 @@ void size_callback(int width, int height){
 
 #ifndef OPENBLOX_JNI
 void glfw_error_callback(int error, const char* description){
-	std::cout << "[GRAPHICS]" << description << std::endl;
+	std::cout << "[GLFW] " << description << std::endl;
 }
 
 void glfw_window_size_callback(GLFWwindow* window, int width, int height){
@@ -137,6 +137,7 @@ void* renderThread(void* arg){
 			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		}
 		#endif
+		glfwWindowHint(GLFW_SAMPLES, 2);
 
 		if(!OpenBlox::createGLContext()){
 			return 1;

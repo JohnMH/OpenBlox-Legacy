@@ -8,6 +8,9 @@ namespace OpenBlox{
 #ifndef OPENBLOX_JNI
 	static GLFWwindow* window;
 
+	std::map<std::string, GLuint> shaderMap;
+	std::map<std::string, GLuint> programMap;
+
 	void getFramebufferSize(int* width, int* height){
 		if(window == NULL){
 			std::cerr << "Window is NULL!" << std::endl;
