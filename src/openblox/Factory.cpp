@@ -5,6 +5,7 @@
 namespace OpenBlox{
 	void Factory::addClass(const char* className, ClassMaker* const newClassMaker){
 		char* key = covertToLower(className);
+		std::cout<<key<<std::endl;
 		std::string keystr = std::string(key);
 		lokupTable[keystr] = newClassMaker;
 		registered.insert(registered.begin(), className);
