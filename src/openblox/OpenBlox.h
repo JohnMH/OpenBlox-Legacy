@@ -28,9 +28,9 @@ extern "C"{
 
 #include <pthread.h>
 
-#define LOGI(...) fputs(__VA_ARGS__, stdout)
-#define LOGW(...) fputs(__VA_ARGS__, stdout)
-#define LOGE(...) fputs(__VA_ARGS__, stderr)
+#define LOGI(...) printf(__VA_ARGS__)
+#define LOGW(...) printf(__VA_ARGS__)
+#define LOGE(...) fprintf(stderr, __VA_ARGS__)
 #else
 #include <jni.h>
 #include <android/log.h>

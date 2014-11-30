@@ -37,8 +37,10 @@ namespace OpenBlox{
 
 	void BaseGame::handle_lua_errors(lua_State* L){
 		const char* output = lua_tostring(L, -1);
+		std::string outstring = std::string(output);
+		outstring = outstring + "\n";
 		if(INSTANCE != NULL){
-			INSTANCE->print_error(output);
+			INSTANCE->print_error(outstring.c_str());
 		}
 		lua_pop(L, 1);
 	}
@@ -65,6 +67,8 @@ namespace OpenBlox{
 			output = output + s;
 			lua_pop(L, 1);
 		}
+
+		output = output + "\n";
 
 		if(INSTANCE != NULL){
 			INSTANCE->print(output.c_str());
@@ -103,6 +107,8 @@ namespace OpenBlox{
 			output = output + s;
 			lua_pop(L, 1);
 		}
+
+		output = output + "\n";
 
 		if(INSTANCE != NULL){
 			INSTANCE->warn(output.c_str());

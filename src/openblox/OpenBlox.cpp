@@ -9,7 +9,22 @@
 
 OpenBlox::BaseGame* game;
 
+double lastTime = glfwGetTime();
+int nbFrames = 0;
+
 void render(){
+	double currentTime = glfwGetTime();
+	nbFrames++;
+	if(currentTime - lastTime >= 1.0){
+		std::string newTitle = "OpenBlox - TPS: ";
+		newTitle = newTitle + ((std::ostringstream&)(std::ostringstream() << std::dec << 1000.0/double(nbFrames))).str();
+
+		glfwSetWindowTitle(OpenBlox::getWindow(), newTitle.c_str());
+
+		nbFrames = 0;
+		lastTime += 1.0;
+	}
+
 	float ratio;
 	int width, height;
 
@@ -44,7 +59,7 @@ void* luaThread(void* arg){
 
 	lua_pop(L, gm);
 
-	char* script = "local cam = Instance.new('Camera'); ";
+	char* script = "print('hi');";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);
@@ -74,6 +89,19 @@ void glfw_window_size_callback(GLFWwindow* window, int width, int height){
 
 void* renderThread(void* arg){
 	GLFWwindow* window = OpenBlox::getWindow();
+	glfwMakeContextCurrent(window);
+	{
+		const GLubyte* vendor = glGetString(GL_VENDOR);
+		const GLubyte* renderer = glGetString(GL_RENDERER);
+		const GLubyte* version = glGetString(GL_VERSION);
+		const GLubyte* shading_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+		std::cout << "Vendor: " << vendor << std::endl;
+		std::cout << "Renderer: " << renderer << std::endl;
+		std::cout << "OpenGL Version: " << version << std::endl;
+		std::cout << "Shading Language Version: " << shading_version << std::endl;
+	}
+
 	while(!glfwWindowShouldClose(window)){
 		//Fire RunService.Stepped, then RunService.RenderStepped
 		glfwMakeContextCurrent(window);
@@ -82,7 +110,7 @@ void* renderThread(void* arg){
 		glfwSwapBuffers(window);
 		glfwMakeContextCurrent(NULL);
 
-		usleep(10);
+		//mywait(10);
 	}
 	pthread_exit(NULL);
 	return NULL;
@@ -125,35 +153,23 @@ void* renderThread(void* arg){
 			return 1;
 		}
 
-		pthread_t lua_thread;
+		glfwSetWindowSizeCallback(window, glfw_window_size_callback);
+
+		pthread_t render_thread;
 		int val;
-		val = pthread_create(&lua_thread, NULL, luaThread, NULL);
+		val = pthread_create(&render_thread, NULL, renderThread, NULL);
 		if(val){
-			std::cerr << "Failed to create logic thread." << std::endl;
+			std::cerr << "Failed to create render thread." << std::endl;
 			glfwTerminate();
 			return 1;
 		}
 
-		{
-			const GLubyte* vendor = glGetString(GL_VENDOR);
-			const GLubyte* renderer = glGetString(GL_RENDERER);
-			const GLubyte* version = glGetString(GL_VERSION);
-			const GLubyte* shading_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
-
-			std::cout << "Vendor: " << vendor << std::endl;
-			std::cout << "Renderer: " << renderer << std::endl;
-			std::cout << "OpenGL Version: " << version << std::endl;
-			std::cout << "Shading Language Version: " << shading_version << std::endl;
-		}
-
-		glfwSetWindowSizeCallback(window, glfw_window_size_callback);
-
 		glfwMakeContextCurrent(NULL);
 
-		pthread_t render_thread;
-		val = pthread_create(&render_thread, NULL, renderThread, NULL);
+		pthread_t lua_thread;
+		val = pthread_create(&lua_thread, NULL, luaThread, NULL);
 		if(val){
-			std::cerr << "Failed to create render thread." << std::endl;
+			std::cerr << "Failed to create logic thread." << std::endl;
 			glfwTerminate();
 			return 1;
 		}
