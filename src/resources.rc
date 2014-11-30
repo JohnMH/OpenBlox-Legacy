@@ -9,7 +9,7 @@ BEGIN
     BLOCK "040904E4"
     BEGIN
       VALUE "CompanyName", "Myzilla Web Resources"
-      VALUE "FileDescription", "An open source implementation of the ROBLOX API made for standalone games."
+      VALUE "FileDescription", "OpenBlox"
       VALUE "FileVersion", "1.0"
       VALUE "InternalName", "openblox"
       VALUE "LegalCopyright", "John M. Harris, Jr."

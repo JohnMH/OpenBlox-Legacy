@@ -27,7 +27,7 @@
 		ShowWindow(nativeWin, SW_MINIMIZE);
 	}
 
-	void glfwFocusWindow(GLFWwindow* win){
+	void glfwFocusWindow(GLFWwindow* window){
 		if(window == NULL){
 			return;
 		}

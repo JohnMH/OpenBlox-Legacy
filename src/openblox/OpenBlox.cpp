@@ -5,13 +5,15 @@
 #include <unistd.h>
 #include "WindowUtils.h"
 
+#include "OpenBloxRenderUtil.h"
+
 OpenBlox::BaseGame* game;
 
 void render(){
 	float ratio;
 	int width, height;
 
-	getFramebufferSize(&width, &height);
+	OpenBlox::getFramebufferSize(&width, &height);
 	ratio = width / (float)height;
 
 	glViewport(0, 0, width, height);
@@ -19,7 +21,7 @@ void render(){
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrthof(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+	glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
 	glMatrixMode(GL_MODELVIEW);
 
 	ob_instance::DataModel* dm = game->getDataModel();
@@ -71,6 +73,7 @@ void glfw_window_size_callback(GLFWwindow* window, int width, int height){
 }
 
 void* renderThread(void* arg){
+	GLFWwindow* window = OpenBlox::getWindow();
 	while(!glfwWindowShouldClose(window)){
 		//Fire RunService.Stepped, then RunService.RenderStepped
 		glfwMakeContextCurrent(window);
@@ -107,16 +110,11 @@ void* renderThread(void* arg){
 		}
 		#endif
 
-		window = glfwCreateWindow(640, 480, "OpenBlox", NULL, NULL);
-		if(!window){
-			std::cerr << "Could not create window." << std::endl;
-			glfwTerminate();
+		if(!OpenBlox::createGLContext()){
 			return 1;
 		}
-		glfwMaximizeWindow(window);
-		#if defined(__unix__) || defined(__linux__)
-		glfwWindowMinSize(window, 640, 480);
-		#endif
+
+		GLFWwindow* window = OpenBlox::getWindow();
 
 		glfwMakeContextCurrent(window);
 

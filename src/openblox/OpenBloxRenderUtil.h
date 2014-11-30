@@ -3,11 +3,12 @@
 
 #include "OpenBlox.h"
 
-#ifndef OPENBLOX_JNI
-
-	GLFWwindow* window;
-#endif
-
-void getFramebufferSize(int* width, int* height);
+namespace OpenBlox{
+	void getFramebufferSize(int* width, int* height);
+	bool createGLContext();
+	#ifndef OPENBLOX_JNI
+	GLFWwindow* getWindow();
+	#endif
+}
 
 #endif
