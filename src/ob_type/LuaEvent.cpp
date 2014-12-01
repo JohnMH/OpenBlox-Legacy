@@ -4,6 +4,8 @@ namespace ob_type {
 
 	STATIC_INIT(LuaEvent){
 		lua_State* L = OpenBlox::BaseGame::getGlobalState();
+		lua_newtable(L);
+		lua_setfield(L, LUA_REGISTRYINDEX, "EventThreads");
 
 		luaL_newmetatable(L, lua_evt_name);
 
@@ -29,13 +31,13 @@ namespace ob_type {
 		lua_pop(L, 1);
 	}
 
-	LuaEvent::LuaEvent(char* LuaEventName) {
+	LuaEvent::LuaEvent(const char* LuaEventName) {
 		this->LuaEventName = LuaEventName;
 		Connections = std::vector<lua_State*>();
 	}
 
 	LuaEvent::~LuaEvent() {
-		free(LuaEventName);
+		//free(LuaEventName);
 	}
 
 	LuaEvent* checkudata(lua_State *L, int n){
@@ -43,8 +45,8 @@ namespace ob_type {
 	}
 
 	int LuaEvent::wrap_lua(lua_State* L){
-		LuaEvent** LuaEvent = (LuaEvent**)lua_newuserdata(L, sizeof(*this));
-		*LuaEvent = this;
+		LuaEvent** evt = (LuaEvent**)lua_newuserdata(L, sizeof(*this));
+		*evt = this;
 		luaL_getmetatable(L, lua_evt_name);
 		lua_setmetatable(L, -2);
 
@@ -64,14 +66,17 @@ namespace ob_type {
 		luaL_checktype(L, 2, LUA_TFUNCTION);
 
 		lua_State* func = lua_newthread(L);
+		lua_pushvalue(L, 1);
 		lua_xmove(L, func, 1);
 		LuaEvent->Connections.push_back(func);
 	}
 
 	void LuaEvent::Fire(){
+		std::cout<<"Fire called!"<<std::endl;
 		for (std::vector<lua_State*>::size_type i = 0; i != Connections.size(); i++){
 			lua_State* thread = Connections[i];
 			if (thread != NULL){
+				std::cout<<"Resuming a thread!"<<std::endl;
 				lua_resume(thread, 0);
 			}
 		}

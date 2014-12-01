@@ -35,7 +35,7 @@ namespace ob_instance{
 		ParentLocked = false;
 
 		children = std::vector<Instance*>();
-		Changed = ob_type::LuaEvent("Changed");
+		Changed = new ob_type::LuaEvent("Changed");
 	}
 
 	Instance::~Instance(){
@@ -377,7 +377,7 @@ namespace ob_instance{
 				lua_pushvalue(L, 3);
 				lua_call(L, 2, 0);
 
-				inst->Changed.Fire();
+				inst->Changed->Fire();
 
 				return 0;
 			}else{
@@ -552,7 +552,7 @@ namespace ob_instance{
 	int Instance::lua_getChangedEvent(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
 		if (inst != NULL){
-			return inst->Changed.wrap_lua(L);
+			return inst->Changed->wrap_lua(L);
 			//return 1;
 		}
 		return 0;

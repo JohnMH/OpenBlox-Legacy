@@ -74,7 +74,7 @@ namespace ob_instance{
 			char* Name;
 			Instance* Parent;
 			bool ParentLocked;
-			ob_type::LuaEvent Changed;
+			ob_type::LuaEvent* Changed;
 
 			virtual Instance* cloneImpl() = 0;
 

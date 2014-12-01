@@ -8,12 +8,12 @@ namespace ob_type {
 
 class LuaEvent {
 	public:
-		LuaEvent(char* EventName);
+		LuaEvent(const char* EventName);
 		virtual ~LuaEvent();
 		DECLARE_STATIC_INIT(LuaEvent);
 		int wrap_lua(lua_State* L);
 		void Fire();
-		char* LuaEventName;
+		const char* LuaEventName;
 	private:
 		static int lua_toString(lua_State* L);
 		static int lua_connect(lua_State* L);
