@@ -11,6 +11,8 @@ namespace ob_instance{
 
 			virtual Instance* cloneImpl();
 
+			virtual char* getClassName();
+
 			virtual int wrap_lua(lua_State* L);
 
 			DECLARE_STATIC_INIT(Camera);

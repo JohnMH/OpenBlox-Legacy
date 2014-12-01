@@ -9,10 +9,14 @@ namespace ob_instance{
 			ServiceProvider();
 			virtual ~ServiceProvider();
 
-			virtual Instance* FindService(char* className);
-			virtual Instance* GetService(char* className);
+			virtual Instance* FindService(const char* className);
+			virtual Instance* GetService(const char* className);
+
+			virtual char* getClassName();
 
 			DECLARE_STATIC_INIT(ServiceProvider);
+
+			static int lua_FindService(lua_State* L);
 		protected:
 			static char* ClassName;
 			static char* LuaClassName;

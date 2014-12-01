@@ -22,44 +22,7 @@ namespace ob_instance{
 	STATIC_INIT(Instance){
 		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new InstanceClassMaker());
 
-		lua_State* L = OpenBlox::BaseGame::getGlobalState();
-
-		luaL_newmetatable(L, LuaClassName);
-		register_lua_metamethods(L);
-
-		lua_pushstring(L, "__metatable");
-		lua_pushstring(L, "This metatable is locked");
-		lua_rawset(L, -3);
-
-		// methods
-		lua_pushstring(L, "__methods");
-		lua_newtable(L);
-		register_lua_methods(L);
-		lua_rawset(L, -3);
-
-		// property getters
-		lua_pushstring(L, "__propertygetters");
-		lua_newtable(L);
-		register_lua_property_getters(L);
-		lua_rawset(L, -3);
-
-		// property setters
-		lua_pushstring(L, "__propertysetters");
-		lua_newtable(L);
-		register_lua_property_setters(L);
-		lua_rawset(L, -3);
-
-		// item get
-		lua_pushstring(L, "__index");
-		lua_pushcfunction(L, lua_index);
-		lua_rawset(L, -3);
-
-		// item set
-		lua_pushstring(L, "__newindex");
-		lua_pushcfunction(L, lua_newindex);
-		lua_rawset(L, -3);
-
-		lua_pop(L, 1);
+		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters);
 	}
 
 	char* Instance::ClassName = "Instance";
@@ -75,7 +38,7 @@ namespace ob_instance{
 	}
 
 	Instance::~Instance(){
-		delete[] Name;
+		free(Name);
 	}
 
 	void Instance::ClearAllChildren(){
@@ -128,7 +91,7 @@ namespace ob_instance{
 		}
 	}
 
-	Instance* Instance::FindFirstChild(char* name, bool recursive){
+	Instance* Instance::FindFirstChild(const char* name, bool recursive){
 		if(name == NULL){
 			return NULL;
 		}
@@ -204,9 +167,11 @@ namespace ob_instance{
 		return ancestor->IsAncestorOf(this);
 	}
 
-	void Instance::render(){
-
+	char* Instance::getClassName(){
+		return ClassName;
 	}
+
+	void Instance::render(){}
 
 	void Instance::renderChildren(){
 		for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
@@ -218,6 +183,47 @@ namespace ob_instance{
 		}
 	}
 
+	void Instance::registerLuaClass(char* className, luaRegisterFunc register_metamethods, luaRegisterFunc register_methods, luaRegisterFunc register_getters, luaRegisterFunc register_setters){
+		lua_State* L = OpenBlox::BaseGame::getGlobalState();
+
+		luaL_newmetatable(L, className);
+		register_metamethods(L);
+
+		lua_pushstring(L, "__metatable");
+		lua_pushstring(L, "This metatable is locked");
+		lua_rawset(L, -3);
+
+		//Methods
+		lua_pushstring(L, "__methods");
+		lua_newtable(L);
+		register_methods(L);
+		lua_rawset(L, -3);
+
+		//Property getters
+		lua_pushstring(L, "__propertygetters");
+		lua_newtable(L);
+		register_getters(L);
+		lua_rawset(L, -3);
+
+		//Property setters
+		lua_pushstring(L, "__propertysetters");
+		lua_newtable(L);
+		register_setters(L);
+		lua_rawset(L, -3);
+
+		//Item get
+		lua_pushstring(L, "__index");
+		lua_pushcfunction(L, lua_index);
+		lua_rawset(L, -3);
+
+		//Item set
+		lua_pushstring(L, "__newindex");
+		lua_pushcfunction(L, lua_newindex);
+		lua_rawset(L, -3);
+
+		lua_pop(L, 1);
+	}
+
 	char* Instance::toString(){
 		return Name;
 	}
@@ -226,13 +232,13 @@ namespace ob_instance{
 		if(ParentLocked){
 			std::string errMsg = "The Parent property of ";
 			errMsg = errMsg + Name + " is locked.";
-			throw std::runtime_error(errMsg);
+			throw std::runtime_error(errMsg.c_str());
 			return;
 		}
 		if(parent == this){
 			std::string errMsg = "Attempt to set ";
 			errMsg = errMsg + GetFullName() + " as its own parent";
-			throw std::runtime_error(errMsg);
+			throw std::runtime_error(errMsg.c_str());
 			return;
 		}
 		if(Parent != NULL){
@@ -279,16 +285,22 @@ namespace ob_instance{
 
 	void Instance::register_lua_property_setters(lua_State* L){
 		luaL_Reg properties[]{
-				{"Name", lua_setName},
-				{NULL, NULL}
+			{"ClassName", lua_readOnlyProperty},
+			{"Name", lua_setName},
+			{"Parent", lua_setParent},
+			{"Archivable", lua_setArchivable},
+			{NULL, NULL}
 		};
 		luaL_register(L, NULL, properties);
 	}
 
 	void Instance::register_lua_property_getters(lua_State* L){
 		luaL_Reg properties[]{
-				{"Name", lua_getName},
-				{NULL, NULL}
+			{"ClassName", lua_getClassName},
+			{"Name", lua_getName},
+			{"Parent", lua_setParent},
+			{"Archivable", lua_getArchivable},
+			{NULL, NULL}
 		};
 		luaL_register(L, NULL, properties);
 	}
@@ -326,7 +338,7 @@ namespace ob_instance{
 						lua_pop(L, 2);
 						return *(Instance**)udata;
 					}
-					lua_pop(L, 1); // don't mind me just testing something
+					lua_pop(L, 1);
 				}
 			}
 			return NULL;
@@ -338,9 +350,9 @@ namespace ob_instance{
 		Instance* inst = checkInstance(L, 1);
 		if (inst != NULL){
 			const char* name = luaL_checkstring(L, 2);
-			int meta = lua_getmetatable(L, 1); // -3
-			lua_getfield(L, -1, "__propertysetters"); // -2
-			lua_getfield(L, -1, name); // -1
+			lua_getmetatable(L, 1);//-3
+			lua_getfield(L, -1, "__propertysetters");//-2
+			lua_getfield(L, -1, name);//-1
 			if (lua_iscfunction(L, -1)){
 				lua_remove(L, -2);
 				lua_remove(L, -2);
@@ -349,7 +361,7 @@ namespace ob_instance{
 				lua_pushvalue(L, 3);
 				lua_call(L, 2, 0);
 				return 0;
-			} else {
+			}else{
 				lua_pop(L, 3);
 
 				return luaL_error(L, "attempt to index '%s' (a nil value)", name);
@@ -360,30 +372,31 @@ namespace ob_instance{
 
 	int Instance::lua_index(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if (inst != NULL){
+		if(inst != NULL){
 			const char* name = luaL_checkstring(L, 2);
-			int meta = lua_getmetatable(L, 1); // -3
-			lua_getfield(L, -1, "__propertygetters"); // -2
-			lua_getfield(L, -1, name); // -1
-			if (lua_iscfunction(L, -1)){
+			lua_getmetatable(L, 1);//-3
+			lua_getfield(L, -1, "__propertygetters");//-2
+			lua_getfield(L, -1, name);//-1
+			if(lua_iscfunction(L, -1)){
 				lua_remove(L, -2);
 				lua_remove(L, -2);
 
 				lua_pushvalue(L, 1);
 				lua_call(L, 1, 1);
 				return 1;
-			} else {
+			}else{
 				lua_pop(L, 2);
-				// check methods
-				lua_getfield(L, -1, "__methods"); // -2
-				lua_getfield(L, -1, name); // -1
-				if (lua_iscfunction(L, -1)){
+				//Check methods
+				lua_getfield(L, -1, "__methods");//-2
+				lua_getfield(L, -1, name);//-1
+				if(lua_iscfunction(L, -1)){
 					lua_remove(L, -2);
 					lua_remove(L, -3);
 
 					return 1;
-				} else {
-					// TODO: check children
+				}else{
+					//TODO: Check children
+					//Perhaps just call FindFirstChild(name, false);
 					lua_pop(L, 3);
 
 					return luaL_error(L, "attempt to index '%s' (a nil value)", name);
@@ -403,17 +416,35 @@ namespace ob_instance{
 	}
 
 	//Properties
+	int Instance::lua_getClassName(lua_State* L){
+		Instance* inst = checkInstance(L, 1);
+		if(inst != NULL){
+			char* className = inst->getClassName();
+			lua_pushstring(L, className);
+			return 1;
+		}
+		lua_pushnil(L);
+		return 1;
+	}
+
+	int Instance::lua_readOnlyProperty(lua_State* L){
+		//Welp. This is how ROBLOX does it.
+		luaL_error(L, "can't set value");
+		return 0;
+	}
+
 	int Instance::lua_getName(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if (inst != NULL){
+		if(inst != NULL){
 			lua_pushstring(L, inst->Name);
 			return 1;
 		}
 		return 0;
 	}
+
 	int Instance::lua_setName(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if (inst != NULL){
+		if(inst != NULL){
 			std::string desired = std::string(luaL_checkstring(L, 2));
 			char* newname = new char[desired.size() + 1];
 			std::copy(desired.begin(), desired.end(), newname);
@@ -421,7 +452,67 @@ namespace ob_instance{
 			inst->Name = newname;
 			return 0;
 		}
-		std::cout<<"inst was null"<<std::endl;
+		return 0;
+	}
+
+	int Instance::lua_getParent(lua_State* L){
+		Instance* inst = checkInstance(L, 1);
+		if(inst != NULL){
+			if(inst->Parent != NULL){
+				return inst->Parent->wrap_lua(L);
+			}
+			lua_pushnil(L);
+			return 1;
+		}
+		return 0;
+	}
+
+	int Instance::lua_setParent(lua_State* L){
+		Instance* inst = checkInstance(L, 1);
+		if(inst != NULL){
+			bool throwErrorIf = true;
+			Instance* otherInst = NULL;
+			if(lua_isnil(L, 2)){
+				throwErrorIf = false;
+			}else{
+				otherInst = checkInstance(L, 2);
+			}
+			if(otherInst != NULL || !throwErrorIf){
+				try{
+					inst->setParent(otherInst);
+				}catch(std::runtime_error& ex){
+					return luaL_error(L, ex.what());
+				}
+				return 0;
+			}else{
+				return luaL_typerror(L, 2, "Instance");
+			}
+			return 0;
+		}
+		return 0;
+	}
+
+	int Instance::lua_getArchivable(lua_State* L){
+		Instance* inst = checkInstance(L, 1);
+		if(inst != NULL){
+			lua_pushboolean(L, inst->Archivable);
+			return 1;
+		}
+		return 0;
+	}
+
+	int Instance::lua_setArchivable(lua_State* L){
+		Instance* inst = checkInstance(L, 1);
+		if(inst != NULL){
+			//Again, following ROBLOX's ways....
+			bool newVal = false;
+			if(lua_isboolean(L, 2)){
+				newVal = lua_toboolean(L, 2);
+			}else if(!lua_isnoneornil(L, 2)){
+				newVal = true;
+			}
+			inst->Archivable = newVal;
+		}
 		return 0;
 	}
 
@@ -468,7 +559,21 @@ namespace ob_instance{
 	int Instance::lua_FindFirstChild(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
 		if(inst != NULL){
-			return 0;
+			const char* kidName = luaL_checkstring(L, 2);
+			bool recursive = false;
+			if(!lua_isnoneornil(L, 3)){
+				if(lua_isboolean(L, 3)){
+					recursive = lua_toboolean(L, 3);
+				}else{
+					luaL_typerror(L, 3, "boolean");
+				}
+			}
+			Instance* foundStuff = inst->FindFirstChild(kidName, recursive);
+			if(foundStuff != NULL){
+				return foundStuff->wrap_lua(L);
+			}
+			lua_pushnil(L);
+			return 1;
 		}
 		return luaL_error(L, COLONERR, "FindFirstChild");
 	}

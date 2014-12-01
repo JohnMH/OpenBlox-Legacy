@@ -1,7 +1,8 @@
 #ifndef OPENBLOX_UTILITY_H_
 #define OPENBLOX_UTILITY_H_
 
-#include "OpenBlox.h"
+#include <cctype>
+#include <cstring>
 
 namespace OpenBlox{
 	char* covertToLower(char* str);
@@ -9,7 +10,5 @@ namespace OpenBlox{
 
 	char* covertToUpper(char* str);
 	char* covertToUpper(const char* str);
-
-	char* my_strdup(const char* str);
 }
 #endif

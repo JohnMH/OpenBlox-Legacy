@@ -1,10 +1,3 @@
-/*
- * ServiceProvider.cpp
- *
- *  Created on: Nov 28, 2014
- *      Author: john
- */
-
 #include "ServiceProvider.h"
 
 namespace ob_instance{
@@ -29,44 +22,7 @@ namespace ob_instance{
 	STATIC_INIT(ServiceProvider){
 		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new ServiceProviderClassMaker());
 
-		lua_State* L = OpenBlox::BaseGame::getGlobalState();
-
-		luaL_newmetatable(L, LuaClassName);
-		register_lua_metamethods(L);
-
-		lua_pushstring(L, "__metatable");
-		lua_pushstring(L, "This metatable is locked");
-		lua_rawset(L, -3);
-
-		// methods
-		lua_pushstring(L, "__methods");
-		lua_newtable(L);
-		register_lua_methods(L);
-		lua_rawset(L, -3);
-
-		// property getters
-		lua_pushstring(L, "__propertygetters");
-		lua_newtable(L);
-		register_lua_property_getters(L);
-		lua_rawset(L, -3);
-
-		// property setters
-		lua_pushstring(L, "__propertysetters");
-		lua_newtable(L);
-		register_lua_property_setters(L);
-		lua_rawset(L, -3);
-
-		// item get
-		lua_pushstring(L, "__index");
-		lua_pushcfunction(L, lua_index);
-		lua_rawset(L, -3);
-
-		// item set
-		lua_pushstring(L, "__newindex");
-		lua_pushcfunction(L, lua_newindex);
-		lua_rawset(L, -3);
-
-		lua_pop(L, 1);
+		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters);
 	}
 
 	char* ServiceProvider::ClassName = "ServiceProvider";
@@ -80,12 +36,12 @@ namespace ob_instance{
 
 	}
 
-	Instance* ServiceProvider::FindService(char* className){
+	Instance* ServiceProvider::FindService(const char* className){
 		//Look through children for service
 		return NULL;
 	}
 
-	Instance* ServiceProvider::GetService(char* className){
+	Instance* ServiceProvider::GetService(const char* className){
 		Instance* foundService = FindService(className);
 		if(foundService != NULL){
 			return foundService;
@@ -94,7 +50,25 @@ namespace ob_instance{
 		return NULL;
 	}
 
+	char* ServiceProvider::getClassName(){
+		return ClassName;
+	}
+
 	void ServiceProvider::register_lua_methods(lua_State* L){
 		Instance::register_lua_methods(L);
+	}
+
+	int ServiceProvider::lua_FindService(lua_State* L){
+		Instance* inst = checkInstance(L, 1);
+		if(ServiceProvider* sp = dynamic_cast<ServiceProvider*>(inst)){
+			const char* serviceName = luaL_checkstring(L, 2);
+			Instance* foundGuy = sp->FindService(serviceName);
+			if(foundGuy != NULL){
+				return foundGuy->wrap_lua(L);
+			}
+			lua_pushnil(L);
+			return 0;
+		}
+		return luaL_error(L, COLONERR, "FindService");
 	}
 }

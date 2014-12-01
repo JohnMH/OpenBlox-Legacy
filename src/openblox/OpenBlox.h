@@ -44,6 +44,8 @@ extern "C"{
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 #endif
 
+#include "InternalException.h"
+
 //Helpers
 #include "static_init.h"
 #include "Utility.h"

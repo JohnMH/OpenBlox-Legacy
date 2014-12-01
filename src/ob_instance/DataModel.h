@@ -13,6 +13,8 @@ namespace ob_instance{
 
 			int wrap_lua(lua_State* L);
 
+			virtual char* getClassName();
+
 			DECLARE_STATIC_INIT(DataModel);
 
 		protected:

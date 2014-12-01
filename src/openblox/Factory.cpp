@@ -4,16 +4,16 @@
 
 namespace OpenBlox{
 	void Factory::addClass(const char* className, ClassMaker* const newClassMaker){
-		char* key = covertToLower(className);
-		std::cout<<key<<std::endl;
-		std::string keystr = std::string(key);
+		//char* key = covertToLower(className);
+		//LOGI(key);
+		std::string keystr = std::string(className);
 		lokupTable[keystr] = newClassMaker;
 		registered.insert(registered.begin(), className);
 	}
 
 	ob_instance::Instance* Factory::create(const char* className){
-		char* key = covertToLower(className);
-		std::string keystr = std::string(key);
+		//char* key = covertToLower(className);
+		std::string keystr = std::string(className);
 
 		ob_instance::Instance* result = NULL;
 		std::map<std::string, ClassMaker*>::iterator it = lokupTable.find(keystr);
@@ -32,8 +32,8 @@ namespace OpenBlox{
 	}
 
 	bool Factory::isA(const ob_instance::Instance* obj, const char* className){
-		char* key = covertToLower(className);
-		std::string keystr = std::string(key);
+		//char* key = covertToLower(className);
+		std::string keystr = std::string(className);
 
 		std::map<std::string, ClassMaker*>::iterator it = lokupTable.find(keystr);
 

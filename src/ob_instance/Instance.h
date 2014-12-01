@@ -14,7 +14,7 @@ namespace ob_instance{
 			virtual Instance* Clone();
 			virtual void Destroy();
 			virtual void Remove();
-			virtual Instance* FindFirstChild(char* name, bool recursive = false);
+			virtual Instance* FindFirstChild(const char* name, bool recursive = false);
 			virtual Instance** GetChildren();
 			virtual char* GetFullName();
 			virtual bool IsA(const char *name);
@@ -22,8 +22,13 @@ namespace ob_instance{
 			virtual bool IsDescendantOf(Instance* ancestor);
 			//virtual Instance* WaitForChild(char* childName);
 
+			virtual char* getClassName();
+
 			virtual void render();
 			virtual void renderChildren();
+
+			typedef void (*luaRegisterFunc)(lua_State* L);
+			static void registerLuaClass(char* className, luaRegisterFunc register_metamethods, luaRegisterFunc register_methods, luaRegisterFunc register_getters, luaRegisterFunc register_setters);
 
 			virtual char* toString();
 			virtual void setParent(Instance* parent);
@@ -37,8 +42,15 @@ namespace ob_instance{
 
 			static int lua_toString(lua_State* L);
 
+			static int lua_getClassName(lua_State* L);
 			static int lua_getName(lua_State* L);
 			static int lua_setName(lua_State* L);
+			static int lua_getParent(lua_State* L);
+			static int lua_setParent(lua_State* L);
+			static int lua_getArchivable(lua_State* L);
+			static int lua_setArchivable(lua_State* L);
+
+			static int lua_readOnlyProperty(lua_State* L);
 
 			static int lua_ClearAllChildren(lua_State* L);
 			static int lua_Clone(lua_State* L);

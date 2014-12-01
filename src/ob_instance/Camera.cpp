@@ -22,23 +22,7 @@ namespace ob_instance{
 	STATIC_INIT(Camera){
 		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new CameraClassMaker());
 
-		lua_State* L = OpenBlox::BaseGame::getGlobalState();
-
-		luaL_newmetatable(L, LuaClassName);
-
-		register_lua_metamethods(L);
-
-		lua_pushstring(L, "__index");
-		lua_newtable(L);
-
-		lua_pushstring(L, "ClassName");
-		lua_pushstring(L, ClassName);
-		lua_rawset(L, -3);
-
-		register_lua_methods(L);
-
-		lua_rawset(L, -3);
-		lua_pop(L, 1);
+		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters);
 	}
 
 	char* Camera::ClassName = "Camera";
@@ -66,5 +50,9 @@ namespace ob_instance{
 		Camera* newGuy = new Camera;
 		newGuy->Name = Name;
 		return newGuy;
+	}
+
+	char* Camera::getClassName(){
+		return ClassName;
 	}
 }

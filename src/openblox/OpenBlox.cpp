@@ -61,7 +61,7 @@ void* luaThread(void* arg){
 
 	lua_pop(L, gm);
 
-	char* script = "print('hi');";
+	char* script = "local cam = Instance.new('Camera'); print(cam.ClassName); game.Parent = cam;";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);

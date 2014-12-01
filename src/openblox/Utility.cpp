@@ -1,55 +1,51 @@
 #include "Utility.h"
 
 namespace OpenBlox{
-	char* covertToLower(char* ostr){
-		int len = strlen(ostr);
-		char* newstr = new char[len];
-		for(int i = 0; i < len; i++){
-			if(ostr[i] == '\0'){
-				newstr[i] = '\0';
-				break;
+	char* covertToLower(char* s){
+		if(s != NULL){
+			int i;
+			int sz = strlen(s);
+			for(i = 0; i < sz; i++){
+				s[i] = tolower(s[i]);
 			}
-			newstr[i] = tolower(ostr[i]);
 		}
-		return newstr;
+		return s;
 	}
 
-	char* covertToLower(const char* ostr){
-		int len = strlen(ostr);
-		char* newstr = new char[len];
-		for(int i = 0; i < len; i++){
-			if(ostr[i] == '\0'){
-				newstr[i] = '\0';
-				break;
+	char* covertToLower(const char* s){
+		if(s != NULL){
+			int i;
+			int sz = strlen(s);
+			char* newGuy = new char[sz];
+			for(i = 0; i < sz; i++){
+				newGuy[i] = tolower(s[i]);
 			}
-			newstr[i] = tolower(ostr[i]);
+			return newGuy;
 		}
-		return newstr;
+		return NULL;
 	}
 
-	char* covertToUpper(char* ostr){
-		int len = strlen(ostr);
-		char* newstr = new char[len];
-		for(int i = 0; i < len; i++){
-			if(ostr[i] == '\0'){
-				newstr[i] = '\0';
-				break;
+	char* covertToUpper(char* s){
+		if(s != NULL){
+			int i;
+			int sz = strlen(s);
+			for(i = 0; i < sz; i++){
+				s[i] = toupper(s[i]);
 			}
-			newstr[i] = toupper(ostr[i]);
 		}
-		return newstr;
+		return s;
 	}
 
-	char* covertToUpper(const char* ostr){
-		int len = strlen(ostr);
-		char* newstr = new char[len];
-		for(int i = 0; i < len; i++){
-			if(ostr[i] == '\0'){
-				newstr[i] = '\0';
-				break;
+	char* covertToUpper(const char* s){
+		if(s != NULL){
+			int i;
+			int sz = strlen(s);
+			char* newGuy = new char[sz];
+			for(i = 0; i < sz; i++){
+				newGuy[i] = toupper(s[i]);
 			}
-			newstr[i] = toupper(ostr[i]);
+			return newGuy;
 		}
-		return newstr;
+		return NULL;
 	}
 }

@@ -22,44 +22,7 @@ namespace ob_instance{
 	STATIC_INIT(DataModel){
 		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new DataModelClassMaker());
 
-		lua_State* L = OpenBlox::BaseGame::getGlobalState();
-
-		luaL_newmetatable(L, LuaClassName);
-		register_lua_metamethods(L);
-
-		lua_pushstring(L, "__metatable");
-		lua_pushstring(L, "This metatable is locked");
-		lua_rawset(L, -3);
-
-		// methods
-		lua_pushstring(L, "__methods");
-		lua_newtable(L);
-		register_lua_methods(L);
-		lua_rawset(L, -3);
-
-		// property getters
-		lua_pushstring(L, "__propertygetters");
-		lua_newtable(L);
-		register_lua_property_getters(L);
-		lua_rawset(L, -3);
-
-		// property setters
-		lua_pushstring(L, "__propertysetters");
-		lua_newtable(L);
-		register_lua_property_setters(L);
-		lua_rawset(L, -3);
-
-		// item get
-		lua_pushstring(L, "__index");
-		lua_pushcfunction(L, lua_index);
-		lua_rawset(L, -3);
-
-		// item set
-		lua_pushstring(L, "__newindex");
-		lua_pushcfunction(L, lua_newindex);
-		lua_rawset(L, -3);
-
-		lua_pop(L, 1);
+		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters);
 	}
 
 	char* DataModel::ClassName = "DataModel";
@@ -67,6 +30,7 @@ namespace ob_instance{
 
 	DataModel::DataModel() : ServiceProvider(){
 		Name = ClassName;
+		ParentLocked = true;
 	}
 
 	DataModel::~DataModel(){
@@ -103,21 +67,29 @@ namespace ob_instance{
 		return 1;
 	}
 
+	char* DataModel::getClassName(){
+		return ClassName;
+	}
+
 	void DataModel::register_lua_property_setters(lua_State* L){
+		/*
 		luaL_Reg properties[]{
-				{NULL, NULL}
+			{NULL, NULL}
 		};
 		luaL_register(L, NULL, properties);
+		*/
 		Instance::register_lua_property_setters(L);
 	}
 
 	void DataModel::register_lua_property_getters(lua_State* L){
-			luaL_Reg properties[]{
-					{NULL, NULL}
-			};
-			luaL_register(L, NULL, properties);
-			Instance::register_lua_property_getters(L);
-		}
+		/*
+		luaL_Reg properties[]{
+			{NULL, NULL}
+		};
+		luaL_register(L, NULL, properties);
+		*/
+		Instance::register_lua_property_getters(L);
+	}
 
 	void DataModel::register_lua_methods(lua_State* L){
 		ServiceProvider::register_lua_methods(L);
