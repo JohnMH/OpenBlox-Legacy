@@ -22,7 +22,7 @@ namespace ob_instance{
 	STATIC_INIT(ServiceProvider){
 		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new ServiceProviderClassMaker());
 
-		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters);
+		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, Instance::register_lua_events);
 	}
 
 	char* ServiceProvider::ClassName = "ServiceProvider";

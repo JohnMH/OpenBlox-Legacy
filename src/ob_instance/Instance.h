@@ -3,6 +3,7 @@
 
 #include "../openblox/OpenBlox.h"
 #include "constants.h"
+#include "../ob_type/LuaEvent.h"
 
 namespace ob_instance{
 	class Instance{
@@ -28,7 +29,7 @@ namespace ob_instance{
 			virtual void renderChildren();
 
 			typedef void (*luaRegisterFunc)(lua_State* L);
-			static void registerLuaClass(char* className, luaRegisterFunc register_metamethods, luaRegisterFunc register_methods, luaRegisterFunc register_getters, luaRegisterFunc register_setters);
+			static void registerLuaClass(char* className, luaRegisterFunc register_metamethods, luaRegisterFunc register_methods, luaRegisterFunc register_getters, luaRegisterFunc register_setters, luaRegisterFunc register_events);
 
 			virtual char* toString();
 			virtual void setParent(Instance* parent);
@@ -52,6 +53,8 @@ namespace ob_instance{
 
 			static int lua_readOnlyProperty(lua_State* L);
 
+			static int lua_getChangedEvent(lua_State* L);
+
 			static int lua_ClearAllChildren(lua_State* L);
 			static int lua_Clone(lua_State* L);
 			static int lua_Destroy(lua_State* L);
@@ -71,6 +74,7 @@ namespace ob_instance{
 			char* Name;
 			Instance* Parent;
 			bool ParentLocked;
+			ob_type::LuaEvent Changed;
 
 			virtual Instance* cloneImpl() = 0;
 
@@ -81,6 +85,7 @@ namespace ob_instance{
 			static void register_lua_methods(lua_State* L);
 			static void register_lua_property_setters(lua_State* L);
 			static void register_lua_property_getters(lua_State* L);
+			static void register_lua_events(lua_State* L);
 
 			std::vector<Instance*> children;
 	};

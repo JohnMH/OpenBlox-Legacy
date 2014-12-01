@@ -22,7 +22,7 @@ namespace ob_instance{
 	STATIC_INIT(Instance){
 		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new InstanceClassMaker());
 
-		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters);
+		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
 	}
 
 	char* Instance::ClassName = "Instance";
@@ -35,6 +35,7 @@ namespace ob_instance{
 		ParentLocked = false;
 
 		children = std::vector<Instance*>();
+		Changed = ob_type::LuaEvent("Changed");
 	}
 
 	Instance::~Instance(){
@@ -183,7 +184,7 @@ namespace ob_instance{
 		}
 	}
 
-	void Instance::registerLuaClass(char* className, luaRegisterFunc register_metamethods, luaRegisterFunc register_methods, luaRegisterFunc register_getters, luaRegisterFunc register_setters){
+	void Instance::registerLuaClass(char* className, luaRegisterFunc register_metamethods, luaRegisterFunc register_methods, luaRegisterFunc register_getters, luaRegisterFunc register_setters, luaRegisterFunc register_events){
 		lua_State* L = OpenBlox::BaseGame::getGlobalState();
 
 		luaL_newmetatable(L, className);
@@ -209,6 +210,12 @@ namespace ob_instance{
 		lua_pushstring(L, "__propertysetters");
 		lua_newtable(L);
 		register_setters(L);
+		lua_rawset(L, -3);
+
+		//Events
+		lua_pushstring(L, "__events");
+		lua_newtable(L);
+		register_events(L);
 		lua_rawset(L, -3);
 
 		//Item get
@@ -278,6 +285,7 @@ namespace ob_instance{
 	void Instance::register_lua_metamethods(lua_State* L){
 		luaL_Reg metamethods[] = {
 			{"__tostring", Instance::lua_toString},
+			//{"__gc", Instance::lua_gc},
 			{NULL, NULL}
 		};
 		luaL_register(L, NULL, metamethods);
@@ -322,6 +330,14 @@ namespace ob_instance{
 		luaL_register(L, NULL, methods);
 	}
 
+	void Instance::register_lua_events(lua_State* L){
+			luaL_Reg events[]{
+				{"Changed", lua_getChangedEvent},
+				{NULL, NULL}
+			};
+			luaL_register(L, NULL, events);
+		}
+
 	//Lua Wrappers
 	//Metamethods
 	Instance* Instance::checkInstance(lua_State* L, int index){
@@ -360,6 +376,9 @@ namespace ob_instance{
 				lua_pushvalue(L, 1);
 				lua_pushvalue(L, 3);
 				lua_call(L, 2, 0);
+
+				inst->Changed.Fire();
+
 				return 0;
 			}else{
 				lua_pop(L, 3);
@@ -395,11 +414,24 @@ namespace ob_instance{
 
 					return 1;
 				}else{
-					//TODO: Check children
-					//Perhaps just call FindFirstChild(name, false);
-					lua_pop(L, 3);
+					lua_pop(L, 2);
+					//Check events
+					lua_getfield(L, -1, "__events");//-2
+					lua_getfield(L, -1, name);//-1
+					if(lua_iscfunction(L, -1)){
+						lua_remove(L, -2);
+						lua_remove(L, -3);
 
-					return luaL_error(L, "attempt to index '%s' (a nil value)", name);
+						lua_pushvalue(L, 1);
+						lua_call(L, 1, 1);
+						return 1;
+					}else{
+						//TODO: Check children
+						//Perhaps just call FindFirstChild(name, false);
+						lua_pop(L, 3);
+
+						return luaL_error(L, "attempt to index '%s' (a nil value)", name);
+					}
 				}
 			}
 		}
@@ -512,6 +544,16 @@ namespace ob_instance{
 				newVal = true;
 			}
 			inst->Archivable = newVal;
+		}
+		return 0;
+	}
+
+	//Events
+	int Instance::lua_getChangedEvent(lua_State* L){
+		Instance* inst = checkInstance(L, 1);
+		if (inst != NULL){
+			return inst->Changed.wrap_lua(L);
+			//return 1;
 		}
 		return 0;
 	}
