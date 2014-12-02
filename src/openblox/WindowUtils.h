@@ -25,7 +25,7 @@
 #include <GLFW/glfw3native.h>
 
 void glfwMaximizeWindow(GLFWwindow* win);
-void glfwRestoreWindow(GLFWwindow* win);
+//void glfwRestoreWindow(GLFWwindow* win);
 void glfwMinimizeWindow(GLFWwindow* win);
 void glfwFocusWindow(GLFWwindow* win);
 

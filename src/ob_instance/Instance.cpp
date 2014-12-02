@@ -377,7 +377,9 @@ namespace ob_instance{
 				lua_pushvalue(L, 3);
 				lua_call(L, 2, 0);
 
-				inst->Changed->Fire();
+				inst->Changed->Fire([](lua_State* L, va_list args){
+					lua_pushstring(L, va_arg(args, const char*));
+				}, 1, name);
 
 				return 0;
 			}else{

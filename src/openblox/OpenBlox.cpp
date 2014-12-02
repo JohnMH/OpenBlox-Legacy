@@ -61,7 +61,7 @@ void* luaThread(void* arg){
 
 	lua_pop(L, gm);
 
-	char* script = "local cam = Instance.new('Camera'); print(cam.ClassName); print(game.Changed) game.Changed:connect(function() print(\"Property changed\") end) game.Name = \"Test!\" print(game.Name)";
+	char* script = "print(game.Changed); local con = game.Changed:connect(function(prop) print(prop, game[prop]); end); print(con); game.Name = 'Place1337'; game.Name = 'game'; game.Name = 'Place1337'; con:disconnect();  con:disconnect();   con:disconnect();   print(con:disconnect())  con.connectd = true";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);

@@ -13,6 +13,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <cstdarg>
 
 extern "C"{
 	#include "../lua/lua.h"
