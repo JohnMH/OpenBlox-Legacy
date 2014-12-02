@@ -3,6 +3,7 @@
 
 #include <cctype>
 #include <cstring>
+#include <sys/time.h>
 
 namespace OpenBlox{
 	char* covertToLower(char* str);
@@ -10,5 +11,7 @@ namespace OpenBlox{
 
 	char* covertToUpper(char* str);
 	char* covertToUpper(const char* str);
+
+	long currentTimeMillis();
 }
 #endif

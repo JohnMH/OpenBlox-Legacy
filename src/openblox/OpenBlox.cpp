@@ -49,19 +49,9 @@ void render(){
 }
 
 void* luaThread(void* arg){
-	lua_State* L = OpenBlox::BaseGame::getGlobalState();
+	lua_State* L = OpenBlox::BaseGame::newLuaState();
 
-	ob_instance::DataModel* dm = game->getDataModel();
-	int gm = dm->wrap_lua(L);
-	lua_pushvalue(L, -gm);
-	lua_setglobal(L, "game");
-
-	lua_pushvalue(L, -gm);
-	lua_setglobal(L, "Game");
-
-	lua_pop(L, gm);
-
-	char* script = "print(game.Changed); local con = game.Changed:connect(function(prop) print(prop, game[prop]); end); print(con); game.Name = 'Place1337'; game.Name = 'game'; game.Name = 'Place1337'; con:disconnect();  con:disconnect();   con:disconnect();   print(con:disconnect())  con.connectd = true";
+	char* script = "print('Hi');";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);
@@ -103,88 +93,89 @@ void* renderThread(void* arg){
 	return NULL;
 }
 
-	int main(){
-		glfwSetErrorCallback(glfw_error_callback);
-		if(!glfwInit()){
-			LOGE("[GLFW] Failed to initialize library.");
-			return 1;
-		}
-
-		OpenBlox::BaseGame::InstanceFactory = new OpenBlox::Factory();
-
-		game = new OpenBlox::BaseGame();
-
-		static_init::execute();
-
-		#ifdef __APPLE__
-		{
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		}
-		#endif
-		glfwWindowHint(GLFW_SAMPLES, OPENBLOX_AA_SAMPLES);
-
-		if(!OpenBlox::createGLContext()){
-			return 1;
-		}
-
-		GLFWwindow* window = OpenBlox::getWindow();
-
-		glfwMakeContextCurrent(window);
-
-		glewExperimental = GL_TRUE;
-		if(glewInit() != GLEW_OK){
-			LOGE("[GLFW] Failed to initialize GLEW.");
-			glfwTerminate();
-			return 1;
-		}
-
-		glfwSetWindowSizeCallback(window, glfw_window_size_callback);
-
-		{
-			const GLubyte* vendor = glGetString(GL_VENDOR);
-			const GLubyte* renderer = glGetString(GL_RENDERER);
-			const GLubyte* version = glGetString(GL_VERSION);
-			const GLubyte* shading_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
-
-			LOGI("[GL] Vendor: %s", vendor);
-			LOGI("[GL] Renderer: %s", renderer);
-			LOGI("[GL] OpenGL Version: %s", version);
-			LOGI("[GL] Shading Language Version: %s", shading_version);
-		}
-
-		pthread_t render_thread;
-		int val;
-		val = pthread_create(&render_thread, NULL, renderThread, NULL);
-		if(val){
-			LOGE("[CORE] Failed to create render thread.");
-			glfwTerminate();
-			return 1;
-		}
-
-		glfwMakeContextCurrent(NULL);
-
-		pthread_t lua_thread;
-		val = pthread_create(&lua_thread, NULL, luaThread, NULL);
-		if(val){
-			LOGE("[CORE] Failed to create logic thread.");
-			glfwTerminate();
-			return 1;
-		}
-
-		while(!glfwWindowShouldClose(window)){
-			glfwPollEvents();
-		}
-
-		void* status;
-		pthread_join(lua_thread, &status);
-		pthread_join(render_thread, &status);
-
-		glfwDestroyWindow(window);
-		OpenBlox::BaseGame::getInstanceFactory()->releaseTable();
-		glfwTerminate();
-		return 0;
+int main(){
+	glfwSetErrorCallback(glfw_error_callback);
+	if(!glfwInit()){
+		LOGE("[GLFW] Failed to initialize library.");
+		return 1;
 	}
+
+	OpenBlox::BaseGame::InstanceFactory = new OpenBlox::Factory();
+
+	game = new OpenBlox::BaseGame();
+
+	static_init::execute();
+
+	#ifdef __APPLE__
+	{
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	}
+	#endif
+	glfwWindowHint(GLFW_SAMPLES, OPENBLOX_AA_SAMPLES);
+
+	if(!OpenBlox::createGLContext()){
+		return 1;
+	}
+
+	GLFWwindow* window = OpenBlox::getWindow();
+
+	glfwMakeContextCurrent(window);
+
+	glewExperimental = GL_TRUE;
+	if(glewInit() != GLEW_OK){
+		LOGE("[GLFW] Failed to initialize GLEW.");
+		glfwTerminate();
+		return 1;
+	}
+
+	glfwSetWindowSizeCallback(window, glfw_window_size_callback);
+
+	{
+		const GLubyte* vendor = glGetString(GL_VENDOR);
+		const GLubyte* renderer = glGetString(GL_RENDERER);
+		const GLubyte* version = glGetString(GL_VERSION);
+		const GLubyte* shading_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+		LOGI("[GL] Vendor: %s", vendor);
+		LOGI("[GL] Renderer: %s", renderer);
+		LOGI("[GL] OpenGL Version: %s", version);
+		LOGI("[GL] Shading Language Version: %s", shading_version);
+	}
+
+	pthread_t render_thread;
+	int val;
+	val = pthread_create(&render_thread, NULL, renderThread, NULL);
+	if(val){
+		LOGE("[CORE] Failed to create render thread.");
+		glfwTerminate();
+		return 1;
+	}
+
+	glfwMakeContextCurrent(NULL);
+
+	pthread_t lua_thread;
+	val = pthread_create(&lua_thread, NULL, luaThread, NULL);
+	if(val){
+		LOGE("[CORE] Failed to create logic thread.");
+		glfwTerminate();
+		return 1;
+	}
+
+	while(!glfwWindowShouldClose(window)){
+		//game->tick();
+		glfwPollEvents();
+	}
+
+	void* status;
+	pthread_join(lua_thread, &status);
+	pthread_join(render_thread, &status);
+
+	glfwDestroyWindow(window);
+	OpenBlox::BaseGame::getInstanceFactory()->releaseTable();
+	glfwTerminate();
+	return 0;
+}
 #endif

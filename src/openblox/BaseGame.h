@@ -30,10 +30,13 @@ namespace OpenBlox{
 			static Factory* getInstanceFactory();
 			static Factory* InstanceFactory;
 
+			static lua_State* newLuaState();
+
 			static BaseGame* getInstance();
 
+			//static void tick();
+
 		private:
-			lua_State* newLuaState();
 			ob_instance::DataModel* datamodel;
 
 			static lua_State* GlobalLuaState;

@@ -127,7 +127,7 @@ namespace ob_type{
 		if(con != NULL){
 			bool conned = con->connected;
 			if(conned){
-				conned = evt->isConnected(ref);
+				conned = con->evt->isConnected(con->ref);
 			}
 			lua_pushboolean(L, conned);
 			return 1;

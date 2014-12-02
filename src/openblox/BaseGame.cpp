@@ -8,9 +8,26 @@ namespace OpenBlox{
 	lua_State* BaseGame::GlobalLuaState = NULL;
 	Factory* BaseGame::InstanceFactory = NULL;
 
+	/*
+	struct WaitingTask{
+		WaitingTask(lua_State* L, long resumeTime){
+			this->L = L;
+			this->resumeTime = resumeTime;
+		}
+
+		lua_State* L;
+		long resumeTime;
+	};
+
+	static std::vector<WaitingTask*> tasks = std::vector<WaitingTask*>();
+	*/
+
 	BaseGame::BaseGame(){
 		INSTANCE = this;
-		GlobalLuaState = newLuaState();
+
+		lua_State* L = lua_open();
+
+		GlobalLuaState = L;
 		datamodel = new ob_instance::DataModel();
 	}
 
@@ -125,8 +142,26 @@ namespace OpenBlox{
 		return 1;
 	}
 
+	/*
+	static int lua_wait(lua_State* L){
+		double waitTime = 1/60;
+		if(!lua_isnoneornil(L, 1)){
+			waitTime = luaL_checknumber(L, 1);
+		}
+
+		long waitStart = currentTimeMillis();
+		long longWaitTime = waitStart + (waitTime * 1000);
+
+		tasks.push_back(new WaitingTask(L, longWaitTime));
+
+		return lua_yield(L, 2);
+	}
+	*/
+
 	lua_State* BaseGame::newLuaState(){
-		lua_State* L = lua_open();
+		lua_State* L = lua_newthread(GlobalLuaState);
+		lua_resume(L, 0);
+
 		luaopen_base(L);
 		luaopen_table(L);
 		luaopen_string(L);
@@ -150,6 +185,18 @@ namespace OpenBlox{
 		lua_register(L, "print", lua_print);
 		lua_register(L, "warn", lua_warn);
 
+		//lua_register(L, "wait", lua_wait);
+
+		ob_instance::DataModel* dm = INSTANCE->getDataModel();
+		int gm = dm->wrap_lua(L);
+		lua_pushvalue(L, -gm);
+		lua_setglobal(L, "game");
+
+		lua_pushvalue(L, -gm);
+		lua_setglobal(L, "Game");
+
+		lua_pop(L, gm);
+
 		return L;
 	}
 
@@ -164,4 +211,45 @@ namespace OpenBlox{
 	BaseGame* BaseGame::getInstance(){
 		return INSTANCE;
 	}
+
+	/*
+	void removeTask(WaitingTask* task){
+		std::vector<WaitingTask*>::size_type min1 = -1;
+		std::vector<WaitingTask*>::size_type to_remove = min1;
+		for(std::vector<WaitingTask*>::size_type i = 0; i != tasks.size(); i++){
+			if(tasks[i] == task){
+				to_remove = i;
+				break;
+			}
+		}
+		if(to_remove != min1){
+			tasks.erase(tasks.begin() + (to_remove - 1));
+		}
+	}
+
+	void BaseGame::tick(){
+		if(tasks.size() > 0){
+			long curTime = OpenBlox::currentTimeMillis();
+
+			for(std::vector<WaitingTask*>::size_type i = 0; tasks.size(); i++){
+				WaitingTask* task = tasks[i];
+				if(task != NULL){
+					if(lua_status(task->L) == LUA_YIELD){
+						if(task->resumeTime <= curTime){
+							lua_pushnumber(task->L, curTime - task->resumeTime);
+							lua_pushnumber(task->L, curTime);
+							int s = lua_resume(task->L, 2);
+							if(s != 0 && s != LUA_YIELD){
+								INSTANCE->handle_lua_errors(task->L);
+							}
+							removeTask(task);
+						}
+					}
+				}else{
+					removeTask(task);
+				}
+			}
+		}
+	}
+	*/
 }
