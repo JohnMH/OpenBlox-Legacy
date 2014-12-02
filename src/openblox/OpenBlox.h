@@ -51,6 +51,7 @@ extern "C"{
 #include "static_init.h"
 #include "Utility.h"
 #include "Factory.h"
+#include "ThreadScheduler.h"
 
 #include "BaseGame.h"
 #endif

@@ -50,8 +50,9 @@ void render(){
 
 void* luaThread(void* arg){
 	lua_State* L = OpenBlox::BaseGame::newLuaState();
+	lua_resume(L, 0);
 
-	char* script = "print('Hi');";
+	char* script = "print('Hi');print(wait(1));print('Bye');";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);
@@ -165,7 +166,7 @@ int main(){
 	}
 
 	while(!glfwWindowShouldClose(window)){
-		//game->tick();
+		game->getThreadScheduler()->Tick();
 		glfwPollEvents();
 	}
 
