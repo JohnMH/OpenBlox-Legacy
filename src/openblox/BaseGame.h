@@ -13,6 +13,7 @@ namespace ob_instance{
 
 namespace OpenBlox{
 	class Factory;
+	class ThreadScheduler;
 
 	class BaseGame{
 		public:
@@ -25,6 +26,7 @@ namespace OpenBlox{
 			void handle_lua_errors(lua_State* L);
 
 			ob_instance::DataModel* getDataModel();
+			ThreadScheduler* getThreadScheduler();
 
 			static lua_State* getGlobalState();
 			static Factory* getInstanceFactory();
@@ -34,10 +36,9 @@ namespace OpenBlox{
 
 			static BaseGame* getInstance();
 
-			//static void tick();
-
 		private:
 			ob_instance::DataModel* datamodel;
+			ThreadScheduler* GlobalThreadScheduler;
 
 			static lua_State* GlobalLuaState;
 	};

@@ -3,61 +3,20 @@
 #include "../ob_instance/DataModel.h"
 
 namespace OpenBlox{
+
 	static BaseGame* INSTANCE;
 
-	lua_State* BaseGame::GlobalLuaState = NULL;
-	Factory* BaseGame::InstanceFactory = NULL;
-
-	/*
-	struct WaitingTask{
-		WaitingTask(lua_State* L, long resumeTime){
-			this->L = L;
-			this->resumeTime = resumeTime;
+	static int lua_wait(lua_State* L){
+		double waitTime = 1/60;
+		if(!lua_isnoneornil(L, 1)){
+			waitTime = luaL_checknumber(L, 1);
 		}
 
-		lua_State* L;
-		long resumeTime;
-	};
+		LOGI("ThreadScheduler->Wait for %.5f seconds", waitTime);
+		INSTANCE->getThreadScheduler()->Wait(L, (waitTime * 1000));
 
-	static std::vector<WaitingTask*> tasks = std::vector<WaitingTask*>();
-	*/
-
-	BaseGame::BaseGame(){
-		INSTANCE = this;
-
-		lua_State* L = lua_open();
-
-		GlobalLuaState = L;
-		datamodel = new ob_instance::DataModel();
-	}
-
-	BaseGame::~BaseGame(){
-		INSTANCE = NULL;
-	}
-
-	ob_instance::DataModel* BaseGame::getDataModel(){
-		return datamodel;
-	}
-
-	//TODO: Implement LogService print, warn, error
-	void BaseGame::print(const char* output){
-		LOGI(output);
-	}
-
-	void BaseGame::warn(const char* output){
-		LOGW(output);
-	}
-
-	void BaseGame::print_error(const char* output){
-		LOGE(output);
-	}
-
-	void BaseGame::handle_lua_errors(lua_State* L){
-		const char* output = lua_tostring(L, -1);
-		if(INSTANCE != NULL){
-			INSTANCE->print_error(output);
-		}
-		lua_pop(L, 1);
+		LOGI("lua_yield return");
+		return lua_yield(L, 1);
 	}
 
 	static int lua_print(lua_State* L){
@@ -142,27 +101,19 @@ namespace OpenBlox{
 		return 1;
 	}
 
-	/*
-	static int lua_wait(lua_State* L){
-		double waitTime = 1/60;
-		if(!lua_isnoneornil(L, 1)){
-			waitTime = luaL_checknumber(L, 1);
-		}
 
-		long waitStart = currentTimeMillis();
-		long longWaitTime = waitStart + (waitTime * 1000);
+	lua_State* BaseGame::GlobalLuaState = NULL;
+	Factory* BaseGame::InstanceFactory = NULL;
 
-		tasks.push_back(new WaitingTask(L, longWaitTime));
 
-		return lua_yield(L, 2);
-	}
-	*/
+	BaseGame::BaseGame(){
+		INSTANCE = this;
+		datamodel = new ob_instance::DataModel();
 
-	lua_State* BaseGame::newLuaState(){
-		lua_State* L = lua_newthread(GlobalLuaState);
-		lua_resume(L, 0);
+		lua_State *L = lua_open();
 
 		luaopen_base(L);
+
 		luaopen_table(L);
 		luaopen_string(L);
 		luaopen_math(L);
@@ -185,7 +136,7 @@ namespace OpenBlox{
 		lua_register(L, "print", lua_print);
 		lua_register(L, "warn", lua_warn);
 
-		//lua_register(L, "wait", lua_wait);
+		lua_register(L, "wait", lua_wait);
 
 		ob_instance::DataModel* dm = INSTANCE->getDataModel();
 		int gm = dm->wrap_lua(L);
@@ -197,11 +148,53 @@ namespace OpenBlox{
 
 		lua_pop(L, gm);
 
+		GlobalLuaState = L;
+		GlobalThreadScheduler = new ThreadScheduler();
+	}
+
+	BaseGame::~BaseGame(){
+		INSTANCE = NULL;
+	}
+
+	ob_instance::DataModel* BaseGame::getDataModel(){
+		return datamodel;
+	}
+
+	//TODO: Implement LogService print, warn, error
+	void BaseGame::print(const char* output){
+		LOGI(output);
+	}
+
+	void BaseGame::warn(const char* output){
+		LOGW(output);
+	}
+
+	void BaseGame::print_error(const char* output){
+		LOGE(output);
+	}
+
+	void BaseGame::handle_lua_errors(lua_State* L){
+		const char* output = lua_tostring(L, -1);
+		if(INSTANCE != NULL){
+			INSTANCE->print_error(output);
+		}
+		lua_pop(L, 1);
+	}
+
+	lua_State* BaseGame::newLuaState(){
+		lua_State* L = lua_newthread(GlobalLuaState);
+
+		lua_pop(GlobalLuaState, 1);
+
 		return L;
 	}
 
 	lua_State* BaseGame::getGlobalState(){
 		return GlobalLuaState;
+	}
+
+	ThreadScheduler* BaseGame::getThreadScheduler(){
+		return GlobalThreadScheduler;
 	}
 
 	Factory* BaseGame::getInstanceFactory(){
@@ -212,44 +205,4 @@ namespace OpenBlox{
 		return INSTANCE;
 	}
 
-	/*
-	void removeTask(WaitingTask* task){
-		std::vector<WaitingTask*>::size_type min1 = -1;
-		std::vector<WaitingTask*>::size_type to_remove = min1;
-		for(std::vector<WaitingTask*>::size_type i = 0; i != tasks.size(); i++){
-			if(tasks[i] == task){
-				to_remove = i;
-				break;
-			}
-		}
-		if(to_remove != min1){
-			tasks.erase(tasks.begin() + (to_remove - 1));
-		}
-	}
-
-	void BaseGame::tick(){
-		if(tasks.size() > 0){
-			long curTime = OpenBlox::currentTimeMillis();
-
-			for(std::vector<WaitingTask*>::size_type i = 0; tasks.size(); i++){
-				WaitingTask* task = tasks[i];
-				if(task != NULL){
-					if(lua_status(task->L) == LUA_YIELD){
-						if(task->resumeTime <= curTime){
-							lua_pushnumber(task->L, curTime - task->resumeTime);
-							lua_pushnumber(task->L, curTime);
-							int s = lua_resume(task->L, 2);
-							if(s != 0 && s != LUA_YIELD){
-								INSTANCE->handle_lua_errors(task->L);
-							}
-							removeTask(task);
-						}
-					}
-				}else{
-					removeTask(task);
-				}
-			}
-		}
-	}
-	*/
 }
