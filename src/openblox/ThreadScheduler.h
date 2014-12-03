@@ -13,6 +13,11 @@ namespace OpenBlox{
 				long at;
 				long start;
 			};
+			struct less_than_key{
+				inline bool operator() (const Task& struct1, const Task& struct2){
+					return struct1.at > struct2.at;
+				}
+			};
 
 			ThreadScheduler();
 			virtual ~ThreadScheduler();

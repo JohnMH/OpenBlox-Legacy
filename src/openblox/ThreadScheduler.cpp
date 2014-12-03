@@ -8,17 +8,16 @@ namespace OpenBlox{
 
 	int ThreadScheduler::Delay(lua_State* L, int funcidx, long millis){
 		lua_State* NL = lua_newthread(L);
-		luaL_argcheck(L, lua_isfunction(L, funcidx) && !lua_iscfunction(L, funcidx), funcidx, "Lua function expected");
 		lua_pushvalue(L, funcidx);
-		lua_xmove(L, NL, funcidx);
+		int r = lua_ref(L, LUA_REGISTRYINDEX);
 
 		long curTime = currentTimeMillis();
 
 		Task tsk = Task();
-		tsk.origin = L;
+		tsk.origin = NL;
 		tsk.at = curTime + millis;
 		tsk.start = curTime;
-		tsk.coro = lua_ref(L, LUA_REGISTRYINDEX);
+		tsk.coro = r;
 		tsk.usestackid = true;
 
 		enqueue_task(tsk);
@@ -28,15 +27,16 @@ namespace OpenBlox{
 
 	int ThreadScheduler::Spawn(lua_State* L, int funcidx){
 		lua_State* NL = lua_newthread(L);
-		luaL_argcheck(L, lua_isfunction(L, funcidx) && !lua_iscfunction(L, funcidx), funcidx, "Lua function expected");
 		lua_pushvalue(L, funcidx);
-		lua_xmove(L, NL, funcidx);
+		int r = lua_ref(L, LUA_REGISTRYINDEX);
+
+		long curTime = currentTimeMillis();
 
 		Task tsk = Task();
-		tsk.origin = L;
-		tsk.at = currentTimeMillis();
-		tsk.start = tsk.at;
-		tsk.coro = lua_ref(L, LUA_REGISTRYINDEX);
+		tsk.origin = NL;
+		tsk.at = curTime;
+		tsk.start = curTime;
+		tsk.coro = r;
 		tsk.usestackid = true;
 
 		enqueue_task(tsk);
@@ -60,6 +60,7 @@ namespace OpenBlox{
 
 	void ThreadScheduler::enqueue_task(ThreadScheduler::Task t){
 		tasks.push_back(t);
+		std::sort(tasks.begin(), tasks.end(), less_than_key());
 	}
 
 	void ThreadScheduler::Tick(){
@@ -68,27 +69,40 @@ namespace OpenBlox{
 			try{
 				Task task = tasks.at(tasks.size() - 1);
 				if(task.at < curTime){
-					lua_State* L = NULL;
-					if(task.usestackid == true){
-						lua_rawgeti(task.origin, LUA_REGISTRYINDEX, task.coro);
-						L = lua_tothread(task.origin, -1);
-						luaL_unref(task.origin, LUA_REGISTRYINDEX, task.coro);
-					}else{
-						L = task.origin;
-					}
-
+					lua_State* L = task.origin;
 					if(L == NULL){
+						return;
+					}
+					if(task.usestackid == true){
+						lua_resume(L, 0);
+						lua_rawgeti(L, LUA_REGISTRYINDEX, task.coro);
+
+						long appStartTime = OpenBlox::BaseGame::appStarted();
+						long elapsedTime = (curTime - task.start) / 1000;
+
+						lua_pushnumber(L, elapsedTime);
+						lua_pushnumber(L, (curTime - appStartTime) / 1000.0);
+
+						int stat = lua_pcall(L, 2, LUA_MULTRET, 0);
+						if(stat != 0 && stat != LUA_YIELD){
+							OpenBlox::BaseGame::getInstance()->handle_lua_errors(L);
+						}
+						luaL_unref(L, LUA_REGISTRYINDEX, task.coro);
+						tasks.pop_back();
 						return;
 					}
 
 					long appStartTime = OpenBlox::BaseGame::appStarted();
-
 					long elapsedTime = (curTime - task.start) / 1000;
 
-					lua_pushnumber(L, 1);
+					lua_pushnumber(L, elapsedTime);
 					lua_pushnumber(L, (curTime - appStartTime) / 1000.0);
-					lua_resume(L, 2);
+
 					tasks.pop_back();
+					int stat = lua_resume(L, 2);
+					if(stat != 0 && stat != LUA_YIELD){
+						OpenBlox::BaseGame::getInstance()->handle_lua_errors(L);
+					}
 				}
 			}catch(const std::out_of_range& e){}
 		}
