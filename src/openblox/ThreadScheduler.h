@@ -8,8 +8,6 @@ namespace OpenBlox{
 		public:
 			struct Task{
 				lua_State* origin;
-				int coro;
-				bool usestackid;
 				long at;
 				long start;
 			};
