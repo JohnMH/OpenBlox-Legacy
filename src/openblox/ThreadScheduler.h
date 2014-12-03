@@ -3,28 +3,27 @@
 
 #include "OpenBlox.h"
 
-namespace OpenBlox {
-	class ThreadScheduler {
+namespace OpenBlox{
+	class ThreadScheduler{
 		public:
-			struct Task {
-				lua_State* origin; // original lua_State
-				int coro; // stack id from registry
-				bool usestackid; // use stack id?
-				long at; // when to resume
+			struct Task{
+				lua_State* origin;
+				int coro;
+				bool usestackid;
+				long at;
+				long start;
 			};
 
 			ThreadScheduler();
 			virtual ~ThreadScheduler();
 
-			static void Delay(lua_State* L, int funcidx, long millis);
-			static void Spawn(lua_State* L, int funcidx);
-			static void Wait(lua_State* L, long millis);
+			static int Delay(lua_State* L, int funcidx, long millis);
+			static int Spawn(lua_State* L, int funcidx);
+			static int Wait(lua_State* L, long millis);
 
 			static void Tick();
 		private:
 			static void enqueue_task(Task t);
 	};
-
-} /* namespace OpenBlox */
-
-#endif /* OPENBLOX_THREADSCHEDULER_H_ */
+}
+#endif

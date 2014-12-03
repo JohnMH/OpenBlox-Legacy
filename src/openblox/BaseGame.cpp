@@ -1,22 +1,44 @@
 #include "BaseGame.h"
 
 #include "../ob_instance/DataModel.h"
+#include <ctime>
 
 namespace OpenBlox{
-
 	static BaseGame* INSTANCE;
+	static long APP_START = currentTimeMillis();
 
 	static int lua_wait(lua_State* L){
 		double waitTime = 1/60;
 		if(!lua_isnoneornil(L, 1)){
 			waitTime = luaL_checknumber(L, 1);
 		}
+		return INSTANCE->getThreadScheduler()->Wait(L, (waitTime * 1000));
+	}
 
-		LOGI("ThreadScheduler->Wait for %.5f seconds", waitTime);
-		INSTANCE->getThreadScheduler()->Wait(L, (waitTime * 1000));
+	static int lua_delay(lua_State* L){
+		if(lua_isnumber(L, 1)){
+			double delayTime = luaL_checknumber(L, 1);
 
-		LOGI("lua_yield return");
-		return lua_yield(L, 1);
+			luaL_checktype(L, 2, LUA_TFUNCTION);
+
+			return INSTANCE->getThreadScheduler()->Delay(L, 2, delayTime * 1000);
+		}else{
+			luaL_checktype(L, 1, LUA_TFUNCTION);
+
+			double delayTime = luaL_checknumber(L, 2);
+
+			return INSTANCE->getThreadScheduler()->Delay(L, 1, delayTime * 1000);
+		}
+	}
+
+	static int lua_spawn(lua_State* L){
+		luaL_checktype(L, 1, LUA_TFUNCTION);
+		return INSTANCE->getThreadScheduler()->Spawn(L, 1);
+	}
+
+	static int lua_tick(lua_State* L){
+		lua_pushnumber(L, time(0));
+		return 1;
 	}
 
 	static int lua_print(lua_State* L){
@@ -47,6 +69,11 @@ namespace OpenBlox{
 		}
 
 		return 0;
+	}
+
+	static int lua_elapsedTime(lua_State* L){
+		lua_pushnumber(L, (currentTimeMillis() - APP_START) / 1000.0);
+		return 1;
 	}
 
 	static int lua_warn(lua_State* L){
@@ -125,6 +152,18 @@ namespace OpenBlox{
 		lua_pushnil(L);
 		lua_setglobal(L, "loadfile");
 
+		lua_register(L, "delay", lua_delay);
+		lua_register(L, "Delay", lua_delay);
+		lua_register(L, "elapsedTime", lua_elapsedTime);
+		lua_register(L, "ElapsedTime", lua_elapsedTime);
+		lua_register(L, "spawn", lua_spawn);
+		lua_register(L, "Spawn", lua_spawn);
+		lua_register(L, "print", lua_print);
+		lua_register(L, "warn", lua_warn);
+		lua_register(L, "tick", lua_tick);
+		lua_register(L, "wait", lua_wait);
+		lua_register(L, "Wait", lua_wait);
+
 		lua_newtable(L);
 		luaL_Reg instancelib[]{
 			{"new", lua_newInstance},
@@ -132,11 +171,6 @@ namespace OpenBlox{
 		};
 		luaL_register(L, NULL, instancelib);
 		lua_setglobal(L, "Instance");
-
-		lua_register(L, "print", lua_print);
-		lua_register(L, "warn", lua_warn);
-
-		lua_register(L, "wait", lua_wait);
 
 		ob_instance::DataModel* dm = INSTANCE->getDataModel();
 		int gm = dm->wrap_lua(L);
@@ -201,8 +235,11 @@ namespace OpenBlox{
 		return InstanceFactory;
 	}
 
+	long BaseGame::appStarted(){
+		return APP_START;
+	}
+
 	BaseGame* BaseGame::getInstance(){
 		return INSTANCE;
 	}
-
 }

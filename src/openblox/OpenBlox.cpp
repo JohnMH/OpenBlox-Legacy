@@ -52,7 +52,7 @@ void* luaThread(void* arg){
 	lua_State* L = OpenBlox::BaseGame::newLuaState();
 	lua_resume(L, 0);
 
-	char* script = "print('Hi');print(wait(1));print('Bye');";
+	char* script = "print('Hi');delay(0.5, function() print('lolo'); end);print(wait(1));print('Bye');";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);
@@ -61,6 +61,11 @@ void* luaThread(void* arg){
 	if(s != 0){
 		game->handle_lua_errors(L);
 	}
+
+	while(!glfwWindowShouldClose(OpenBlox::getWindow())){
+		game->getThreadScheduler()->Tick();
+	}
+
 	lua_close(L);
 
 	pthread_exit(NULL);
@@ -166,7 +171,6 @@ int main(){
 	}
 
 	while(!glfwWindowShouldClose(window)){
-		game->getThreadScheduler()->Tick();
 		glfwPollEvents();
 	}
 

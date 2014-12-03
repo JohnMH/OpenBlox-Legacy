@@ -31,6 +31,7 @@ namespace OpenBlox{
 			static lua_State* getGlobalState();
 			static Factory* getInstanceFactory();
 			static Factory* InstanceFactory;
+			static long appStarted();
 
 			static lua_State* newLuaState();
 
