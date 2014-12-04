@@ -9,7 +9,8 @@ namespace OpenBlox{
 	int ThreadScheduler::Delay(lua_State* L, int funcidx, long millis){
 		lua_State* NL = lua_newthread(L);
 		lua_pushvalue(L, funcidx);
-		int r = lua_ref(L, LUA_REGISTRYINDEX);
+		lua_xmove(L, NL, 1);
+		int r = luaL_ref(L, LUA_REGISTRYINDEX);
 
 		long curTime = currentTimeMillis();
 
@@ -17,8 +18,7 @@ namespace OpenBlox{
 		tsk.origin = NL;
 		tsk.at = curTime + millis;
 		tsk.start = curTime;
-		tsk.coro = r;
-		tsk.usestackid = true;
+		tsk.ref = r;
 
 		enqueue_task(tsk);
 
@@ -26,22 +26,7 @@ namespace OpenBlox{
 	}
 
 	int ThreadScheduler::Spawn(lua_State* L, int funcidx){
-		lua_State* NL = lua_newthread(L);
-		lua_pushvalue(L, funcidx);
-		int r = lua_ref(L, LUA_REGISTRYINDEX);
-
-		long curTime = currentTimeMillis();
-
-		Task tsk = Task();
-		tsk.origin = NL;
-		tsk.at = curTime;
-		tsk.start = curTime;
-		tsk.coro = r;
-		tsk.usestackid = true;
-
-		enqueue_task(tsk);
-
-		return 0;
+		return Delay(L, funcidx, 0);
 	}
 
 	int ThreadScheduler::Wait(lua_State* L, long millis){
@@ -51,7 +36,6 @@ namespace OpenBlox{
 		tsk.origin = L;
 		tsk.at = curTime + millis;
 		tsk.start = curTime;
-		tsk.usestackid = false;
 
 		enqueue_task(tsk);
 
@@ -73,24 +57,6 @@ namespace OpenBlox{
 					if(L == NULL){
 						return;
 					}
-					if(task.usestackid == true){
-						lua_resume(L, 0);
-						lua_rawgeti(L, LUA_REGISTRYINDEX, task.coro);
-
-						long appStartTime = OpenBlox::BaseGame::appStarted();
-						long elapsedTime = (curTime - task.start) / 1000;
-
-						lua_pushnumber(L, elapsedTime);
-						lua_pushnumber(L, (curTime - appStartTime) / 1000.0);
-
-						int stat = lua_pcall(L, 2, LUA_MULTRET, 0);
-						if(stat != 0 && stat != LUA_YIELD){
-							OpenBlox::BaseGame::getInstance()->handle_lua_errors(L);
-						}
-						luaL_unref(L, LUA_REGISTRYINDEX, task.coro);
-						tasks.pop_back();
-						return;
-					}
 
 					long appStartTime = OpenBlox::BaseGame::appStarted();
 					long elapsedTime = (curTime - task.start) / 1000;
@@ -98,6 +64,7 @@ namespace OpenBlox{
 					lua_pushnumber(L, elapsedTime);
 					lua_pushnumber(L, (curTime - appStartTime) / 1000.0);
 
+					luaL_unref(L, LUA_REGISTRYINDEX, task.ref);
 					tasks.pop_back();
 					int stat = lua_resume(L, 2);
 					if(stat != 0 && stat != LUA_YIELD){
