@@ -64,7 +64,7 @@ namespace OpenBlox{
 					lua_pushnumber(L, elapsedTime);
 					lua_pushnumber(L, (curTime - appStartTime) / 1000.0);
 
-					lua_unref(L, task.ref);
+					luaL_unref(L, LUA_REGISTRYINDEX, task.ref);
 					tasks.pop_back();
 					int stat = lua_resume(L, 2);
 					if(stat != 0 && stat != LUA_YIELD){
