@@ -10,6 +10,7 @@ namespace OpenBlox{
 				lua_State* origin;
 				long at;
 				long start;
+				int ref;
 			};
 			struct less_than_key{
 				inline bool operator() (const Task& struct1, const Task& struct2){

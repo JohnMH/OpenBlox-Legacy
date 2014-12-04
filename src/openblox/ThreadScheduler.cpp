@@ -10,6 +10,7 @@ namespace OpenBlox{
 		lua_State* NL = lua_newthread(L);
 		lua_pushvalue(L, funcidx);
 		lua_xmove(L, NL, 1);
+		int r = luaL_ref(L, LUA_REGISTRYINDEX);
 
 		long curTime = currentTimeMillis();
 
@@ -17,6 +18,7 @@ namespace OpenBlox{
 		tsk.origin = NL;
 		tsk.at = curTime + millis;
 		tsk.start = curTime;
+		tsk.ref = r;
 
 		enqueue_task(tsk);
 
@@ -24,20 +26,7 @@ namespace OpenBlox{
 	}
 
 	int ThreadScheduler::Spawn(lua_State* L, int funcidx){
-		lua_State* NL = lua_newthread(L);
-		lua_pushvalue(L, funcidx);
-		lua_xmove(L, NL, 1);
-
-		long curTime = currentTimeMillis();
-
-		Task tsk = Task();
-		tsk.origin = NL;
-		tsk.at = curTime;
-		tsk.start = curTime;
-
-		enqueue_task(tsk);
-
-		return 0;
+		return Delay(L, funcidx, 0);
 	}
 
 	int ThreadScheduler::Wait(lua_State* L, long millis){
@@ -75,6 +64,7 @@ namespace OpenBlox{
 					lua_pushnumber(L, elapsedTime);
 					lua_pushnumber(L, (curTime - appStartTime) / 1000.0);
 
+					lua_unref(L, task.ref);
 					tasks.pop_back();
 					int stat = lua_resume(L, 2);
 					if(stat != 0 && stat != LUA_YIELD){
