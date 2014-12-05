@@ -1,9 +1,6 @@
 #include "ThreadScheduler.h"
 
 namespace OpenBlox{
-	ThreadScheduler::ThreadScheduler(){}
-	ThreadScheduler::~ThreadScheduler(){}
-
 	static std::vector<ThreadScheduler::Task> tasks = std::vector<ThreadScheduler::Task>();
 	static std::vector<ThreadScheduler::WaitingTask> waitingTasks = std::vector<ThreadScheduler::WaitingTask>();
 

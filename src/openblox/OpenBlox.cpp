@@ -62,7 +62,7 @@ void* luaThread(void* arg){
 	L = OpenBlox::BaseGame::newLuaState();
 	lua_resume(L, 0);
 
-	char* script = "local cam = Instance.new('Camera'); delay(5, function() print('delayed'); cam.Name = 'HiThere'; end); local prop = cam.Changed:wait(); print('No longer waiting', prop);";
+	char* script = "print(game);";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);

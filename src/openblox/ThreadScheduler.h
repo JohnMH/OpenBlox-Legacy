@@ -22,9 +22,6 @@ namespace OpenBlox{
 				}
 			};
 
-			ThreadScheduler();
-			virtual ~ThreadScheduler();
-
 			static int Delay(lua_State* L, int funcidx, long millis);
 			static int Spawn(lua_State* L, int funcidx);
 			static int Wait(lua_State* L, long millis);

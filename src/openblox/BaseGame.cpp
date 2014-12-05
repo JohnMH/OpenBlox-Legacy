@@ -136,7 +136,40 @@ namespace OpenBlox{
 		INSTANCE = this;
 		datamodel = new ob_instance::DataModel();
 
-		lua_State *L = lua_open();
+		GlobalLuaState = lua_open();
+	}
+
+	BaseGame::~BaseGame(){
+		INSTANCE = NULL;
+	}
+
+	ob_instance::DataModel* BaseGame::getDataModel(){
+		return datamodel;
+	}
+
+	//TODO: Implement LogService print, warn, error
+	void BaseGame::print(const char* output){
+		LOGI(output);
+	}
+
+	void BaseGame::warn(const char* output){
+		LOGW(output);
+	}
+
+	void BaseGame::print_error(const char* output){
+		LOGE(output);
+	}
+
+	void BaseGame::handle_lua_errors(lua_State* L){
+		const char* output = lua_tostring(L, -1);
+		if(INSTANCE != NULL){
+			INSTANCE->print_error(output);
+		}
+		lua_pop(L, 1);
+	}
+
+	lua_State* BaseGame::newLuaState(){
+		lua_State* L = lua_newthread(GlobalLuaState);
 
 		luaopen_base(L);
 
@@ -181,42 +214,7 @@ namespace OpenBlox{
 
 		lua_pop(L, gm);
 
-		GlobalLuaState = L;
-	}
-
-	BaseGame::~BaseGame(){
-		INSTANCE = NULL;
-	}
-
-	ob_instance::DataModel* BaseGame::getDataModel(){
-		return datamodel;
-	}
-
-	//TODO: Implement LogService print, warn, error
-	void BaseGame::print(const char* output){
-		LOGI(output);
-	}
-
-	void BaseGame::warn(const char* output){
-		LOGW(output);
-	}
-
-	void BaseGame::print_error(const char* output){
-		LOGE(output);
-	}
-
-	void BaseGame::handle_lua_errors(lua_State* L){
-		const char* output = lua_tostring(L, -1);
-		if(INSTANCE != NULL){
-			INSTANCE->print_error(output);
-		}
-		lua_pop(L, 1);
-	}
-
-	lua_State* BaseGame::newLuaState(){
-		lua_State* L = lua_newthread(GlobalLuaState);
-
-		lua_pop(GlobalLuaState, 1);
+		//lua_pop(GlobalLuaState, 1);
 
 		return L;
 	}
