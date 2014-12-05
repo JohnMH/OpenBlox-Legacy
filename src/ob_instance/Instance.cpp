@@ -35,7 +35,7 @@ namespace ob_instance{
 		ParentLocked = false;
 
 		children = std::vector<Instance*>();
-		Changed = new ob_type::LuaEvent("Changed");
+		Changed = new ob_type::LuaEvent("Changed", 1);
 	}
 
 	Instance::~Instance(){
@@ -73,7 +73,7 @@ namespace ob_instance{
 	void Instance::Destroy(){
 		setParent(NULL);
 		ParentLocked = true;
-		//Disconnect all events
+		Changed->disconnectAll();
 		for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
 			Instance* kid = children[i];
 			if(kid != NULL){
@@ -379,7 +379,7 @@ namespace ob_instance{
 
 				inst->Changed->Fire([](lua_State* L, va_list args){
 					lua_pushstring(L, va_arg(args, const char*));
-				}, 1, name);
+				}, name);
 
 				return 0;
 			}else{

@@ -12,7 +12,7 @@ namespace OpenBlox{
 		if(!lua_isnoneornil(L, 1)){
 			waitTime = luaL_checknumber(L, 1);
 		}
-		return INSTANCE->getThreadScheduler()->Wait(L, (waitTime * 1000));
+		return ThreadScheduler::Wait(L, (waitTime * 1000));
 	}
 
 	static int lua_delay(lua_State* L){
@@ -21,19 +21,19 @@ namespace OpenBlox{
 
 			luaL_checktype(L, 2, LUA_TFUNCTION);
 
-			return INSTANCE->getThreadScheduler()->Delay(L, 2, delayTime * 1000);
+			return ThreadScheduler::Delay(L, 2, delayTime * 1000);
 		}else{
 			luaL_checktype(L, 1, LUA_TFUNCTION);
 
 			double delayTime = luaL_checknumber(L, 2);
 
-			return INSTANCE->getThreadScheduler()->Delay(L, 1, delayTime * 1000);
+			return ThreadScheduler::Delay(L, 1, delayTime * 1000);
 		}
 	}
 
 	static int lua_spawn(lua_State* L){
 		luaL_checktype(L, 1, LUA_TFUNCTION);
-		return INSTANCE->getThreadScheduler()->Spawn(L, 1);
+		return ThreadScheduler::Spawn(L, 1);
 	}
 
 	static int lua_tick(lua_State* L){
@@ -132,7 +132,6 @@ namespace OpenBlox{
 	lua_State* BaseGame::GlobalLuaState = NULL;
 	Factory* BaseGame::InstanceFactory = NULL;
 
-
 	BaseGame::BaseGame(){
 		INSTANCE = this;
 		datamodel = new ob_instance::DataModel();
@@ -183,7 +182,6 @@ namespace OpenBlox{
 		lua_pop(L, gm);
 
 		GlobalLuaState = L;
-		GlobalThreadScheduler = new ThreadScheduler();
 	}
 
 	BaseGame::~BaseGame(){
@@ -225,10 +223,6 @@ namespace OpenBlox{
 
 	lua_State* BaseGame::getGlobalState(){
 		return GlobalLuaState;
-	}
-
-	ThreadScheduler* BaseGame::getThreadScheduler(){
-		return GlobalThreadScheduler;
 	}
 
 	Factory* BaseGame::getInstanceFactory(){

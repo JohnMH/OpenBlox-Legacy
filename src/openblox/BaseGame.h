@@ -39,7 +39,6 @@ namespace OpenBlox{
 
 		private:
 			ob_instance::DataModel* datamodel;
-			ThreadScheduler* GlobalThreadScheduler;
 
 			static lua_State* GlobalLuaState;
 	};

@@ -10,6 +10,7 @@
 #include "OpenBloxRenderUtil.h"
 
 OpenBlox::BaseGame* game;
+lua_State* L = NULL;
 
 double lastTime = glfwGetTime();
 int nbFrames = 0;
@@ -48,11 +49,20 @@ void render(){
 	}
 }
 
+void* taskSchedulerThread(void* arg){
+	GLFWwindow* window = OpenBlox::getWindow();
+	while(!glfwWindowShouldClose(window)){
+		OpenBlox::ThreadScheduler::Tick();
+	}
+	pthread_exit(NULL);
+	return NULL;
+}
+
 void* luaThread(void* arg){
-	lua_State* L = OpenBlox::BaseGame::newLuaState();
+	L = OpenBlox::BaseGame::newLuaState();
 	lua_resume(L, 0);
 
-	char* script = "while true do print('Hi');delay(5, function() print('lolo'); end);print(wait(1));print('Bye');spawn(function(...)print('waiting 1 sec')wait(1)print('waited')end) end";
+	char* script = "local cam = Instance.new('Camera'); delay(5, function() print('delayed'); cam.Name = 'HiThere'; end); local prop = cam.Changed:wait(); print('No longer waiting', prop);";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);
@@ -61,12 +71,6 @@ void* luaThread(void* arg){
 	if(s != 0){
 		game->handle_lua_errors(L);
 	}
-
-	GLFWwindow* window = OpenBlox::getWindow();
-	while(!glfwWindowShouldClose(window)){
-		game->getThreadScheduler()->Tick();
-	}
-	lua_close(L);
 
 	pthread_exit(NULL);
 	return NULL;
@@ -162,6 +166,14 @@ int main(){
 
 	glfwMakeContextCurrent(NULL);
 
+	pthread_t task_thread;
+	val = pthread_create(&task_thread, NULL, taskSchedulerThread, NULL);
+	if(val){
+		LOGE("[CORE] Failed to create task thread.");
+		glfwTerminate();
+		return 1;
+	}
+
 	pthread_t lua_thread;
 	val = pthread_create(&lua_thread, NULL, luaThread, NULL);
 	if(val){
@@ -176,7 +188,10 @@ int main(){
 
 	void* status;
 	pthread_join(lua_thread, &status);
+	pthread_join(task_thread, &status);
 	pthread_join(render_thread, &status);
+
+	lua_close(L);
 
 	glfwDestroyWindow(window);
 	OpenBlox::BaseGame::getInstanceFactory()->releaseTable();

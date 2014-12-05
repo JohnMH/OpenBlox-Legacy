@@ -1,4 +1,5 @@
 #include "LuaEvent.h"
+#include "../openblox/ThreadScheduler.h"
 
 namespace ob_type{
 	STATIC_INIT(LuaEventConnection){
@@ -155,6 +156,7 @@ namespace ob_type{
 
 		luaL_Reg methods[]{
 			{"connect", lua_connect},
+			{"wait", lua_wait},
 			{NULL, NULL}
 		};
 		luaL_register(L, NULL, methods);
@@ -164,9 +166,12 @@ namespace ob_type{
 		lua_pop(L, 1);
 	}
 
-	LuaEvent::LuaEvent(const char* LuaEventName){
+	LuaEvent::LuaEvent(const char* LuaEventName, int nargs){
 		this->LuaEventName = LuaEventName;
+		this->nargs = nargs;
+
 		connections = std::vector<int>();
+		waiting = std::vector<lua_State*>();
 	}
 
 	LuaEvent::~LuaEvent(){}
@@ -233,8 +238,32 @@ namespace ob_type{
 		return con->wrap_lua(L);
 	}
 
-	void LuaEvent::Fire(luaFireFunc fireFunc, int args, ...){
+	int LuaEvent::lua_wait(lua_State* L){
+		LuaEvent* evt = checkudata(L, 1);
+		evt->waiting.push_back(L);
+		return lua_yield(L, evt->nargs);
+	}
+
+	void LuaEvent::Fire(luaFireFunc fireFunc, ...){
 		lua_State* L = OpenBlox::BaseGame::getGlobalState();
+		if(!waiting.empty()){
+			while(!waiting.empty()){
+				try{
+					lua_State* L = waiting.at(waiting.size() - 1);
+					if(L != NULL){
+						va_list ap;
+						va_start(ap, fireFunc);
+
+						fireFunc(L, ap);
+
+						va_end(ap);
+
+						OpenBlox::ThreadScheduler::AddWaitingTask(L, nargs);
+					}
+					waiting.pop_back();
+				}catch(const std::out_of_range& e){}
+			}
+		}
 		for(std::vector<int>::size_type i = 0; i != connections.size(); i++){
 			int ref = connections[i];
 
@@ -244,13 +273,13 @@ namespace ob_type{
 			lua_rawgeti(eL, LUA_REGISTRYINDEX, ref);
 
 			va_list ap;
-			va_start(ap, args);
+			va_start(ap, fireFunc);
 
 			fireFunc(eL, ap);
 
 			va_end(ap);
 
-			int s = lua_pcall(eL, args, 0, 0);
+			int s = lua_pcall(eL, nargs, 0, 0);
 			if(s != 0){
 				OpenBlox::BaseGame::getInstance()->handle_lua_errors(eL);
 			}

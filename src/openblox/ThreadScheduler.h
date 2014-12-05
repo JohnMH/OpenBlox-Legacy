@@ -8,9 +8,13 @@ namespace OpenBlox{
 		public:
 			struct Task{
 				lua_State* origin;
+				int ref = -1;
 				long at;
 				long start;
-				int ref;
+			};
+			struct WaitingTask{
+					lua_State* state;
+					int resumeArgs;
 			};
 			struct less_than_key{
 				inline bool operator() (const Task& struct1, const Task& struct2){
@@ -24,6 +28,7 @@ namespace OpenBlox{
 			static int Delay(lua_State* L, int funcidx, long millis);
 			static int Spawn(lua_State* L, int funcidx);
 			static int Wait(lua_State* L, long millis);
+			static void AddWaitingTask(lua_State* L, int nargs);
 
 			static void Tick();
 		private:

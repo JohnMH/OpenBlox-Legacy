@@ -2,6 +2,7 @@
 #define OB_TYPE_LuaEvent_H_
 
 #include "../openblox/OpenBlox.h"
+
 #define lua_evt_name "luaL_LuaEvent"
 #define lua_evt_con_name "luaL_LuaEventConnection"
 
@@ -32,7 +33,7 @@ namespace ob_type{
 
 	class LuaEvent{
 		public:
-			LuaEvent(const char* EventName);
+			LuaEvent(const char* EventName, int nargs);
 			virtual ~LuaEvent();
 
 			void disconnectAll();
@@ -44,13 +45,16 @@ namespace ob_type{
 			int wrap_lua(lua_State* L);
 
 			typedef void (*luaFireFunc)(lua_State*, va_list);
-			void Fire(luaFireFunc fireFunc, int args, ...);
+			void Fire(luaFireFunc fireFunc, ...);
 		private:
 			std::vector<int> connections;
+			std::vector<lua_State*> waiting;
 			const char* LuaEventName;
+			int nargs;
 
 			static int lua_toString(lua_State* L);
 			static int lua_connect(lua_State* L);
+			static int lua_wait(lua_State* L);
 	};
 }
 #endif
