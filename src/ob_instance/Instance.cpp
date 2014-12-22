@@ -287,7 +287,6 @@ namespace ob_instance{
 	void Instance::register_lua_metamethods(lua_State* L){
 		luaL_Reg metamethods[] = {
 			{"__tostring", Instance::lua_toString},
-			{"__gc", Instance::lua_gc},
 			{NULL, NULL}
 		};
 		luaL_register(L, NULL, metamethods);
@@ -430,9 +429,12 @@ namespace ob_instance{
 						lua_call(L, 1, 1);
 						return 1;
 					}else{
-						//TODO: Check children
-						//Perhaps just call FindFirstChild(name, false);
 						lua_pop(L, 3);
+
+						Instance* kiddie = inst->FindFirstChild(name, false);
+						if(kiddie){
+							return kiddie->wrap_lua(L);
+						}
 
 						return luaL_error(L, "attempt to index '%s' (a nil value)", name);
 					}
@@ -627,8 +629,18 @@ namespace ob_instance{
 	int Instance::lua_GetChildren(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
 		if(inst){
-			//TODO:Implement
-			return 0;
+			lua_newtable(L);
+
+			for(std::vector<Instance*>::size_type i = 0; i != inst->children.size(); i++){
+				Instance* kid = inst->children[i];
+				if(kid != NULL){
+					int lIndex = i + 1;
+					//lua_pushnumber(L, lIndex);
+					kid->wrap_lua(L);
+					lua_rawseti(L, -2, lIndex);
+				}
+			}
+			return 1;
 		}
 		return luaL_error(L, COLONERR, "GetChildren");
 	}
@@ -700,13 +712,5 @@ namespace ob_instance{
 			return 0;
 		}
 		return luaL_error(L, COLONERR, "IsDescendantOf");;
-	}
-
-	int Instance::lua_gc(lua_State* L){
-		Instance* inst = checkInstance(L, 1);
-		if(inst){
-			delete inst;
-		}
-		return 0;
 	}
 }

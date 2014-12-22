@@ -117,10 +117,18 @@ namespace OpenBlox{
 
 	static int lua_newInstance(lua_State* L){
 		const char* className = luaL_checkstring(L, 1);
+		ob_instance::Instance* par = ob_instance::Instance::checkInstance(L, 2);
 		if(className != NULL){
 			if(BaseGame::InstanceFactory != NULL){
 				ob_instance::Instance* newGuy = BaseGame::InstanceFactory->create(className);
 				if(newGuy != NULL){
+					if(par != NULL){
+						try{
+							newGuy->setParent(par);
+						}catch(std::runtime_error& ex){
+							return luaL_error(L, ex.what());
+						}
+					}
 					return newGuy->wrap_lua(L);
 				}
 			}

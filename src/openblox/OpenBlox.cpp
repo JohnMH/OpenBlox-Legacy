@@ -63,8 +63,14 @@ void luaInit(){
 	L = OpenBlox::BaseGame::newLuaState();
 	lua_resume(L, 0);
 
-	char* script = "while wait() do print((Vector3.new(100, 100, 100) - Vector3.new(10000, 1000, 10000)).magnitude); end";
-	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
+	char* starterScript = "wait();";
+	int s = luaL_loadbuffer(L, starterScript, strlen(starterScript), "@StarterScript");
+	if(s == 0){
+		s = lua_pcall(L, 0, LUA_MULTRET, 0);
+	}
+
+	char* script = "Instance.new('Camera', game); Instance.new('Camera', game).Name = 'Tester'; for i,v in ipairs(game:GetChildren()) do print(v); end";
+	s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);
 	}
@@ -184,9 +190,9 @@ int main(){
 		glfwWaitEvents();
 	}
 
+	renderThread->join();
 	initLuaThread->join();
 	taskThread->join();
-	renderThread->join();
 
 	lua_close(L);
 

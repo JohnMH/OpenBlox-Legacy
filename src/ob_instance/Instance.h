@@ -68,8 +68,6 @@ namespace ob_instance{
 			static int lua_IsAncestorOf(lua_State* L);
 			static int lua_IsDescendantOf(lua_State* L);
 
-			static int lua_gc(lua_State* L);
-
 			DECLARE_STATIC_INIT(Instance);
 		protected:
 			bool Archivable;
