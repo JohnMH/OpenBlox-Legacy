@@ -59,7 +59,7 @@ namespace ob_type{
 		}
 	}
 
-	LuaEventConnection* checkconn(lua_State *L, int n){
+	LuaEventConnection* checkEventConnection(lua_State* L, int n){
 		return *(LuaEventConnection**)luaL_checkudata(L, n, lua_evt_con_name);
 	}
 
@@ -79,13 +79,13 @@ namespace ob_type{
 	}
 
 	int LuaEventConnection::lua_disconnect(lua_State* L){
-		LuaEventConnection* con = checkconn(L, 1);
+		LuaEventConnection* con = checkEventConnection(L, 1);
 		con->disconnect();
 		return 0;
 	}
 
 	int LuaEventConnection::lua_index(lua_State* L){
-		LuaEventConnection* con = checkconn(L, 1);
+		LuaEventConnection* con = checkEventConnection(L, 1);
 		if(con != NULL){
 			const char* name = luaL_checkstring(L, 2);
 
@@ -124,7 +124,7 @@ namespace ob_type{
 	}
 
 	int LuaEventConnection::lua_getConnected(lua_State* L){
-		LuaEventConnection* con = checkconn(L, 1);
+		LuaEventConnection* con = checkEventConnection(L, 1);
 		if(con != NULL){
 			bool conned = con->connected;
 			if(conned){
@@ -203,7 +203,7 @@ namespace ob_type{
 		return false;
 	}
 
-	LuaEvent* checkudata(lua_State *L, int n){
+	LuaEvent* checkEvent(lua_State* L, int n){
 		return *(LuaEvent**)luaL_checkudata(L, n, lua_evt_name);
 	}
 
@@ -218,7 +218,7 @@ namespace ob_type{
 	}
 
 	int LuaEvent::lua_toString(lua_State* L){
-		LuaEvent* LuaEvent = checkudata(L, 1);
+		LuaEvent* LuaEvent = checkEvent(L, 1);
 		std::string ret = "Signal ";
 		ret += LuaEvent->LuaEventName;
 		lua_pushstring(L, ret.c_str());
@@ -226,7 +226,7 @@ namespace ob_type{
 	}
 
 	int LuaEvent::lua_connect(lua_State* L){
-		LuaEvent* evt = checkudata(L, 1);
+		LuaEvent* evt = checkEvent(L, 1);
 		luaL_checktype(L, 2, LUA_TFUNCTION);
 
 		lua_pushvalue(L, 2);
@@ -239,7 +239,7 @@ namespace ob_type{
 	}
 
 	int LuaEvent::lua_wait(lua_State* L){
-		LuaEvent* evt = checkudata(L, 1);
+		LuaEvent* evt = checkEvent(L, 1);
 		evt->waiting.push_back(L);
 		return lua_yield(L, evt->nargs);
 	}

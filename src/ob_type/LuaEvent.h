@@ -31,6 +31,8 @@ namespace ob_type{
 
 	};
 
+	LuaEventConnection* checkEventConnection(lua_State* L, int n);
+
 	class LuaEvent{
 		public:
 			LuaEvent(const char* EventName, int nargs);
@@ -56,5 +58,7 @@ namespace ob_type{
 			static int lua_connect(lua_State* L);
 			static int lua_wait(lua_State* L);
 	};
+
+	LuaEvent* checkEvent(lua_State* L, int n);
 }
 #endif

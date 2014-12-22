@@ -62,7 +62,7 @@ void* luaThread(void* arg){
 	L = OpenBlox::BaseGame::newLuaState();
 	lua_resume(L, 0);
 
-	char* script = "print(game);";
+	char* script = "print((Vector3.new(100, 100, 100) - Vector3.new(10000, 1000, 10000)).magnitude); print(Vector3.new(1, 1, 1) == Vector3.new(1, 1, 1));";
 	int s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);
