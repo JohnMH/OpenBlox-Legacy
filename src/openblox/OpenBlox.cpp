@@ -9,6 +9,8 @@
 
 #include "OpenBloxRenderUtil.h"
 
+#include "Thread.h"
+
 OpenBlox::BaseGame* game;
 lua_State* L = NULL;
 
@@ -49,17 +51,15 @@ void render(){
 	}
 }
 
-void* taskSchedulerThread(void* arg){
+void taskLoop(){
 	GLFWwindow* window = OpenBlox::getWindow();
 	while(!glfwWindowShouldClose(window)){
 		OpenBlox::ThreadScheduler::Tick();
 		usleep(10000);
 	}
-	pthread_exit(NULL);
-	return NULL;
 }
 
-void* luaThread(void* arg){
+void luaInit(){
 	L = OpenBlox::BaseGame::newLuaState();
 	lua_resume(L, 0);
 
@@ -72,9 +72,6 @@ void* luaThread(void* arg){
 	if(s != 0){
 		game->handle_lua_errors(L);
 	}
-
-	pthread_exit(NULL);
-	return NULL;
 }
 
 void size_callback(int width, int height){
@@ -90,7 +87,7 @@ void glfw_window_size_callback(GLFWwindow* window, int width, int height){
 	size_callback(width, height);
 }
 
-void* renderThread(void* arg){
+void renderLoop(){
 	GLFWwindow* window = OpenBlox::getWindow();
 	glfwMakeContextCurrent(window);
 
@@ -99,11 +96,8 @@ void* renderThread(void* arg){
 		render();
 
 		glfwSwapBuffers(window);
-
 		usleep(500);
 	}
-	pthread_exit(NULL);
-	return NULL;
 }
 
 int main(){
@@ -158,9 +152,12 @@ int main(){
 		LOGI("[GL] Shading Language Version: %s", shading_version);
 	}
 
-	pthread_t render_thread;
+	OpenBlox::Thread* renderThread = new OpenBlox::Thread(renderLoop);
+	OpenBlox::Thread* taskThread = new OpenBlox::Thread(taskLoop);
+	OpenBlox::Thread* initLuaThread = new OpenBlox::Thread(luaInit);
+
 	int val;
-	val = pthread_create(&render_thread, NULL, renderThread, NULL);
+	val = renderThread->start();
 	if(val){
 		LOGE("[CORE] Failed to create render thread.");
 		glfwTerminate();
@@ -169,16 +166,14 @@ int main(){
 
 	glfwMakeContextCurrent(NULL);
 
-	pthread_t task_thread;
-	val = pthread_create(&task_thread, NULL, taskSchedulerThread, NULL);
+	val = taskThread->start();
 	if(val){
 		LOGE("[CORE] Failed to create task thread.");
 		glfwTerminate();
 		return 1;
 	}
 
-	pthread_t lua_thread;
-	val = pthread_create(&lua_thread, NULL, luaThread, NULL);
+	val = initLuaThread->start();
 	if(val){
 		LOGE("[CORE] Failed to create logic thread.");
 		glfwTerminate();
@@ -189,15 +184,15 @@ int main(){
 		glfwWaitEvents();
 	}
 
-	void* status;
-	pthread_join(lua_thread, &status);
-	pthread_join(task_thread, &status);
-	pthread_join(render_thread, &status);
+	initLuaThread->join();
+	taskThread->join();
+	renderThread->join();
 
 	lua_close(L);
 
 	glfwDestroyWindow(window);
 	OpenBlox::BaseGame::getInstanceFactory()->releaseTable();
+	delete game;
 	glfwTerminate();
 	return 0;
 }

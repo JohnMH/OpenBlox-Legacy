@@ -27,8 +27,6 @@ extern "C"{
 #define GLFW_DLL
 #include <GLFW/glfw3.h>
 
-#include <pthread.h>
-
 #define LOGI(...) printf(__VA_ARGS__); printf("\n"); fflush(stdout);
 #define LOGW(...) printf(__VA_ARGS__); printf("\n"); fflush(stdout);
 #define LOGE(...) fprintf(stderr, __VA_ARGS__); fprintf(stderr, "\n"); fflush(stderr);
