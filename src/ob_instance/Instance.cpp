@@ -36,10 +36,12 @@ namespace ob_instance{
 
 		children = std::vector<Instance*>();
 		Changed = new ob_type::LuaEvent("Changed", 1);
+		usedInternally = false;
 	}
 
 	Instance::~Instance(){
 		free(Name);
+		delete Changed;
 	}
 
 	void Instance::ClearAllChildren(){
@@ -285,7 +287,7 @@ namespace ob_instance{
 	void Instance::register_lua_metamethods(lua_State* L){
 		luaL_Reg metamethods[] = {
 			{"__tostring", Instance::lua_toString},
-			//{"__gc", Instance::lua_gc},
+			{"__gc", Instance::lua_gc},
 			{NULL, NULL}
 		};
 		luaL_register(L, NULL, metamethods);
@@ -442,7 +444,7 @@ namespace ob_instance{
 
 	int Instance::lua_toString(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			lua_pushstring(L, inst->toString());
 			return 1;
 		}
@@ -452,7 +454,7 @@ namespace ob_instance{
 	//Properties
 	int Instance::lua_getClassName(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			char* className = inst->getClassName();
 			lua_pushstring(L, className);
 			return 1;
@@ -469,7 +471,7 @@ namespace ob_instance{
 
 	int Instance::lua_getName(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			lua_pushstring(L, inst->Name);
 			return 1;
 		}
@@ -478,7 +480,7 @@ namespace ob_instance{
 
 	int Instance::lua_setName(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			std::string desired = std::string(luaL_checkstring(L, 2));
 			char* newname = new char[desired.size() + 1];
 			std::copy(desired.begin(), desired.end(), newname);
@@ -491,7 +493,7 @@ namespace ob_instance{
 
 	int Instance::lua_getParent(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			if(inst->Parent != NULL){
 				return inst->Parent->wrap_lua(L);
 			}
@@ -503,7 +505,7 @@ namespace ob_instance{
 
 	int Instance::lua_setParent(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			bool throwErrorIf = true;
 			Instance* otherInst = NULL;
 			if(lua_isnil(L, 2)){
@@ -528,7 +530,7 @@ namespace ob_instance{
 
 	int Instance::lua_getArchivable(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			lua_pushboolean(L, inst->Archivable);
 			return 1;
 		}
@@ -537,7 +539,7 @@ namespace ob_instance{
 
 	int Instance::lua_setArchivable(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			//Again, following ROBLOX's ways....
 			bool newVal = false;
 			if(lua_isboolean(L, 2)){
@@ -553,7 +555,7 @@ namespace ob_instance{
 	//Events
 	int Instance::lua_getChangedEvent(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if (inst != NULL){
+		if (inst){
 			return inst->Changed->wrap_lua(L);
 			//return 1;
 		}
@@ -563,7 +565,7 @@ namespace ob_instance{
 	//Methods
 	int Instance::lua_ClearAllChildren(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			inst->ClearAllChildren();
 			return 0;
 		}
@@ -572,7 +574,7 @@ namespace ob_instance{
 
 	int Instance::lua_Clone(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			Instance* newGuy = inst->Clone();
 			if(newGuy != NULL){
 				return newGuy->wrap_lua(L);
@@ -584,7 +586,7 @@ namespace ob_instance{
 
 	int Instance::lua_Destroy(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			inst->Destroy();
 			return 0;
 		}
@@ -593,7 +595,7 @@ namespace ob_instance{
 
 	int Instance::lua_Remove(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			inst->Remove();
 			return 0;
 		}
@@ -602,7 +604,7 @@ namespace ob_instance{
 
 	int Instance::lua_FindFirstChild(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			const char* kidName = luaL_checkstring(L, 2);
 			bool recursive = false;
 			if(!lua_isnoneornil(L, 3)){
@@ -624,7 +626,7 @@ namespace ob_instance{
 
 	int Instance::lua_GetChildren(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			//TODO:Implement
 			return 0;
 		}
@@ -633,7 +635,7 @@ namespace ob_instance{
 
 	int Instance::lua_GetFullName(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			char* fullName = inst->GetFullName();
 			lua_pushstring(L, fullName);
 			return 1;
@@ -643,7 +645,7 @@ namespace ob_instance{
 
 	int Instance::lua_IsA(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			const char* checkName = luaL_checkstring(L, 2);
 			if(checkName != NULL){
 				bool isIt = inst->IsA(checkName);
@@ -658,7 +660,7 @@ namespace ob_instance{
 
 	int Instance::lua_IsAncestorOf(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			bool throwErrorIf = true;
 			Instance* otherInst = NULL;
 			if(lua_isnil(L, 2)){
@@ -680,7 +682,7 @@ namespace ob_instance{
 
 	int Instance::lua_IsDescendantOf(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
-		if(inst != NULL){
+		if(inst){
 			bool throwErrorIf = true;
 			Instance* otherInst = NULL;
 			if(lua_isnil(L, 2)){
@@ -698,5 +700,13 @@ namespace ob_instance{
 			return 0;
 		}
 		return luaL_error(L, COLONERR, "IsDescendantOf");;
+	}
+
+	int Instance::lua_gc(lua_State* L){
+		Instance* inst = checkInstance(L, 1);
+		if(inst){
+			delete inst;
+		}
+		return 0;
 	}
 }

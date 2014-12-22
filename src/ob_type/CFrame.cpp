@@ -71,6 +71,18 @@ namespace ob_type{
 
 	CFrame::~CFrame(){}
 
+	bool CFrame::equals(CFrame* other){
+		if(other){
+			for(int n=0; n<16; n++){
+				if(matrix[n] != other->matrix[n]){
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
 	CFrame* CFrame::inverse(){
 		double* m = matrix;
 		return new CFrame(m[6]*m[11]*m[13] - m[7]*m[10]*m[13] + m[7]*m[9]*m[14] - m[5]*m[11]*m[14] - m[6]*m[9]*m[15] + m[5]*m[10]*m[15],

@@ -72,6 +72,10 @@ namespace ob_type{
 		lua_pushcfunction(L, lua_eq);
 		lua_rawset(L, -3);
 
+		lua_pushstring(L, "__gc");
+		lua_pushcfunction(L, lua_gc);
+		lua_rawset(L, -3);
+
 		lua_pushstring(L, "__index");
 		lua_pushcfunction(L, lua_index);
 		lua_rawset(L, -3);
@@ -88,6 +92,8 @@ namespace ob_type{
 		y = 0;
 		z = 0;
 		magnitude = 1;
+
+		usedInternally = false;
 	}
 
 	Vector3::Vector3(double x, double y, double z){
@@ -95,6 +101,8 @@ namespace ob_type{
 		this->y = y;
 		this->z = z;
 		magnitude = sqrt(dot(this));
+
+		usedInternally = false;
 	}
 
 	Vector3::~Vector3(){}
@@ -359,6 +367,22 @@ namespace ob_type{
 			lua_pushboolean(L, false);
 		}
 		return 1;
+	}
+
+	int Vector3::lua_gc(lua_State* L){
+		void *p = lua_touserdata(L, 1);
+		if(p){
+			if(lua_getmetatable(L, 1)){
+				lua_getfield(L, LUA_REGISTRYINDEX, lua_vec3_name);
+				if(lua_rawequal(L, -1, -2)){
+					lua_pop(L, 2);
+
+					Vector3* vec_ud = *(Vector3**)p;
+					delete vec_ud;
+				}
+			}
+		}
+		return 0;
 	}
 
 	int Vector3::wrap_lua(lua_State* L){

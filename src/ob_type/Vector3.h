@@ -15,6 +15,8 @@ namespace ob_type{
 
 			DECLARE_STATIC_INIT(Vector3);
 
+			bool usedInternally;
+
 			double x;
 			double y;
 			double z;
@@ -59,6 +61,7 @@ namespace ob_type{
 			static int lua_mul(lua_State* L);
 			static int lua_div(lua_State* L);
 			static int lua_eq(lua_State* L);
+			static int lua_gc(lua_State* L);
 
 			int wrap_lua(lua_State* L);
 	};

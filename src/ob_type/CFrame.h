@@ -18,6 +18,8 @@ namespace ob_type{
 			double* y;
 			double* z;
 
+			bool equals(CFrame* other);
+
 			CFrame* inverse();
 			std::string toString();
 

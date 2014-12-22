@@ -31,6 +31,7 @@ namespace ob_instance{
 	DataModel::DataModel() : ServiceProvider(){
 		Name = ClassName;
 		ParentLocked = true;
+		usedInternally = true;
 	}
 
 	DataModel::~DataModel(){
