@@ -37,6 +37,19 @@ namespace OpenBlox{
 
 			static BaseGame* getInstance();
 
+			static int lua_wait(lua_State* L);
+			static int lua_delay(lua_State* L);
+			static int lua_spawn(lua_State* L);
+
+			static int lua_tick(lua_State* L);
+			static int lua_print(lua_State* L);
+			static int lua_elapsedTime(lua_State* L);
+			static int lua_warn(lua_State* L);
+
+			static int lua_newInstance(lua_State* L);
+
+			static int lua_newVector3(lua_State* L);
+
 		private:
 			ob_instance::DataModel* datamodel;
 

@@ -55,4 +55,21 @@ namespace OpenBlox{
 		long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
 		return ms;
 	}
+
+	char* fileGetContents(char* fileName){
+		char* file_contents;
+		long file_size;
+
+		FILE *input_file = fopen(fileName, "rb");
+		fseek(input_file, 0, SEEK_END);
+		file_size = ftell(input_file);
+		rewind(input_file);
+		file_contents = (char*)malloc((file_size + 1) * sizeof(char));
+		fread(file_contents, sizeof(char), file_size, input_file);
+		fclose(input_file);
+
+		file_contents[file_size] = '\0';
+
+		return file_contents;
+	}
 }

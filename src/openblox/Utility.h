@@ -1,8 +1,11 @@
 #ifndef OPENBLOX_UTILITY_H_
 #define OPENBLOX_UTILITY_H_
 
+#include <cstdlib>
+#include <cstdio>
 #include <cctype>
 #include <cstring>
+
 #include <sys/time.h>
 
 namespace OpenBlox{
@@ -13,5 +16,7 @@ namespace OpenBlox{
 	char* covertToUpper(const char* str);
 
 	long currentTimeMillis();
+
+	char* fileGetContents(char* fileName);
 }
 #endif

@@ -58,27 +58,6 @@ void taskLoop(){
 	}
 }
 
-void luaInit(){
-	L = OpenBlox::BaseGame::newLuaState();
-	lua_resume(L, 0);
-
-	char* starterScript = "wait();";
-	int s = luaL_loadbuffer(L, starterScript, strlen(starterScript), "@StarterScript");
-	if(s == 0){
-		s = lua_pcall(L, 0, LUA_MULTRET, 0);
-	}
-
-	char* script = "local gotten = game:GetService('StarterGui'); print(gotten); local found = game:FindService('StarterGui'); print(found); print(gotten == found)";
-	s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
-	if(s == 0){
-		s = lua_pcall(L, 0, LUA_MULTRET, 0);
-	}
-
-	if(s != 0){
-		game->handle_lua_errors(L);
-	}
-}
-
 void size_callback(int width, int height){
 	//Update stuff
 }
@@ -161,7 +140,6 @@ int main(){
 
 	OpenBlox::Thread* renderThread = new OpenBlox::Thread(renderLoop);
 	OpenBlox::Thread* taskThread = new OpenBlox::Thread(taskLoop);
-	OpenBlox::Thread* initLuaThread = new OpenBlox::Thread(luaInit);
 
 	int val;
 	val = renderThread->start();
@@ -178,19 +156,28 @@ int main(){
 		return 1;
 	}
 
-	val = initLuaThread->start();
-	if(val){
-		LOGE("[CORE] Failed to create logic thread.");
-		glfwTerminate();
-		return 1;
-	}
+	L = OpenBlox::BaseGame::newLuaState();
+
+	OpenBlox::ThreadScheduler::RunOnTaskThread([](){
+		lua_resume(L, 0);
+
+		char* initFile = OpenBlox::fileGetContents("init.lua");
+
+		int s = luaL_loadbuffer(L, initFile, strlen(initFile), "@game.Workspace.Script");
+		if(s == 0){
+			s = lua_pcall(L, 0, LUA_MULTRET, 0);
+		}
+
+		if(s != 0){
+			game->handle_lua_errors(L);
+		}
+	}, 0);
 
 	while(!glfwWindowShouldClose(window)){
 		glfwWaitEvents();
 	}
 
 	renderThread->join();
-	initLuaThread->join();
 	taskThread->join();
 
 	lua_close(L);

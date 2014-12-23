@@ -3,6 +3,7 @@
 namespace OpenBlox{
 	static std::vector<ThreadScheduler::Task> tasks = std::vector<ThreadScheduler::Task>();
 	static std::vector<ThreadScheduler::WaitingTask> waitingTasks = std::vector<ThreadScheduler::WaitingTask>();
+	static std::vector<ThreadScheduler::WaitingFuncTask> waitingFuncTasks = std::vector<ThreadScheduler::WaitingFuncTask>();
 
 	int ThreadScheduler::Delay(lua_State* L, int funcidx, long millis){
 		lua_State* NL = lua_newthread(L);
@@ -47,6 +48,15 @@ namespace OpenBlox{
 		waitingTasks.push_back(task);
 	}
 
+	void ThreadScheduler::RunOnTaskThread(task_func* func, long millis){
+		WaitingFuncTask task = WaitingFuncTask();
+		task.func = func;
+		task.at = currentTimeMillis() + millis;
+
+		waitingFuncTasks.push_back(task);
+		std::sort(waitingFuncTasks.begin(), waitingFuncTasks.end(), func_less_than_key());
+	}
+
 	void ThreadScheduler::enqueue_task(ThreadScheduler::Task t){
 		tasks.push_back(t);
 		std::sort(tasks.begin(), tasks.end(), less_than_key());
@@ -68,6 +78,19 @@ namespace OpenBlox{
 				}catch(const std::out_of_range& e){}
 			}
 		}
+		if(!waitingFuncTasks.empty()){
+			while(!waitingFuncTasks.empty()){
+				try{
+					WaitingFuncTask task = waitingFuncTasks.at(waitingFuncTasks.size() - 1);
+					if(task.at < currentTimeMillis()){
+						task.func();
+						waitingFuncTasks.pop_back();
+					}else{
+						break;
+					}
+				}catch(const std::out_of_range& e){}
+			}
+		}
 		if(!tasks.empty()){
 			long curTime = currentTimeMillis();
 			try{
@@ -75,6 +98,10 @@ namespace OpenBlox{
 				if(task.at < curTime){
 					lua_State* L = task.origin;
 					if(L == NULL){
+						return;
+					}
+					if(lua_status(L) != LUA_YIELD && task.ref == -1){
+						tasks.pop_back();
 						return;
 					}
 
