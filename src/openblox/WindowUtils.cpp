@@ -11,24 +11,6 @@
 		ShowWindow(nativeWin, SW_MAXIMIZE);
 	}
 
-	/*
-	void glfwRestoreWindow(GLFWwindow* window){
-		if(window == NULL){
-			return;
-		}
-		HWND nativeWin = glfwGetWin32Window(window);
-		ShowWindow(nativeWin, SW_RESTORE);
-	}
-	*/
-
-	void glfwMinimizeWindow(GLFWwindow* window){
-		if(window == NULL){
-			return;
-		}
-		HWND nativeWin = glfwGetWin32Window(window);
-		ShowWindow(nativeWin, SW_MINIMIZE);
-	}
-
 	void glfwFocusWindow(GLFWwindow* window){
 		if(window == NULL){
 			return;
@@ -37,26 +19,32 @@
 		SetActiveWindow(nativeWin);
 	}
 #elif defined(__unix__) || defined(__linux__)
-	void glfwSetWindowMinimumSize(GLFWwindow* window, int minX, int minY){
-		std::cout << "OpenBlox has not implemented glfwSetWindowMinimumSize for this platform." << std::endl;
-	}
+	void glfwMaximizeWindow(GLFWwindow* win){
+		if(win == NULL){
+			return;
+		}
+		Window nativeWin = glfwGetX11Window(win);
+		Display* disp = glfwGetX11Display();
 
-	void glfwMaximizeWindow(GLFWwindow* window){
-		std::cout << "OpenBlox has not implemented glfwMaximizeWindow for this platform." << std::endl;
-	}
+		XEvent xev;
+		Atom wm_state = XInternAtom(disp, "_NET_WM_STATE", False);
+		Atom max_horz = XInternAtom(disp, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
+		Atom max_vert = XInternAtom(disp, "_NET_WM_STATE_MAXIMIZED_VERT", False);
 
-	/*
-	void glfwRestoreWindow(GLFWwindow* window){
-		std::cout << "OpenBlox has not implemented glfwRestoreWindow for this platform." << std::endl;
-	}
-	*/
+		memset(&xev, 0, sizeof(xev));
+		xev.type = ClientMessage;
+		xev.xclient.window = nativeWin;
+		xev.xclient.message_type = wm_state;
+		xev.xclient.format = 32;
+		xev.xclient.data.l[0] = _NET_WM_STATE_ADD;
+		xev.xclient.data.l[1] = max_horz;
+		xev.xclient.data.l[2] = max_vert;
 
-	void glfwMinimizeWindow(GLFWwindow* window){
-		std::cout << "OpenBlox has not implemented glfwRestoreWindow for this platform." << std::endl;
+		XSendEvent(disp, DefaultRootWindow(disp), False, SubstructureNotifyMask, &xev);
 	}
 
 	void glfwWindowMinSize(GLFWwindow* win, int width, int height){
-		if(window == NULL){
+		if(win == NULL){
 			return;
 		}
 		Window nativeWin = glfwGetX11Window(win);
@@ -74,28 +62,18 @@
 	}
 
 	void glfwFocusWindow(GLFWwindow* win){
-		std::cout << "OpenBlox has not implemented glfwSetWindowMinimumSize for this platform." << std::endl;
+		std::cout << "OpenBlox has not implemented glfwFocusWindow for this platform." << std::endl;
 	}
 #elif defined(__APPLE__)
-	void glfwSetWindowMinimumSize(GLFWwindow* window, int minX, int minY){
-		std::cout << "OpenBlox has not implemented glfwSetWindowMinimumSize for this platform." << std::endl;
+	void glfwWindowMinSize(GLFWwindow* win, int width, int height){
+		std::cout << "OpenBlox has not implemented glfwWindowMinSize for this platform." << std::endl;
 	}
 
 	void glfwMaximizeWindow(GLFWwindow* window){
 		std::cout << "OpenBlox has not implemented glfwMaximizeWindow for this platform." << std::endl;
 	}
 
-	/*
-	void glfwRestoreWindow(GLFWwindow* window){
-		std::cout << "OpenBlox has not implemented glfwRestoreWindow for this platform." << std::endl;
-	}
-	*/
-
-	void glfwMinimizeWindow(GLFWwindow* window){
-		std::cout << "OpenBlox has not implemented glfwRestoreWindow for this platform." << std::endl;
-	}
-
 	void glfwFocusWindow(GLFWwindow* win){
-		std::cout << "OpenBlox has not implemented glfwSetWindowMinimumSize for this platform." << std::endl;
+		std::cout << "OpenBlox has not implemented glfwFocusWindow for this platform." << std::endl;
 	}
 #endif
