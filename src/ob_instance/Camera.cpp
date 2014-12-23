@@ -14,7 +14,7 @@ namespace ob_instance{
 			return true;
 		}
 
-		bool isService(){
+		bool isService(bool isDataModel){
 			return false;
 		}
 	};
@@ -37,7 +37,7 @@ namespace ob_instance{
 	}
 
 	int Camera::wrap_lua(lua_State* L){
-		Camera** udata = (Camera**)lua_newuserdata(L, sizeof(Camera*));
+		Camera** udata = (Camera**)lua_newuserdata(L, sizeof(*this));
 		*udata = this;
 
 		luaL_getmetatable(L, LuaClassName);

@@ -14,7 +14,7 @@ namespace ob_instance{
 			return false;
 		}
 
-		bool isService(){
+		bool isService(bool isDataModel){
 			return false;
 		}
 	};
@@ -31,27 +31,28 @@ namespace ob_instance{
 	DataModel::DataModel() : ServiceProvider(){
 		Name = ClassName;
 		ParentLocked = true;
-		usedInternally = true;
+		starterGui = new StarterGui();
+		starterGui->setParent(this);
+		starterGui->parentLock();
 	}
 
-	DataModel::~DataModel(){
+	DataModel::~DataModel(){}
 
+	Instance* DataModel::GetService(const char* className){
+		Instance* foundService = FindService(className);
+		if(foundService != NULL){
+			return foundService;
+		}
+		ob_instance::Instance* newGuy = OpenBlox::BaseGame::getInstanceFactory()->createService(className, true);
+		if(newGuy){
+			newGuy->setParent(this);
+			newGuy->parentLock();
+		}
+		return newGuy;
 	}
 
 	void DataModel::render(){
-		glLoadIdentity();
-		glRotatef((float)glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-
-		glBegin(GL_TRIANGLES);
-		{
-			glColor3f(1.f, 0.f, 0.f);
-			glVertex3f(-0.6f, -0.4f, 0.f);
-			glColor3f(0.f, 1.f, 0.f);
-			glVertex3f(0.6f, -0.4f, 0.f);
-			glColor3f(0.f, 0.f, 1.f);
-			glVertex3f(0.f, 0.6f, 0.f);
-		}
-		glEnd();
+		starterGui->render();
 	}
 
 	Instance* DataModel::cloneImpl(){
@@ -73,22 +74,10 @@ namespace ob_instance{
 	}
 
 	void DataModel::register_lua_property_setters(lua_State* L){
-		/*
-		luaL_Reg properties[]{
-			{NULL, NULL}
-		};
-		luaL_register(L, NULL, properties);
-		*/
 		Instance::register_lua_property_setters(L);
 	}
 
 	void DataModel::register_lua_property_getters(lua_State* L){
-		/*
-		luaL_Reg properties[]{
-			{NULL, NULL}
-		};
-		luaL_register(L, NULL, properties);
-		*/
 		Instance::register_lua_property_getters(L);
 	}
 

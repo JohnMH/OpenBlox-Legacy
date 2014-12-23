@@ -14,7 +14,7 @@ namespace ob_instance{
 			return false;
 		}
 
-		bool isService(){
+		bool isService(bool isDataModel){
 			return false;
 		}
 	};
@@ -36,7 +36,6 @@ namespace ob_instance{
 
 		children = std::vector<Instance*>();
 		Changed = new ob_type::LuaEvent("Changed", 1);
-		usedInternally = false;
 	}
 
 	Instance::~Instance(){
@@ -70,6 +69,10 @@ namespace ob_instance{
 			}
 		}
 		return NULL;
+	}
+
+	void Instance::parentLock(){
+		ParentLocked = true;
 	}
 
 	void Instance::Destroy(){
@@ -287,6 +290,7 @@ namespace ob_instance{
 	void Instance::register_lua_metamethods(lua_State* L){
 		luaL_Reg metamethods[] = {
 			{"__tostring", Instance::lua_toString},
+			{"__eq", lua_eq},
 			{NULL, NULL}
 		};
 		luaL_register(L, NULL, metamethods);
@@ -442,6 +446,19 @@ namespace ob_instance{
 			}
 		}
 		return 0;
+	}
+
+	int Instance::lua_eq(lua_State* L){
+		Instance* inst = checkInstance(L, 1);
+		if(inst){
+			Instance* oinst = checkInstance(L, 2);
+			if(oinst){
+				lua_pushboolean(L, inst == oinst);
+				return 1;
+			}
+		}
+		lua_pushboolean(L, false);
+		return 1;
 	}
 
 	int Instance::lua_toString(lua_State* L){

@@ -2,6 +2,7 @@
 #define OB_INSTANCE_DATAMODEL_H_
 
 #include "ServiceProvider.h"
+#include "StarterGui.h"
 
 namespace ob_instance{
 	class DataModel: public ServiceProvider{
@@ -10,6 +11,7 @@ namespace ob_instance{
 			virtual ~DataModel();
 
 			virtual void render();
+			virtual Instance* GetService(const char* className);
 
 			int wrap_lua(lua_State* L);
 
@@ -18,6 +20,8 @@ namespace ob_instance{
 			DECLARE_STATIC_INIT(DataModel);
 
 		protected:
+			StarterGui* starterGui;
+
 			static char* ClassName;
 			static char* LuaClassName;
 

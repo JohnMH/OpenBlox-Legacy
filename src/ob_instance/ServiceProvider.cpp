@@ -14,7 +14,7 @@ namespace ob_instance{
 			return false;
 		}
 
-		bool isService(){
+		bool isService(bool isDataModel){
 			return false;
 		}
 	};
@@ -32,12 +32,17 @@ namespace ob_instance{
 		Name = ClassName;
 	}
 
-	ServiceProvider::~ServiceProvider(){
-
-	}
+	ServiceProvider::~ServiceProvider(){}
 
 	Instance* ServiceProvider::FindService(const char* className){
-		//Look through children for service
+		for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
+			Instance* kid = children[i];
+			if(kid != NULL){
+				if(strcmp(kid->getClassName(), className) == 0){
+					return kid;
+				}
+			}
+		}
 		return NULL;
 	}
 
@@ -46,8 +51,12 @@ namespace ob_instance{
 		if(foundService != NULL){
 			return foundService;
 		}
-		//Create service using Factory::create and ClassMaker::isService.
-		return NULL;
+		ob_instance::Instance* newGuy = OpenBlox::BaseGame::getInstanceFactory()->createService(className, false);
+		if(newGuy){
+			newGuy->setParent(this);
+			newGuy->parentLock();
+		}
+		return newGuy;
 	}
 
 	char* ServiceProvider::getClassName(){
@@ -56,6 +65,12 @@ namespace ob_instance{
 
 	void ServiceProvider::register_lua_methods(lua_State* L){
 		Instance::register_lua_methods(L);
+		luaL_Reg methods[]{
+			{"FindService", lua_FindService},
+			{"GetService", lua_GetService},
+			{NULL, NULL}
+		};
+		luaL_register(L, NULL, methods);
 	}
 
 	int ServiceProvider::lua_FindService(lua_State* L){
@@ -70,5 +85,19 @@ namespace ob_instance{
 			return 0;
 		}
 		return luaL_error(L, COLONERR, "FindService");
+	}
+
+	int ServiceProvider::lua_GetService(lua_State* L){
+		Instance* inst = checkInstance(L, 1);
+		if(ServiceProvider* sp = dynamic_cast<ServiceProvider*>(inst)){
+			const char* serviceName = luaL_checkstring(L, 2);
+			Instance* foundGuy = sp->GetService(serviceName);
+			if(foundGuy != NULL){
+				return foundGuy->wrap_lua(L);
+			}
+			lua_pushnil(L);
+			return 0;
+		}
+		return luaL_error(L, COLONERR, "GetService");
 	}
 }

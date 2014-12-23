@@ -17,6 +17,7 @@ namespace ob_instance{
 			DECLARE_STATIC_INIT(ServiceProvider);
 
 			static int lua_FindService(lua_State* L);
+			static int lua_GetService(lua_State* L);
 		protected:
 			static char* ClassName;
 			static char* LuaClassName;

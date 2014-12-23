@@ -47,7 +47,6 @@ void render(){
 	ob_instance::DataModel* dm = game->getDataModel();
 	if(dm != NULL){
 		dm->render();
-		dm->renderChildren();
 	}
 }
 
@@ -69,7 +68,7 @@ void luaInit(){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);
 	}
 
-	char* script = "Instance.new('Camera', game); Instance.new('Camera', game).Name = 'Tester'; for i,v in ipairs(game:GetChildren()) do print(v); end";
+	char* script = "local gotten = game:GetService('StarterGui'); print(gotten); local found = game:FindService('StarterGui'); print(found); print(gotten == found)";
 	s = luaL_loadbuffer(L, script, strlen(script), "@game.Workspace.Script");
 	if(s == 0){
 		s = lua_pcall(L, 0, LUA_MULTRET, 0);
@@ -96,6 +95,18 @@ void glfw_window_size_callback(GLFWwindow* window, int width, int height){
 void renderLoop(){
 	GLFWwindow* window = OpenBlox::getWindow();
 	glfwMakeContextCurrent(window);
+
+	{
+		const GLubyte* vendor = glGetString(GL_VENDOR);
+		const GLubyte* renderer = glGetString(GL_RENDERER);
+		const GLubyte* version = glGetString(GL_VERSION);
+		const GLubyte* shading_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+		LOGI("[GL] Vendor: %s", vendor);
+		LOGI("[GL] Renderer: %s", renderer);
+		LOGI("[GL] OpenGL Version: %s", version);
+		LOGI("[GL] Shading Language Version: %s", shading_version);
+	}
 
 	while(!glfwWindowShouldClose(window)){
 		//Fire RunService.RenderStepped
@@ -136,27 +147,17 @@ int main(){
 	GLFWwindow* window = OpenBlox::getWindow();
 
 	glfwMakeContextCurrent(window);
-
-	glewExperimental = GL_TRUE;
-	if(glewInit() != GLEW_OK){
-		LOGE("[GLFW] Failed to initialize GLEW.");
-		glfwTerminate();
-		return 1;
+	{
+		glewExperimental = GL_TRUE;
+		if(glewInit() != GLEW_OK){
+			LOGE("[GLFW] Failed to initialize GLEW.");
+			glfwTerminate();
+			return 1;
+		}
 	}
+	glfwMakeContextCurrent(NULL);
 
 	glfwSetWindowSizeCallback(window, glfw_window_size_callback);
-
-	{
-		const GLubyte* vendor = glGetString(GL_VENDOR);
-		const GLubyte* renderer = glGetString(GL_RENDERER);
-		const GLubyte* version = glGetString(GL_VERSION);
-		const GLubyte* shading_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
-
-		LOGI("[GL] Vendor: %s", vendor);
-		LOGI("[GL] Renderer: %s", renderer);
-		LOGI("[GL] OpenGL Version: %s", version);
-		LOGI("[GL] Shading Language Version: %s", shading_version);
-	}
 
 	OpenBlox::Thread* renderThread = new OpenBlox::Thread(renderLoop);
 	OpenBlox::Thread* taskThread = new OpenBlox::Thread(taskLoop);
@@ -169,8 +170,6 @@ int main(){
 		glfwTerminate();
 		return 1;
 	}
-
-	glfwMakeContextCurrent(NULL);
 
 	val = taskThread->start();
 	if(val){

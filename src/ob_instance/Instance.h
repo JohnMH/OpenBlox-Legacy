@@ -11,8 +11,6 @@ namespace ob_instance{
 			Instance();
 			virtual ~Instance();
 
-			bool usedInternally;
-
 			virtual void ClearAllChildren();
 			virtual Instance* Clone();
 			virtual void Destroy();
@@ -24,6 +22,8 @@ namespace ob_instance{
 			virtual bool IsAncestorOf(Instance* descendant);
 			virtual bool IsDescendantOf(Instance* ancestor);
 			//virtual Instance* WaitForChild(char* childName);
+
+			void parentLock();
 
 			virtual char* getClassName();
 
@@ -42,6 +42,8 @@ namespace ob_instance{
 
 			static int lua_index(lua_State* L);
 			static int lua_newindex(lua_State* L);
+
+			static int lua_eq(lua_State* L);
 
 			static int lua_toString(lua_State* L);
 
