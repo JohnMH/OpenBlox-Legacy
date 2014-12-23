@@ -12,6 +12,10 @@
 #include "Thread.h"
 
 OpenBlox::BaseGame* game;
+
+OpenBlox::Thread* renderThread;
+OpenBlox::Thread* taskThread;
+
 lua_State* L = NULL;
 
 double lastTime = glfwGetTime();
@@ -138,8 +142,8 @@ int main(){
 
 	glfwSetWindowSizeCallback(window, glfw_window_size_callback);
 
-	OpenBlox::Thread* renderThread = new OpenBlox::Thread(renderLoop);
-	OpenBlox::Thread* taskThread = new OpenBlox::Thread(taskLoop);
+	renderThread = new OpenBlox::Thread(renderLoop);
+	taskThread = new OpenBlox::Thread(taskLoop);
 
 	int val;
 	val = renderThread->start();
@@ -171,7 +175,7 @@ int main(){
 		if(s != 0){
 			game->handle_lua_errors(L);
 		}
-	}, 0);
+	}, 10);
 
 	while(!glfwWindowShouldClose(window)){
 		glfwWaitEvents();

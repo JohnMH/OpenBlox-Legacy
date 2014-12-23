@@ -1,7 +1,10 @@
 #include "BaseGame.h"
 
 #include "../ob_instance/DataModel.h"
+
 #include "../ob_type/Vector3.h"
+#include "../ob_type/Vector2.h"
+
 #include <ctime>
 
 namespace OpenBlox{
@@ -85,11 +88,19 @@ namespace OpenBlox{
 
 		lua_newtable(L);
 		luaL_Reg vector3lib[]{
-				{"new", lua_newVector3},
-				{NULL, NULL}
+			{"new", lua_newVector3},
+			{NULL, NULL}
 		};
 		luaL_register(L, NULL, vector3lib);
 		lua_setglobal(L, "Vector3");
+
+		lua_newtable(L);
+		luaL_Reg vector2lib[]{
+			{"new", lua_newVector2},
+			{NULL, NULL}
+		};
+		luaL_register(L, NULL, vector2lib);
+		lua_setglobal(L, "Vector2");
 
 		ob_instance::DataModel* dm = INSTANCE->getDataModel();
 		int gm = dm->wrap_lua(L);
@@ -257,6 +268,14 @@ namespace OpenBlox{
 		double z = luaL_checknumber(L, 3);
 
 		ob_type::Vector3* newGuy = new ob_type::Vector3(x, y, z);
+		return newGuy->wrap_lua(L);
+	}
+
+	int BaseGame::lua_newVector2(lua_State* L){
+		double x = luaL_checknumber(L, 1);
+		double y = luaL_checknumber(L, 2);
+
+		ob_type::Vector2* newGuy = new ob_type::Vector2(x, y);
 		return newGuy->wrap_lua(L);
 	}
 }

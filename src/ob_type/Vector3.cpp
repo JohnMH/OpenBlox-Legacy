@@ -179,7 +179,7 @@ namespace ob_type{
 
 	double Vector3::dot(Vector3* other){
 		if(other == NULL){
-			return 0;
+			return NULL;
 		}
 		return x*other->x + y*other->y + z*other->z;
 	}

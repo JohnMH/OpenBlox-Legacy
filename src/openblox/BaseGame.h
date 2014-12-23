@@ -50,6 +50,7 @@ namespace OpenBlox{
 
 			static int lua_newVector3(lua_State* L);
 
+			static int lua_newVector2(lua_State* L);
 		private:
 			ob_instance::DataModel* datamodel;
 
