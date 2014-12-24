@@ -2,9 +2,11 @@ local sg = game:GetService("StarterGui");
 
 local screen = Instance.new("ScreenGui");
 screen.Changed:connect(function(prop)
-	spawn(function()
-		print(prop, " = ", screen[prop]);
-	end);
+	print(prop, " = ", screen[prop]);
+end);
+
+game:GetService("RunService").RenderStepped:connect(function()
+	print("RenderStepped");
 end);
 
 while true do

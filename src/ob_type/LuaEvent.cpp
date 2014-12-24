@@ -250,6 +250,11 @@ namespace ob_type{
 	}
 
 	void LuaEvent::Fire(luaFireFunc fireFunc, ...){
+		if(!OpenBlox::ThreadScheduler::isOnTaskThread()){
+			LOGI("Not on task thread!");
+			return;
+		}
+
 		va_list ap;
 		va_start(ap, fireFunc);
 
@@ -273,25 +278,10 @@ namespace ob_type{
 		}
 		for(std::vector<int>::size_type i = 0; i != connections.size(); i++){
 			EvtCon con = connections[i];
-			lua_State* eL = con.env;
+			lua_State* L = con.env;
 			int ref = con.ref;
 
-			lua_rawgeti(eL, LUA_REGISTRYINDEX, ref);
-
-			if(nargs > 0){
-				va_list argList;
-				va_copy(ap, argList);
-
-				fireFunc(eL, argList);
-
-				va_end(argList);
-			}
-
-			int s = lua_pcall(eL, (nargs > 0) ? nargs : 0, LUA_MULTRET, 0);
-			if(s != 0){
-				OpenBlox::BaseGame::getInstance()->handle_lua_errors(eL);
-			}
+			OpenBlox::ThreadScheduler::AddWaitingEvent(L, ref, fireFunc, ap, nargs);
 		}
-		va_end(ap);
 	}
 }

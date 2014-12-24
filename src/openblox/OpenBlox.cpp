@@ -47,11 +47,6 @@ void render(){
 
 	ob_instance::DataModel* dm = game->getDataModel();
 	if(dm){
-		if(dm->runService){
-			if(dm->runService->RenderStepped){
-				dm->runService->RenderStepped->Fire(NULL, NULL);
-			}
-		}
 		dm->render();
 	}
 }
@@ -59,6 +54,14 @@ void render(){
 void taskLoop(){
 	GLFWwindow* window = OpenBlox::getWindow();
 	while(!glfwWindowShouldClose(window)){
+		ob_instance::DataModel* dm = game->getDataModel();
+		if(dm){
+			if(dm->runService){
+				if(dm->runService->RenderStepped){
+					dm->runService->RenderStepped->Fire(NULL, NULL);
+				}
+			}
+		}
 		OpenBlox::ThreadScheduler::Tick();
 		usleep(10000);
 	}

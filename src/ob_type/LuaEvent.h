@@ -7,6 +7,8 @@
 #define lua_evt_con_name "luaL_LuaEventConnection"
 
 namespace ob_type{
+	typedef void (*luaFireFunc)(lua_State*, va_list);
+
 	class LuaEvent;
 	class LuaEventConnection{
 		public:
@@ -50,7 +52,6 @@ namespace ob_type{
 
 			int wrap_lua(lua_State* L);
 
-			typedef void (*luaFireFunc)(lua_State*, va_list);
 			void Fire(luaFireFunc fireFunc, ...);
 		private:
 			std::vector<EvtCon> connections;

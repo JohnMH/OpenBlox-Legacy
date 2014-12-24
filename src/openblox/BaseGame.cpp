@@ -180,6 +180,7 @@ namespace OpenBlox{
 			lua_pushvalue(L, i);
 			lua_call(L, 1, 1);
 			s = lua_tostring(L, -1);
+			lua_pop(L, 1);
 			if(s == NULL){
 				return luaL_error(L, LUA_QL("tostring") " must return a string to " LUA_QL("print"));
 			}
@@ -187,7 +188,6 @@ namespace OpenBlox{
 				output = output + "\t";
 			}
 			output = output + s;
-			lua_pop(L, 1);
 		}
 
 		if(INSTANCE != NULL){
