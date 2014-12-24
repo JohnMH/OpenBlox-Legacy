@@ -260,6 +260,10 @@ namespace ob_instance{
 		if(Parent != NULL){
 			Parent->addChild(this);
 		}
+
+		Changed->Fire([](lua_State* L, va_list args){
+			lua_pushstring(L, "Parent");
+		});
 	}
 
 	void Instance::removeChild(Instance* kid){
@@ -311,7 +315,7 @@ namespace ob_instance{
 		luaL_Reg properties[]{
 			{"ClassName", lua_getClassName},
 			{"Name", lua_getName},
-			{"Parent", lua_setParent},
+			{"Parent", lua_getParent},
 			{"Archivable", lua_getArchivable},
 			{NULL, NULL}
 		};
@@ -336,12 +340,18 @@ namespace ob_instance{
 	}
 
 	void Instance::register_lua_events(lua_State* L){
-			luaL_Reg events[]{
-				{"Changed", lua_getChangedEvent},
-				{NULL, NULL}
-			};
-			luaL_register(L, NULL, events);
-		}
+		luaL_Reg events[]{
+			{"Changed", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(inst){
+					return inst->Changed->wrap_lua(L);
+				}
+				return 0;
+			}},
+			{NULL, NULL}
+		};
+		luaL_register(L, NULL, events);
+	}
 
 	//Lua Wrappers
 	//Metamethods
@@ -382,10 +392,6 @@ namespace ob_instance{
 				lua_pushvalue(L, 3);
 				lua_call(L, 2, 0);
 
-				inst->Changed->Fire([](lua_State* L, va_list args){
-					lua_pushstring(L, va_arg(args, const char*));
-				}, name);
-
 				return 0;
 			}else{
 				lua_pop(L, 3);
@@ -400,6 +406,7 @@ namespace ob_instance{
 		Instance* inst = checkInstance(L, 1);
 		if(inst != NULL){
 			const char* name = luaL_checkstring(L, 2);
+
 			lua_getmetatable(L, 1);//-3
 			lua_getfield(L, -1, "__propertygetters");//-2
 			lua_getfield(L, -1, name);//-1
@@ -504,7 +511,13 @@ namespace ob_instance{
 			char* newname = new char[desired.size() + 1];
 			std::copy(desired.begin(), desired.end(), newname);
 			newname[desired.size()] = '\0';
-			inst->Name = newname;
+			if(strcmp(newname, inst->Name) != 0){
+				inst->Name = newname;
+
+				inst->Changed->Fire([](lua_State* L, va_list args){
+					lua_pushstring(L, "Name");
+				});
+			}
 			return 0;
 		}
 		return 0;
@@ -566,17 +579,13 @@ namespace ob_instance{
 			}else if(!lua_isnoneornil(L, 2)){
 				newVal = true;
 			}
-			inst->Archivable = newVal;
-		}
-		return 0;
-	}
+			if(inst->Archivable != newVal){
+				inst->Archivable = newVal;
 
-	//Events
-	int Instance::lua_getChangedEvent(lua_State* L){
-		Instance* inst = checkInstance(L, 1);
-		if (inst){
-			return inst->Changed->wrap_lua(L);
-			//return 1;
+				inst->Changed->Fire([](lua_State* L, va_list args){
+					lua_pushstring(L, "Archivable");
+				});
+			}
 		}
 		return 0;
 	}

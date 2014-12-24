@@ -9,6 +9,10 @@ namespace ob_instance{
 			StarterGui();
 			virtual ~StarterGui();
 
+			void sizeChanged(int width, int height);
+
+			virtual void Destroy();
+
 			virtual void render();
 
 			virtual Instance* cloneImpl();
@@ -23,6 +27,9 @@ namespace ob_instance{
 
 			static char* ClassName;
 			static char* LuaClassName;
+
+			virtual void removeChild(Instance* kid);
+			virtual void addChild(Instance* kid);
 	};
 };
 #endif

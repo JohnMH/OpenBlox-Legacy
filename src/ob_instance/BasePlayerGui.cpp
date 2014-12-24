@@ -22,7 +22,7 @@ namespace ob_instance{
 	STATIC_INIT(BasePlayerGui){
 		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new BasePlayerGuiClassMaker());
 
-		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, Instance::register_lua_events);
+		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
 	}
 
 	char* BasePlayerGui::ClassName = "BasePlayerGui";

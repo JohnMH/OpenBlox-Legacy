@@ -474,8 +474,9 @@ const TValue *luaH_get (Table *t, const TValue *key) {
       int k;
       lua_Number n = nvalue(key);
       lua_number2int(k, n);
-      if (luai_numeq(cast_num(k), nvalue(key))) /* index is int? */
+      if (luai_numeq(cast_num(k), nvalue(key))){ /* index is int? */
         return luaH_getnum(t, k);  /* use specialized version */
+      }
       /* else go through */
     }
     default: {

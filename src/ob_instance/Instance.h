@@ -11,6 +11,8 @@ namespace ob_instance{
 			Instance();
 			virtual ~Instance();
 
+			ob_type::LuaEvent* Changed;
+
 			virtual void ClearAllChildren();
 			virtual Instance* Clone();
 			virtual void Destroy();
@@ -57,8 +59,6 @@ namespace ob_instance{
 
 			static int lua_readOnlyProperty(lua_State* L);
 
-			static int lua_getChangedEvent(lua_State* L);
-
 			static int lua_ClearAllChildren(lua_State* L);
 			static int lua_Clone(lua_State* L);
 			static int lua_Destroy(lua_State* L);
@@ -78,7 +78,6 @@ namespace ob_instance{
 			char* Name;
 			Instance* Parent;
 			bool ParentLocked;
-			ob_type::LuaEvent* Changed;
 
 			virtual Instance* cloneImpl() = 0;
 

@@ -170,7 +170,7 @@ namespace ob_type{
 		this->LuaEventName = LuaEventName;
 		this->nargs = nargs;
 
-		connections = std::vector<int>();
+		connections = std::vector<EvtCon>();
 		waiting = std::vector<lua_State*>();
 	}
 
@@ -184,7 +184,7 @@ namespace ob_type{
 		std::vector<int>::size_type min1 = -1;
 		std::vector<int>::size_type to_remove = min1;
 		for(std::vector<int>::size_type i = 0; i != connections.size(); i++){
-			if(connections[i] == ref){
+			if(connections[i].ref == ref){
 				to_remove = i;
 				break;
 			}
@@ -196,7 +196,7 @@ namespace ob_type{
 
 	bool LuaEvent::isConnected(int ref){
 		for(std::vector<int>::size_type i = 0; i != connections.size(); i++){
-			if(connections[i] == ref){
+			if(connections[i].ref == ref){
 				return true;
 			}
 		}
@@ -227,12 +227,17 @@ namespace ob_type{
 
 	int LuaEvent::lua_connect(lua_State* L){
 		LuaEvent* evt = checkEvent(L, 1);
-		luaL_checktype(L, 2, LUA_TFUNCTION);
 
+		luaL_checktype(L, 2, LUA_TFUNCTION);
 		lua_pushvalue(L, 2);
 
 		int r = luaL_ref(L, LUA_REGISTRYINDEX);
-		evt->connections.push_back(r);
+
+		EvtCon econ = EvtCon();
+		econ.env = L;
+		econ.ref = r;
+
+		evt->connections.push_back(econ);
 
 		LuaEventConnection* con = new LuaEventConnection(evt, r);
 		return con->wrap_lua(L);
@@ -245,7 +250,9 @@ namespace ob_type{
 	}
 
 	void LuaEvent::Fire(luaFireFunc fireFunc, ...){
-		lua_State* L = OpenBlox::BaseGame::getGlobalState();
+		va_list ap;
+		va_start(ap, fireFunc);
+
 		if(!waiting.empty()){
 			while(!waiting.empty()){
 				try{
@@ -265,24 +272,26 @@ namespace ob_type{
 			}
 		}
 		for(std::vector<int>::size_type i = 0; i != connections.size(); i++){
-			int ref = connections[i];
-
-			lua_State* eL = lua_newthread(L);
-			lua_resume(eL, 0);
+			EvtCon con = connections[i];
+			lua_State* eL = con.env;
+			int ref = con.ref;
 
 			lua_rawgeti(eL, LUA_REGISTRYINDEX, ref);
 
-			va_list ap;
-			va_start(ap, fireFunc);
+			if(nargs > 0){
+				va_list argList;
+				va_copy(ap, argList);
 
-			fireFunc(eL, ap);
+				fireFunc(eL, argList);
 
-			va_end(ap);
+				va_end(argList);
+			}
 
-			int s = lua_pcall(eL, nargs, 0, 0);
+			int s = lua_pcall(eL, (nargs > 0) ? nargs : 0, LUA_MULTRET, 0);
 			if(s != 0){
 				OpenBlox::BaseGame::getInstance()->handle_lua_errors(eL);
 			}
 		}
+		va_end(ap);
 	}
 }

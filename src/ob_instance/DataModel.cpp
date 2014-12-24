@@ -22,7 +22,7 @@ namespace ob_instance{
 	STATIC_INIT(DataModel){
 		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new DataModelClassMaker());
 
-		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, Instance::register_lua_events);
+		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
 	}
 
 	char* DataModel::ClassName = "DataModel";
@@ -31,9 +31,14 @@ namespace ob_instance{
 	DataModel::DataModel() : ServiceProvider(){
 		Name = ClassName;
 		ParentLocked = true;
+
 		starterGui = new StarterGui();
 		starterGui->setParent(this);
 		starterGui->parentLock();
+
+		runService = new RunService();
+		runService->setParent(this);
+		runService->parentLock();
 	}
 
 	DataModel::~DataModel(){}

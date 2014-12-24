@@ -70,10 +70,6 @@ namespace ob_type{
 		lua_pushcfunction(L, lua_eq);
 		lua_rawset(L, -3);
 
-		lua_pushstring(L, "__gc");
-		lua_pushcfunction(L, lua_gc);
-		lua_rawset(L, -3);
-
 		lua_pushstring(L, "__index");
 		lua_pushcfunction(L, lua_index);
 		lua_rawset(L, -3);
@@ -89,16 +85,12 @@ namespace ob_type{
 		x = 0;
 		y = 0;
 		magnitude = 1;
-
-		usedInternally = false;
 	}
 
 	Vector2::Vector2(double x, double y){
 		this->x = x;
 		this->y = y;
 		magnitude = sqrt(x * x + y * y);
-
-		usedInternally = false;
 	}
 
 	Vector2::~Vector2(){}
@@ -115,6 +107,14 @@ namespace ob_type{
 			return (x == other->x && y == other->y);
 		}
 		return false;
+	}
+
+	Vector2* Vector2::clone(){
+		Vector2* newGuy = new Vector2();
+		newGuy->x = x;
+		newGuy->y = y;
+		newGuy->magnitude = magnitude;
+		return newGuy;
 	}
 
 	Vector2* Vector2::add(double v){
@@ -174,7 +174,7 @@ namespace ob_type{
 
 	double Vector2::dot(Vector2* other){
 		if(other == NULL){
-			return NULL;
+			return 0;
 		}
 		return x * other->x + y * other->y;
 	}
@@ -356,22 +356,6 @@ namespace ob_type{
 			lua_pushboolean(L, false);
 		}
 		return 1;
-	}
-
-	int Vector2::lua_gc(lua_State* L){
-		void *p = lua_touserdata(L, 1);
-		if(p){
-			if(lua_getmetatable(L, 1)){
-				lua_getfield(L, LUA_REGISTRYINDEX, lua_vec2_name);
-				if(lua_rawequal(L, -1, -2)){
-					lua_pop(L, 2);
-
-					Vector2* vec_ud = *(Vector2**)p;
-					delete vec_ud;
-				}
-			}
-		}
-		return 0;
 	}
 
 	int Vector2::wrap_lua(lua_State* L){

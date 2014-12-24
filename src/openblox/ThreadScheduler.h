@@ -4,7 +4,7 @@
 #include "OpenBlox.h"
 
 namespace OpenBlox{
-	typedef void (task_func)();
+	typedef void (task_func)(va_list);
 
 	class ThreadScheduler{
 		public:
@@ -21,6 +21,7 @@ namespace OpenBlox{
 			struct WaitingFuncTask{
 				task_func* func;
 				long at;
+				va_list args;
 			};
 			struct less_than_key{
 				inline bool operator() (const Task& struct1, const Task& struct2){
@@ -37,9 +38,12 @@ namespace OpenBlox{
 			static int Spawn(lua_State* L, int funcidx);
 			static int Wait(lua_State* L, long millis);
 			static void AddWaitingTask(lua_State* L, int nargs);
-			static void RunOnTaskThread(task_func* func, long millis);
+			static void RunOnTaskThread(task_func* func, long millis, ...);
+			static bool isOnTaskThread();
 
 			static void Tick();
+
+			static Thread* taskThread;
 		private:
 			static void enqueue_task(Task t);
 	};

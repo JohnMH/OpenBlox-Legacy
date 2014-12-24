@@ -1,6 +1,8 @@
 #include "ThreadScheduler.h"
 
 namespace OpenBlox{
+	Thread* ThreadScheduler::taskThread = NULL;
+
 	static std::vector<ThreadScheduler::Task> tasks = std::vector<ThreadScheduler::Task>();
 	static std::vector<ThreadScheduler::WaitingTask> waitingTasks = std::vector<ThreadScheduler::WaitingTask>();
 	static std::vector<ThreadScheduler::WaitingFuncTask> waitingFuncTasks = std::vector<ThreadScheduler::WaitingFuncTask>();
@@ -48,13 +50,21 @@ namespace OpenBlox{
 		waitingTasks.push_back(task);
 	}
 
-	void ThreadScheduler::RunOnTaskThread(task_func* func, long millis){
+	void ThreadScheduler::RunOnTaskThread(task_func* func, long millis, ...){
+		va_list ap;
+		va_start(ap, millis);
+
 		WaitingFuncTask task = WaitingFuncTask();
 		task.func = func;
+		task.args = ap;
 		task.at = currentTimeMillis() + millis;
 
 		waitingFuncTasks.push_back(task);
 		std::sort(waitingFuncTasks.begin(), waitingFuncTasks.end(), func_less_than_key());
+	}
+
+	bool ThreadScheduler::isOnTaskThread(){
+		return taskThread->isCurrent();
 	}
 
 	void ThreadScheduler::enqueue_task(ThreadScheduler::Task t){
@@ -83,7 +93,8 @@ namespace OpenBlox{
 				try{
 					WaitingFuncTask task = waitingFuncTasks.at(waitingFuncTasks.size() - 1);
 					if(task.at < currentTimeMillis()){
-						task.func();
+						task.func(task.args);
+						va_end(task.args);
 						waitingFuncTasks.pop_back();
 					}else{
 						break;

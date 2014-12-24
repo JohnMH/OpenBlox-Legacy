@@ -1,5 +1,11 @@
 #include "StarterGui.h"
 
+#include "../ob_type/Vector2.h"
+
+#include "ScreenGui.h"
+
+#include "../openblox/OpenBloxRenderUtil.h"
+
 namespace ob_instance{
 	struct StarterGuiClassMaker: public OpenBlox::ClassMaker{
 		ob_instance::Instance* getInstance() const{
@@ -22,7 +28,7 @@ namespace ob_instance{
 	STATIC_INIT(StarterGui){
 		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new StarterGuiClassMaker());
 
-		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, Instance::register_lua_events);
+		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
 	}
 
 	char* StarterGui::ClassName = "StarterGui";
@@ -35,21 +41,33 @@ namespace ob_instance{
 
 	StarterGui::~StarterGui(){}
 
+	void StarterGui::sizeChanged(int width, int height){
+		ob_type::Vector2* sizeVec = new ob_type::Vector2(width, height);
+
+		for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
+			Instance* kid = children[i];
+			if(kid != NULL){
+				if(ScreenGui* sg = dynamic_cast<ScreenGui*>(kid)){
+					sg->setAbsoluteSize(sizeVec);
+				}
+			}
+		}
+
+		delete sizeVec;
+	}
+
+	void StarterGui::Destroy(){}
+
 	void StarterGui::render(){
 		if(ShowDevelopmentGui){
-			glLoadIdentity();
-			glRotatef((float)glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-
-			glBegin(GL_TRIANGLES);
-			{
-				glColor3f(1.f, 0.f, 0.f);
-				glVertex3f(-0.6f, -0.4f, 0.f);
-				glColor3f(0.f, 1.f, 0.f);
-				glVertex3f(0.6f, -0.4f, 0.f);
-				glColor3f(0.f, 0.f, 1.f);
-				glVertex3f(0.f, 0.6f, 0.f);
+			for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
+				Instance* kid = children[i];
+				if(kid != NULL){
+					if(ScreenGui* sg = dynamic_cast<ScreenGui*>(kid)){
+						sg->render();
+					}
+				}
 			}
-			glEnd();
 		}
 	}
 
@@ -69,5 +87,35 @@ namespace ob_instance{
 
 	char* StarterGui::getClassName(){
 		return ClassName;
+	}
+
+	void StarterGui::addChild(Instance* kid){
+		Instance::addChild(kid);
+
+		if(ScreenGui* sg = dynamic_cast<ScreenGui*>(kid)){
+			int width;
+			int height;
+			OpenBlox::getFramebufferSize(&width, &height);
+
+			ob_type::Vector2* newVec2 = new ob_type::Vector2(width, height);
+
+			sg->setAbsoluteSize(newVec2);
+
+			delete newVec2;
+		}
+	}
+
+	void StarterGui::removeChild(Instance* kid){
+		Instance::removeChild(kid);
+
+		if(kid != NULL){
+			if(ScreenGui* sg = dynamic_cast<ScreenGui*>(kid)){
+				ob_type::Vector2* newVec2 = new ob_type::Vector2(0, 0);
+
+				sg->setAbsoluteSize(newVec2);
+
+				delete newVec2;
+			}
+		}
 	}
 }

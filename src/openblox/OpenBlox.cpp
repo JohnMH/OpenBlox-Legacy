@@ -9,12 +9,9 @@
 
 #include "OpenBloxRenderUtil.h"
 
-#include "Thread.h"
-
 OpenBlox::BaseGame* game;
 
 OpenBlox::Thread* renderThread;
-OpenBlox::Thread* taskThread;
 
 lua_State* L = NULL;
 
@@ -49,7 +46,12 @@ void render(){
 	glMatrixMode(GL_MODELVIEW);
 
 	ob_instance::DataModel* dm = game->getDataModel();
-	if(dm != NULL){
+	if(dm){
+		if(dm->runService){
+			if(dm->runService->RenderStepped){
+				dm->runService->RenderStepped->Fire(NULL, NULL);
+			}
+		}
 		dm->render();
 	}
 }
@@ -63,7 +65,17 @@ void taskLoop(){
 }
 
 void size_callback(int width, int height){
-	//Update stuff
+	ob_instance::DataModel* dm = game->getDataModel();
+	if(dm){
+		if(dm->starterGui){
+			int w;
+			int h;
+			OpenBlox::getFramebufferSize(&w, &h);
+
+			dm->starterGui->sizeChanged(w, h);
+		}
+		dm->render();
+	}
 }
 
 #ifndef OPENBLOX_JNI
@@ -92,7 +104,6 @@ void renderLoop(){
 	}
 
 	while(!glfwWindowShouldClose(window)){
-		//Fire RunService.RenderStepped
 		render();
 
 		glfwSwapBuffers(window);
@@ -143,7 +154,7 @@ int main(){
 	glfwSetWindowSizeCallback(window, glfw_window_size_callback);
 
 	renderThread = new OpenBlox::Thread(renderLoop);
-	taskThread = new OpenBlox::Thread(taskLoop);
+	OpenBlox::ThreadScheduler::taskThread = new OpenBlox::Thread(taskLoop);
 
 	int val;
 	val = renderThread->start();
@@ -153,7 +164,7 @@ int main(){
 		return 1;
 	}
 
-	val = taskThread->start();
+	val = OpenBlox::ThreadScheduler::taskThread->start();
 	if(val){
 		LOGE("[CORE] Failed to create task thread.");
 		glfwTerminate();
@@ -162,7 +173,7 @@ int main(){
 
 	L = OpenBlox::BaseGame::newLuaState();
 
-	OpenBlox::ThreadScheduler::RunOnTaskThread([](){
+	OpenBlox::ThreadScheduler::RunOnTaskThread([](va_list args){
 		lua_resume(L, 0);
 
 		char* initFile = OpenBlox::fileGetContents("init.lua");
@@ -175,14 +186,14 @@ int main(){
 		if(s != 0){
 			game->handle_lua_errors(L);
 		}
-	}, 10);
+	}, 100);
 
 	while(!glfwWindowShouldClose(window)){
 		glfwWaitEvents();
 	}
 
 	renderThread->join();
-	taskThread->join();
+	OpenBlox::ThreadScheduler::taskThread->join();
 
 	lua_close(L);
 

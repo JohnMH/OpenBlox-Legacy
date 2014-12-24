@@ -35,6 +35,10 @@ namespace ob_type{
 
 	class LuaEvent{
 		public:
+			struct EvtCon{
+				lua_State* env;
+				int ref;
+			};
 			LuaEvent(const char* EventName, int nargs);
 			virtual ~LuaEvent();
 
@@ -49,7 +53,7 @@ namespace ob_type{
 			typedef void (*luaFireFunc)(lua_State*, va_list);
 			void Fire(luaFireFunc fireFunc, ...);
 		private:
-			std::vector<int> connections;
+			std::vector<EvtCon> connections;
 			std::vector<lua_State*> waiting;
 			const char* LuaEventName;
 			int nargs;

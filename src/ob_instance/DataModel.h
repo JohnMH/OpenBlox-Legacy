@@ -3,6 +3,7 @@
 
 #include "ServiceProvider.h"
 #include "StarterGui.h"
+#include "RunService.h"
 
 namespace ob_instance{
 	class DataModel: public ServiceProvider{
@@ -17,11 +18,11 @@ namespace ob_instance{
 
 			virtual char* getClassName();
 
-			DECLARE_STATIC_INIT(DataModel);
-
-		protected:
 			StarterGui* starterGui;
+			RunService* runService;
 
+			DECLARE_STATIC_INIT(DataModel);
+		protected:
 			static char* ClassName;
 			static char* LuaClassName;
 

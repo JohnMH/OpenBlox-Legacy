@@ -15,8 +15,6 @@ namespace ob_type{
 
 			DECLARE_STATIC_INIT(Vector2);
 
-			bool usedInternally;
-
 			double x;
 			double y;
 			double magnitude;
@@ -24,6 +22,8 @@ namespace ob_type{
 			Vector2* getNormalized();//unit
 
 			bool equals(Vector2* other);
+
+			Vector2* clone();
 
 			Vector2* add(double v);
 			Vector2* add(Vector2* other);
@@ -59,7 +59,6 @@ namespace ob_type{
 			static int lua_mul(lua_State* L);
 			static int lua_div(lua_State* L);
 			static int lua_eq(lua_State* L);
-			static int lua_gc(lua_State* L);
 
 			int wrap_lua(lua_State* L);
 	};
