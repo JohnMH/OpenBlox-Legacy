@@ -6,7 +6,7 @@ screen.Changed:connect(function(prop)
 end);
 
 game:GetService("RunService").RenderStepped:connect(function()
-	print("RenderStepped");
+	--print("RenderStepped");
 end);
 
 while true do
