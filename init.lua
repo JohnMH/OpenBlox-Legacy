@@ -5,8 +5,8 @@ screen.Changed:connect(function(prop)
 	print(prop, " = ", screen[prop]);
 end);
 
-game:GetService("RunService").RenderStepped:connect(function()
-	--print("RenderStepped");
+game:GetService("RunService").Stepped:connect(function(time, step)
+	print("Stepped: " .. time .. " " .. step);
 end);
 
 while true do

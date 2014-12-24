@@ -30,11 +30,15 @@ namespace ob_instance{
 
 	RunService::RunService() : Instance(){
 		Name = ClassName;
+
 		RenderStepped = new ob_type::LuaEvent("RenderStepped", 0);
+		Stepped = new ob_type::LuaEvent("Stepped", 2);
+		Heartbeat = new ob_type::LuaEvent("Heartbeat", 1);
 	}
 
 	RunService::~RunService(){
 		delete RenderStepped;
+		delete Heartbeat;
 	}
 
 	void RunService::Destroy(){}
@@ -64,6 +68,24 @@ namespace ob_instance{
 				if(inst){
 					if(RunService* rs = dynamic_cast<RunService*>(inst)){
 						return rs->RenderStepped->wrap_lua(L);
+					}
+				}
+				return 0;
+			}},
+			{"Stepped", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(inst){
+					if(RunService* rs = dynamic_cast<RunService*>(inst)){
+						return rs->Stepped->wrap_lua(L);
+					}
+				}
+				return 0;
+			}},
+			{"Heartbeat", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(inst){
+					if(RunService* rs = dynamic_cast<RunService*>(inst)){
+						return rs->Heartbeat->wrap_lua(L);
 					}
 				}
 				return 0;

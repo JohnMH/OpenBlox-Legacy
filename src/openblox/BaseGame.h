@@ -37,6 +37,8 @@ namespace OpenBlox{
 
 			static BaseGame* getInstance();
 
+			static double elapsedTime();
+
 			static int lua_wait(lua_State* L);
 			static int lua_delay(lua_State* L);
 			static int lua_spawn(lua_State* L);

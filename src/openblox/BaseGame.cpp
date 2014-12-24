@@ -133,6 +133,10 @@ namespace OpenBlox{
 		return INSTANCE;
 	}
 
+	double BaseGame::elapsedTime(){
+		return (currentTimeMillis() - APP_START) / 1000.0;
+	}
+
 	int BaseGame::lua_wait(lua_State* L){
 		double waitTime = 1/60;
 		if(!lua_isnoneornil(L, 1)){
@@ -198,7 +202,7 @@ namespace OpenBlox{
 	}
 
 	int BaseGame::lua_elapsedTime(lua_State* L){
-		lua_pushnumber(L, (currentTimeMillis() - APP_START) / 1000.0);
+		lua_pushnumber(L, elapsedTime());
 		return 1;
 	}
 

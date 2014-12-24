@@ -53,16 +53,33 @@ void render(){
 
 void taskLoop(){
 	GLFWwindow* window = OpenBlox::getWindow();
+
 	while(!glfwWindowShouldClose(window)){
 		ob_instance::DataModel* dm = game->getDataModel();
 		if(dm){
 			if(dm->runService){
 				if(dm->runService->RenderStepped){
-					dm->runService->RenderStepped->Fire(NULL, NULL);
+					dm->runService->RenderStepped->Fire(NULL);
 				}
 			}
 		}
 		OpenBlox::ThreadScheduler::Tick();
+
+		if(dm){
+			if(dm->runService){
+				if(dm->runService->Heartbeat){
+					dm->runService->Heartbeat->Fire([](lua_State* L, va_list args){
+						lua_pushnumber(L, 1/30);
+					});
+				}
+				if(dm->runService->Stepped){
+					dm->runService->Stepped->Fire([](lua_State* L, va_list args){
+						lua_pushnumber(L, (OpenBlox::currentTimeMillis() - OpenBlox::BaseGame::elapsedTime()) / 1000.0);
+						lua_pushnumber(L, 1/30);
+					});
+				}
+			}
+		}
 		usleep(10000);
 	}
 }

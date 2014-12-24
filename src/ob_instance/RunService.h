@@ -18,6 +18,8 @@ namespace ob_instance{
 			virtual int wrap_lua(lua_State* L);
 
 			ob_type::LuaEvent* RenderStepped;
+			ob_type::LuaEvent* Stepped;
+			ob_type::LuaEvent* Heartbeat;
 
 			DECLARE_STATIC_INIT(RunService);
 		protected:
