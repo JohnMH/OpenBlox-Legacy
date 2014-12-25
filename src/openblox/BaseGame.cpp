@@ -4,6 +4,9 @@
 
 #include "../ob_type/Vector3.h"
 #include "../ob_type/Vector2.h"
+#include "../ob_type/Color3.h"
+#include "../ob_type/UDim.h"
+#include "../ob_type/UDim2.h"
 
 #include <ctime>
 
@@ -102,6 +105,30 @@ namespace OpenBlox{
 		luaL_register(L, NULL, vector2lib);
 		lua_setglobal(L, "Vector2");
 
+		lua_newtable(L);
+		luaL_Reg color3lib[]{
+			{"new", lua_newColor3},
+			{NULL, NULL}
+		};
+		luaL_register(L, NULL, color3lib);
+		lua_setglobal(L, "Color3");
+
+		lua_newtable(L);
+		luaL_Reg udimlib[]{
+			{"new", lua_newUDim},
+			{NULL, NULL}
+		};
+		luaL_register(L, NULL, udimlib);
+		lua_setglobal(L, "UDim");
+
+		lua_newtable(L);
+		luaL_Reg udim2lib[]{
+			{"new", lua_newUDim2},
+			{NULL, NULL}
+		};
+		luaL_register(L, NULL, udim2lib);
+		lua_setglobal(L, "UDim2");
+
 		ob_instance::DataModel* dm = INSTANCE->getDataModel();
 		int gm = dm->wrap_lua(L);
 		lua_pushvalue(L, -gm);
@@ -111,8 +138,6 @@ namespace OpenBlox{
 		lua_setglobal(L, "Game");
 
 		lua_pop(L, gm);
-
-		//lua_pop(GlobalLuaState, 1);
 
 		return L;
 	}
@@ -280,6 +305,39 @@ namespace OpenBlox{
 		double y = luaL_checknumber(L, 2);
 
 		ob_type::Vector2* newGuy = new ob_type::Vector2(x, y);
+		return newGuy->wrap_lua(L);
+	}
+
+	int BaseGame::lua_newColor3(lua_State* L){
+		double r = 0;
+		double g = 0;
+		double b = 0;
+
+		if(!lua_isnone(L, 1) && !lua_isnone(L, 2) && !lua_isnone(L, 3)){
+			r = luaL_checknumber(L, 1);
+			g = luaL_checknumber(L, 2);
+			b = luaL_checknumber(L, 3);
+		}
+
+		ob_type::Color3* newGuy = new ob_type::Color3(r, g, b);
+		return newGuy->wrap_lua(L);
+	}
+
+	int BaseGame::lua_newUDim(lua_State* L){
+		double scale = luaL_checknumber(L, 1);
+		int offset = luaL_checkint(L, 2);
+
+		ob_type::UDim* newGuy = new ob_type::UDim(scale, offset);
+		return newGuy->wrap_lua(L);
+	}
+
+	int BaseGame::lua_newUDim2(lua_State* L){
+		double xscale = luaL_checknumber(L, 1);
+		int xoffset = luaL_checkint(L, 2);
+		double yscale = luaL_checknumber(L, 3);
+		int yoffset = luaL_checkint(L, 4);
+
+		ob_type::UDim2* newGuy = new ob_type::UDim2(xscale, xoffset, yscale, yoffset);
 		return newGuy->wrap_lua(L);
 	}
 }

@@ -1,5 +1,7 @@
 #include "Instance.h"
 
+#include "../openblox/OpenBloxRenderUtil.h"
+
 namespace ob_instance{
 	struct InstanceClassMaker: public OpenBlox::ClassMaker{
 		ob_instance::Instance* getInstance() const{
@@ -253,6 +255,11 @@ namespace ob_instance{
 			throw std::runtime_error(errMsg.c_str());
 			return;
 		}
+
+		if(OpenBlox::renderLock){
+			while(OpenBlox::renderLock){}
+		}
+
 		if(Parent != NULL){
 			Parent->removeChild(this);
 		}

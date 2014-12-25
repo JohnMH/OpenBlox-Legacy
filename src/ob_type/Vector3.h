@@ -15,8 +15,6 @@ namespace ob_type{
 
 			DECLARE_STATIC_INIT(Vector3);
 
-			bool usedInternally;
-
 			double x;
 			double y;
 			double z;

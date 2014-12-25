@@ -44,6 +44,8 @@ namespace ob_instance{
 		}
 	}
 
+	void GuiBase2d::sizeChanged(){}
+
 	void GuiBase2d::setAbsolutePosition(ob_type::Vector2* newVec2){
 		if(newVec2){
 			if(AbsolutePosition == NULL || !newVec2->equals(AbsolutePosition)){
@@ -51,6 +53,15 @@ namespace ob_instance{
 					delete AbsolutePosition;
 				}
 				AbsolutePosition = newVec2->clone();
+
+				for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
+					Instance* kid = children[i];
+					if(kid != NULL){
+						if(GuiBase2d* sg = dynamic_cast<GuiBase2d*>(kid)){
+							sg->sizeChanged();
+						}
+					}
+				}
 
 				Changed->Fire([](lua_State* L, va_list args){
 					lua_pushstring(L, "AbsolutePosition");
@@ -73,6 +84,15 @@ namespace ob_instance{
 					delete AbsoluteSize;
 				}
 				AbsoluteSize = newVec2->clone();
+
+				for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
+					Instance* kid = children[i];
+					if(kid != NULL){
+						if(GuiBase2d* sg = dynamic_cast<GuiBase2d*>(kid)){
+							sg->sizeChanged();
+						}
+					}
+				}
 
 				Changed->Fire([](lua_State* L, va_list args){
 					lua_pushstring(L, "AbsoluteSize");

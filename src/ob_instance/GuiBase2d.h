@@ -11,6 +11,11 @@ namespace ob_instance{
 			GuiBase2d();
 			virtual ~GuiBase2d();
 
+			ob_type::Vector2* AbsolutePosition;
+			ob_type::Vector2* AbsoluteSize;
+
+			virtual void sizeChanged();
+
 			void setAbsolutePosition(ob_type::Vector2* newVec2);
 			ob_type::Vector2* getAbsolutePosition();
 
@@ -26,9 +31,6 @@ namespace ob_instance{
 		protected:
 			static char* ClassName;
 			static char* LuaClassName;
-
-			ob_type::Vector2* AbsolutePosition;
-			ob_type::Vector2* AbsoluteSize;
 
 			static void register_lua_property_setters(lua_State* L);
 			static void register_lua_property_getters(lua_State* L);

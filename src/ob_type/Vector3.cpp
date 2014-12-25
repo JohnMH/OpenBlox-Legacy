@@ -88,8 +88,6 @@ namespace ob_type{
 		y = 0;
 		z = 0;
 		magnitude = 1;
-
-		usedInternally = false;
 	}
 
 	Vector3::Vector3(double x, double y, double z){
@@ -97,8 +95,6 @@ namespace ob_type{
 		this->y = y;
 		this->z = z;
 		magnitude = sqrt(dot(this));
-
-		usedInternally = false;
 	}
 
 	Vector3::~Vector3(){}

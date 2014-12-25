@@ -19,6 +19,8 @@ double lastTime = glfwGetTime();
 int nbFrames = 0;
 
 void render(){
+	OpenBlox::renderLock = true;
+
 	double currentTime = glfwGetTime();
 	nbFrames++;
 	if(currentTime - lastTime >= 1.0){
@@ -40,16 +42,15 @@ void render(){
 	glViewport(0, 0, width, height);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-	glMatrixMode(GL_MODELVIEW);
-
 	ob_instance::DataModel* dm = game->getDataModel();
 	if(dm){
 		dm->render();
 	}
+
+	OpenBlox::renderLock = false;
 }
+
+bool wasResized = false;
 
 void taskLoop(){
 	GLFWwindow* window = OpenBlox::getWindow();
@@ -79,23 +80,23 @@ void taskLoop(){
 					});
 				}
 			}
+			if(wasResized){
+				wasResized = false;
+				if(dm->starterGui){
+					int w;
+					int h;
+					OpenBlox::getFramebufferSize(&w, &h);
+
+					dm->starterGui->sizeChanged(w, h);
+				}
+			}
 		}
 		usleep(10000);
 	}
 }
 
 void size_callback(int width, int height){
-	ob_instance::DataModel* dm = game->getDataModel();
-	if(dm){
-		if(dm->starterGui){
-			int w;
-			int h;
-			OpenBlox::getFramebufferSize(&w, &h);
-
-			dm->starterGui->sizeChanged(w, h);
-		}
-		dm->render();
-	}
+	wasResized = true;
 }
 
 #ifndef OPENBLOX_JNI

@@ -1,5 +1,7 @@
 #include "ScreenGui.h"
 
+#include "GuiObject.h"
+
 namespace ob_instance{
 	struct ScreenGuiClassMaker: public OpenBlox::ClassMaker{
 		ob_instance::Instance* getInstance() const{
@@ -32,6 +34,7 @@ namespace ob_instance{
 	ScreenGui::~ScreenGui(){}
 
 	void ScreenGui::render(){
+		/*
 		glLoadIdentity();
 		glRotatef((float)glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
 
@@ -45,6 +48,15 @@ namespace ob_instance{
 			glVertex3f(0.f, 0.6f, 0.f);
 		}
 		glEnd();
+		*/
+		for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
+			Instance* kid = children[i];
+			if(kid != NULL){
+				if(GuiObject* go = dynamic_cast<GuiObject*>(kid)){
+					go->render();
+				}
+			}
+		}
 	}
 
 	int ScreenGui::wrap_lua(lua_State* L){

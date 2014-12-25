@@ -250,11 +250,6 @@ namespace ob_type{
 	}
 
 	void LuaEvent::Fire(luaFireFunc fireFunc, ...){
-		if(!OpenBlox::ThreadScheduler::isOnTaskThread()){
-			LOGI("Not on task thread!");
-			return;
-		}
-
 		va_list ap;
 		va_start(ap, fireFunc);
 

@@ -5,6 +5,8 @@
 #endif
 
 namespace OpenBlox{
+	bool renderLock = false;
+
 #ifndef OPENBLOX_JNI
 	static GLFWwindow* window;
 

@@ -60,6 +60,18 @@ namespace ob_instance{
 
 	void StarterGui::render(){
 		if(ShowDevelopmentGui){
+			int width;
+			int height;
+			OpenBlox::getFramebufferSize(&width, &height);
+
+			glMatrixMode(GL_PROJECTION);
+			{
+				glLoadIdentity();
+				glOrtho(0, width, height, 0, 1.f, -1.f);
+			}
+
+			glMatrixMode(GL_MODELVIEW);
+
 			for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
 				Instance* kid = children[i];
 				if(kid != NULL){
