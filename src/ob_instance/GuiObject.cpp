@@ -171,6 +171,20 @@ namespace ob_instance{
 				}
 				return 0;
 			}},
+			{"BorderColor3", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(GuiObject* go = dynamic_cast<GuiObject*>(inst)){
+					ob_type::Color3* newVal = ob_type::checkColor3(L, 2);
+					if(go->BorderColor3 != newVal){
+						go->BorderColor3 = newVal;
+
+						go->Changed->Fire([](lua_State* L, va_list args){
+							lua_pushstring(L, "BorderColor3");
+						});
+					}
+				}
+				return 0;
+			}},
 			{"BorderSizePixel", [](lua_State* L)->int{
 				Instance* inst = checkInstance(L, 1);
 				if(GuiObject* go = dynamic_cast<GuiObject*>(inst)){
@@ -230,6 +244,8 @@ namespace ob_instance{
 					if(go->Position != newVal){
 						go->Position = newVal;
 
+						go->sizeChanged();
+
 						go->Changed->Fire([](lua_State* L, va_list args){
 							lua_pushstring(L, "Position");
 						});
@@ -257,6 +273,8 @@ namespace ob_instance{
 					ob_type::UDim2* newVal = ob_type::checkUDim2(L, 2);
 					if(go->Size != newVal){
 						go->Size = newVal;
+
+						go->sizeChanged();
 
 						go->Changed->Fire([](lua_State* L, va_list args){
 							lua_pushstring(L, "Size");
@@ -327,6 +345,13 @@ namespace ob_instance{
 				if(GuiObject* go = dynamic_cast<GuiObject*>(inst)){
 					lua_pushnumber(L, go->BackgroundTransparency);
 					return 1;
+				}
+				return 0;
+			}},
+			{"BorderColor3", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(GuiObject* go = dynamic_cast<GuiObject*>(inst)){
+					return go->BorderColor3->wrap_lua(L);
 				}
 				return 0;
 			}},
