@@ -19,6 +19,8 @@ namespace ob_instance{
 			char* GetAsync(const char* url, bool nocache = false);
 			//char* PostAsync(char* url, char* data, Enum HttpContentType content_type = ApplicationJson); //GOD DAMN IT DEVDIGGY! DO ENUMS!
 
+			char* UrlEncode(const char* input);
+
 			virtual Instance* cloneImpl();
 
 			virtual char* getClassName();

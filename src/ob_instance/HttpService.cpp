@@ -79,9 +79,11 @@ namespace ob_instance{
 		if(curl){
 			curl_easy_setopt(curl, CURLOPT_URL, url);
 
+			curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
+
 			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 
-			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
 
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &body);
@@ -94,6 +96,26 @@ namespace ob_instance{
 			curl_easy_cleanup(curl);
 
 			return body.data;
+		}
+		return NULL;
+	}
+
+	char* HttpService::UrlEncode(const char* input){
+		CURL* curl;
+
+		curl = curl_easy_init();
+		if(curl){
+			char* encoded = curl_easy_escape(curl, input, 0);
+
+			size_t thingLen = strlen(encoded) + 1;
+			char* newGuy = new char[thingLen];
+			strcpy(newGuy, encoded);
+			newGuy[thingLen] = '\0';
+
+			curl_free(encoded);
+			curl_easy_cleanup(curl);
+
+			return newGuy;
 		}
 		return NULL;
 	}
@@ -141,6 +163,22 @@ namespace ob_instance{
 					return 1;
 				}
 				return luaL_error(L, COLONERR, "GetAsync");
+			}},
+			{"UrlEncode", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(HttpService* hs = dynamic_cast<HttpService*>(inst)){
+					const char* inputStr = luaL_checkstring(L, 2);
+
+					char* output = hs->UrlEncode(inputStr);
+
+					if(output){
+						lua_pushstring(L, output);
+					}else{
+						lua_pushnil(L);
+					}
+					return 1;
+				}
+				return luaL_error(L, COLONERR, "UrlEncode");
 			}},
 			{NULL, NULL}
 		};

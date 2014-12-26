@@ -1,6 +1,6 @@
 local httpService = game:GetService("HttpService");
 print(httpService);
-wait(2);
+print(httpService:UrlEncode("BOB&WEEVE"));
 print(httpService:GetAsync("https://www.example.com/"));
 
 --[[ Saved for more GUI testing
