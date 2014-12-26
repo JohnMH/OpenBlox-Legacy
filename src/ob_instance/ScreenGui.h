@@ -11,6 +11,8 @@ namespace ob_instance{
 
 			virtual void render();
 
+			bool isMouseCaptured(int x, int y);
+
 			virtual Instance* cloneImpl();
 
 			virtual char* getClassName();
@@ -21,6 +23,9 @@ namespace ob_instance{
 		protected:
 			static char* ClassName;
 			static char* LuaClassName;
+
+			virtual void removeChild(Instance* kid);
+			virtual void addChild(Instance* kid);
 	};
 };
 #endif

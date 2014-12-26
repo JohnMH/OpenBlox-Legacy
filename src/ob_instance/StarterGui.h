@@ -11,6 +11,8 @@ namespace ob_instance{
 
 			void sizeChanged(int width, int height);
 
+			bool isMouseCaptured(int x, int y);
+
 			virtual void Destroy();
 
 			virtual void render();

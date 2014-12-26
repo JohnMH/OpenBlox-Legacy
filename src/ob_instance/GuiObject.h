@@ -14,6 +14,8 @@ namespace ob_instance{
 
 			virtual void sizeChanged();
 
+			bool isMouseCaptured(int x, int y);
+
 			ob_type::Vector2* calculateRenderPosision(ob_type::Vector2* seed);
 			ob_type::Vector2* calculateRenderSize(ob_type::Vector2* seed);
 

@@ -100,6 +100,10 @@ namespace ob_instance{
 		}
 	}
 
+	bool GuiObject::isMouseCaptured(int x, int y){
+		return false;//Might wanna.. Y'know...... Implement this.
+	}
+
 	ob_type::Vector2* GuiObject::calculateRenderPosision(ob_type::Vector2* seed){
 		if(Parent){
 			if(GuiBase2d* par = dynamic_cast<GuiBase2d*>(Parent)){

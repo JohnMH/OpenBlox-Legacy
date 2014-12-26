@@ -33,11 +33,11 @@ void render(){
 		lastTime += 1.0;
 	}
 
-	float ratio;
+	//float ratio;
 	int width, height;
 
 	OpenBlox::getFramebufferSize(&width, &height);
-	ratio = width / (float)height;
+	//ratio = width / (float)height;
 
 	glViewport(0, 0, width, height);
 	glClear(GL_COLOR_BUFFER_BIT);

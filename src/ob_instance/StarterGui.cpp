@@ -56,6 +56,21 @@ namespace ob_instance{
 		delete sizeVec;
 	}
 
+	bool StarterGui::isMouseCaptured(int x, int y){
+		for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
+			Instance* kid = children[i];
+			if(kid != NULL){
+				if(ScreenGui* sg = dynamic_cast<ScreenGui*>(kid)){
+					if(sg->isMouseCaptured(x, y)){
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
 	void StarterGui::Destroy(){}
 
 	void StarterGui::render(){

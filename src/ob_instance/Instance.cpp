@@ -41,7 +41,7 @@ namespace ob_instance{
 	}
 
 	Instance::~Instance(){
-		free(Name);
+		delete[] Name;
 		delete Changed;
 	}
 
