@@ -7,6 +7,7 @@
 #include <cstring>
 
 #include <sys/time.h>
+#include <unistd.h>
 
 namespace OpenBlox{
 	char* covertToLower(char* str);
@@ -18,5 +19,7 @@ namespace OpenBlox{
 	long currentTimeMillis();
 
 	char* fileGetContents(char* fileName);
+	bool fileExists(char* fileName);
+	bool fileIsReadable(char* fileName);
 }
 #endif

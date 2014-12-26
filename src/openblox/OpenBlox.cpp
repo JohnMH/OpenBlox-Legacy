@@ -197,7 +197,15 @@ int main(){
 	OpenBlox::ThreadScheduler::RunOnTaskThread([](va_list args){
 		lua_resume(L, 0);
 
-		char* initFile = OpenBlox::fileGetContents("init.lua");
+		char* fileName = "init.lua";
+
+		if(!OpenBlox::fileIsReadable(fileName)){
+			LOGE("init.lua does not exist or is not readable.");
+			glfwSetWindowShouldClose(OpenBlox::getWindow(), true);
+			return;
+		}
+
+		char* initFile = OpenBlox::fileGetContents(fileName);
 
 		int s = luaL_loadbuffer(L, initFile, strlen(initFile), "@game.Workspace.Script");
 		if(s == 0){

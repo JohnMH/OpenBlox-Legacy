@@ -13,6 +13,8 @@ namespace OpenBlox{
 		lua_pushvalue(L, funcidx);
 		int r = lua_ref(L, LUA_REGISTRYINDEX);
 
+		LOGI("What");
+
 		long curTime = currentTimeMillis();
 
 		Task tsk = Task();
@@ -65,7 +67,8 @@ namespace OpenBlox{
 		evt.state = L;
 		evt.ref = ref;
 		evt.fireFunc = fireFunc;
-		evt.args = args;
+		va_copy(evt.args, args);
+		va_end(args);
 		evt.numArgs = numArgs;
 
 		waitingEvents.push_back(evt);
@@ -77,7 +80,8 @@ namespace OpenBlox{
 
 		WaitingFuncTask task = WaitingFuncTask();
 		task.func = func;
-		task.args = ap;
+		va_copy(task.args, ap);
+		va_end(ap);
 		task.at = currentTimeMillis() + millis;
 
 		waitingFuncTasks.push_back(task);

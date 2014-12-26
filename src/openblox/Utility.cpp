@@ -72,4 +72,12 @@ namespace OpenBlox{
 
 		return file_contents;
 	}
+
+	bool fileExists(char* fileName){
+		return access(fileName, F_OK) != -1;
+	}
+
+	bool fileIsReadable(char* fileName){
+		return access(fileName, R_OK) != -1;
+	}
 }
