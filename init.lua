@@ -1,7 +1,5 @@
-local httpService = game:GetService("HttpService");
-print(httpService);
-print(httpService:UrlEncode("BOB&WEEVE"));
-print(httpService:GetAsync("https://www.example.com/"));
+print(os.time());
+print(tick());
 
 --[[ Saved for more GUI testing
 local frame = Instance.new("Frame");

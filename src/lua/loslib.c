@@ -53,6 +53,9 @@ static int os_rename (lua_State *L) {
   return os_pushresult(L, rename(fromname, toname) == 0, fromname);
 }
 
+#ifndef LUA_TMPNAMBUFSIZE
+	#define LUA_TMPNAMBUFSIZE 32
+#endif
 
 static int os_tmpname (lua_State *L) {
   char buff[LUA_TMPNAMBUFSIZE];
@@ -167,7 +170,7 @@ static int os_date (lua_State *L) {
 }
 
 
-static int os_time (lua_State *L) {
+static int os_time (lua_State *L){
   time_t t;
   if (lua_isnoneornil(L, 1))  /* called without args? */
     t = time(NULL);  /* get current time */

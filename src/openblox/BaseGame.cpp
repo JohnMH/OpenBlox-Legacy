@@ -10,6 +10,8 @@
 
 #include <ctime>
 
+#include "oboslib.h"
+
 namespace OpenBlox{
 	static BaseGame* INSTANCE;
 	static long APP_START = currentTimeMillis();
@@ -62,6 +64,8 @@ namespace OpenBlox{
 		luaopen_string(L);
 		luaopen_math(L);
 
+		luaopen_obos(L);
+
 		lua_pushnil(L);
 		lua_setglobal(L, "dofile");
 		lua_pushnil(L);
@@ -81,53 +85,41 @@ namespace OpenBlox{
 		lua_register(L, "wait", lua_wait);
 		lua_register(L, "Wait", lua_wait);
 
-		lua_newtable(L);
 		luaL_Reg instancelib[]{
 			{"new", lua_newInstance},
 			{NULL, NULL}
 		};
-		luaL_register(L, NULL, instancelib);
-		lua_setglobal(L, "Instance");
+		luaL_register(L, "Instance", instancelib);
 
-		lua_newtable(L);
 		luaL_Reg vector3lib[]{
 			{"new", lua_newVector3},
 			{NULL, NULL}
 		};
-		luaL_register(L, NULL, vector3lib);
-		lua_setglobal(L, "Vector3");
+		luaL_register(L, "Vector3", vector3lib);
 
-		lua_newtable(L);
 		luaL_Reg vector2lib[]{
 			{"new", lua_newVector2},
 			{NULL, NULL}
 		};
-		luaL_register(L, NULL, vector2lib);
-		lua_setglobal(L, "Vector2");
+		luaL_register(L, "Vector2", vector2lib);
 
-		lua_newtable(L);
 		luaL_Reg color3lib[]{
 			{"new", lua_newColor3},
 			{NULL, NULL}
 		};
-		luaL_register(L, NULL, color3lib);
-		lua_setglobal(L, "Color3");
+		luaL_register(L, "Color3", color3lib);
 
-		lua_newtable(L);
 		luaL_Reg udimlib[]{
 			{"new", lua_newUDim},
 			{NULL, NULL}
 		};
-		luaL_register(L, NULL, udimlib);
-		lua_setglobal(L, "UDim");
+		luaL_register(L, "UDim", udimlib);
 
-		lua_newtable(L);
 		luaL_Reg udim2lib[]{
 			{"new", lua_newUDim2},
 			{NULL, NULL}
 		};
-		luaL_register(L, NULL, udim2lib);
-		lua_setglobal(L, "UDim2");
+		luaL_register(L, "UDim2", udim2lib);
 
 		ob_instance::DataModel* dm = INSTANCE->getDataModel();
 		int gm = dm->wrap_lua(L);
@@ -192,7 +184,10 @@ namespace OpenBlox{
 	}
 
 	int BaseGame::lua_tick(lua_State* L){
-		lua_pushnumber(L, time(0));
+		time_t t = time(NULL);
+		t = mktime(localtime(&t));
+
+		lua_pushnumber(L, t);
 		return 1;
 	}
 

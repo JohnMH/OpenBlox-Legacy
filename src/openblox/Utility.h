@@ -16,7 +16,9 @@ namespace OpenBlox{
 	char* covertToUpper(char* str);
 	char* covertToUpper(const char* str);
 
-	long currentTimeMillis();
+	typedef int64_t msec_t;
+
+	msec_t currentTimeMillis();
 
 	char* fileGetContents(char* fileName);
 	bool fileExists(char* fileName);
