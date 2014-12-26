@@ -13,14 +13,14 @@ namespace OpenBlox{
 		public:
 			struct Task{
 				lua_State* origin;
-				int ref = -1;
+				int ref;
 				long at;
 				long start;
 			};
 			struct WaitingTask{
 				lua_State* state;
 				int resumeArgs;
-				bool isCall = false;
+				bool isCall;
 			};
 			struct WaitingFuncTask{
 				task_func* func;

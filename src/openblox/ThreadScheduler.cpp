@@ -39,6 +39,7 @@ namespace OpenBlox{
 		tsk.origin = L;
 		tsk.at = curTime + millis;
 		tsk.start = curTime;
+		tsk.ref = -1;
 
 		enqueue_task(tsk);
 
@@ -49,6 +50,7 @@ namespace OpenBlox{
 		WaitingTask task = WaitingTask();
 		task.state = L;
 		task.resumeArgs = nargs;
+		task.isCall = false;
 
 		waitingTasks.push_back(task);
 	}
