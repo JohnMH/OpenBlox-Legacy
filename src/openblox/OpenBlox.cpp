@@ -9,6 +9,11 @@
 
 #include "OpenBloxRenderUtil.h"
 
+#ifdef _WIN32
+#pragma comment( lib, "ws2_32" )
+#include <WinSock2.h>
+#endif
+
 OpenBlox::BaseGame* game;
 
 OpenBlox::Thread* renderThread;
@@ -60,7 +65,9 @@ void taskLoop(){
 		if(dm){
 			if(dm->runService){
 				if(dm->runService->RenderStepped){
-					dm->runService->RenderStepped->Fire(NULL);
+					std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+
+					dm->runService->RenderStepped->Fire(args);
 				}
 			}
 		}
@@ -69,15 +76,17 @@ void taskLoop(){
 		if(dm){
 			if(dm->runService){
 				if(dm->runService->Heartbeat){
-					dm->runService->Heartbeat->Fire([](lua_State* L, va_list args){
-						lua_pushnumber(L, 1/30);
-					});
+					std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+					args.push_back(ob_type::VarWrapper(1/30));
+
+					dm->runService->Heartbeat->Fire(args);
 				}
 				if(dm->runService->Stepped){
-					dm->runService->Stepped->Fire([](lua_State* L, va_list args){
-						lua_pushnumber(L, (OpenBlox::currentTimeMillis() - OpenBlox::BaseGame::elapsedTime()) / 1000.0);
-						lua_pushnumber(L, 1/30);
-					});
+					std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+					args.push_back((OpenBlox::currentTimeMillis() - OpenBlox::BaseGame::elapsedTime()) / 1000.0);
+					args.push_back(ob_type::VarWrapper(1/30));
+
+					dm->runService->Stepped->Fire(args);
 				}
 			}
 			if(wasResized){
@@ -132,7 +141,19 @@ void renderLoop(){
 	}
 }
 
+#include "../easywsclient/easywsclient.hpp"
+
 int main(){
+	#ifdef _WIN32
+		INT rc;
+		WSADATA wsaData;
+
+		rc = WSAStartup(MAKEWORD(2, 2), &wsaData);
+		if(rc){
+			LOGW("WSAStartup failed.");
+		}
+	#endif
+
 	glfwSetErrorCallback(glfw_error_callback);
 	if(!glfwInit()){
 		LOGE("[GLFW] Failed to initialize library.");
@@ -230,6 +251,9 @@ int main(){
 	OpenBlox::BaseGame::getInstanceFactory()->releaseTable();
 	delete game;
 	glfwTerminate();
+	#ifdef _WIN32
+		WSACleanup();
+	#endif
 	return 0;
 }
 #endif

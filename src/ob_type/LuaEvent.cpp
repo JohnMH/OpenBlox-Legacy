@@ -1,7 +1,46 @@
 #include "LuaEvent.h"
 #include "../openblox/ThreadScheduler.h"
 
+#include "../ob_instance/Instance.h"
+
 namespace ob_type{
+	VarWrapper::VarWrapper(){
+		type = TYPE_UNKNOWN;
+		wrapped = NULL;
+	}
+
+	VarWrapper::VarWrapper(int var){
+		type = TYPE_INT;
+		wrapped = reinterpret_cast<void*>(var);
+	}
+
+	VarWrapper::VarWrapper(double var){
+		type = TYPE_DOUBLE;
+		wrapped = reinterpret_cast<void*>(&var);
+	}
+
+	VarWrapper::VarWrapper(bool var){
+		type = TYPE_BOOL;
+		wrapped = reinterpret_cast<void*>(var);
+	}
+
+	VarWrapper::VarWrapper(char* var){
+		type = TYPE_CHAR;
+		wrapped = reinterpret_cast<void*>(var);
+	}
+
+	VarWrapper::VarWrapper(const char* var){
+		type = TYPE_CONST_CHAR;
+		wrapped = reinterpret_cast<void*>(const_cast<char*>(var));
+	}
+
+	VarWrapper::VarWrapper(ob_instance::Instance* var){
+		type = TYPE_INSTANCE;
+		wrapped = reinterpret_cast<void*>(var);
+	}
+
+	VarWrapper::~VarWrapper(){}
+
 	STATIC_INIT(LuaEventConnection){
 		lua_State* L = OpenBlox::BaseGame::getGlobalState();
 
@@ -249,21 +288,41 @@ namespace ob_type{
 		return lua_yield(L, evt->nargs);
 	}
 
-	void LuaEvent::Fire(luaFireFunc fireFunc, ...){
-		va_list ap;
-		va_start(ap, fireFunc);
+	void LuaEvent::pushWrappersToLua(lua_State* L, std::vector<VarWrapper> argList){
+		for(size_t i = 0; i < argList.size(); i++){
+			VarWrapper wrap = argList[i];
+			switch(wrap.type){
+				case TYPE_INT:
+					lua_pushnumber(L, reinterpret_cast<int &>(wrap.wrapped));
+					break;
+				case TYPE_DOUBLE:
+					lua_pushnumber(L, reinterpret_cast<double &>(wrap.wrapped));
+					break;
+				case TYPE_BOOL:
+					lua_pushboolean(L, reinterpret_cast<bool &>(wrap.wrapped));
+					break;
+				case TYPE_CHAR:
+					lua_pushstring(L, reinterpret_cast<char*>(wrap.wrapped));
+					break;
+				case TYPE_CONST_CHAR:
+					lua_pushstring(L, reinterpret_cast<const char*>(wrap.wrapped));
+					break;
+				case TYPE_INSTANCE:
+					reinterpret_cast<ob_instance::Instance*>(wrap.wrapped)->wrap_lua(L);
+					break;
+				default:
+					lua_pushnil(L);
+			}
+		}
+	}
 
+	void LuaEvent::Fire(std::vector<VarWrapper> argList){
 		if(!waiting.empty()){
 			while(!waiting.empty()){
 				try{
 					lua_State* L = waiting.at(waiting.size() - 1);
 					if(L != NULL){
-						va_list ap;
-						va_start(ap, fireFunc);
-
-						fireFunc(L, ap);
-
-						va_end(ap);
+						pushWrappersToLua(L, argList);
 
 						OpenBlox::ThreadScheduler::AddWaitingTask(L, nargs);
 					}
@@ -276,7 +335,7 @@ namespace ob_type{
 			lua_State* L = con.env;
 			int ref = con.ref;
 
-			OpenBlox::ThreadScheduler::AddWaitingEvent(L, ref, fireFunc, ap, nargs);
+			OpenBlox::ThreadScheduler::AddWaitingEvent(L, ref, argList, nargs);
 		}
 	}
 }

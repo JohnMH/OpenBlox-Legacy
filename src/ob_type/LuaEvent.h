@@ -6,8 +6,35 @@
 #define lua_evt_name "luaL_LuaEvent"
 #define lua_evt_con_name "luaL_LuaEventConnection"
 
+namespace ob_instance{
+	class Instance;
+}
+
 namespace ob_type{
-	typedef void (*luaFireFunc)(lua_State*, va_list);
+	enum VarType{
+		TYPE_INT,
+		TYPE_DOUBLE,
+		TYPE_BOOL,
+		TYPE_CONST_CHAR,
+		TYPE_CHAR,
+		TYPE_INSTANCE,
+		TYPE_UNKNOWN
+	};
+
+	class VarWrapper{
+		public:
+			VarWrapper();
+			VarWrapper(int var);
+			VarWrapper(double var);
+			VarWrapper(bool var);
+			VarWrapper(char* var);
+			VarWrapper(const char* var);
+			VarWrapper(ob_instance::Instance* var);
+			~VarWrapper();
+
+			void* wrapped;
+			VarType type;
+	};
 
 	class LuaEvent;
 	class LuaEventConnection{
@@ -52,7 +79,9 @@ namespace ob_type{
 
 			int wrap_lua(lua_State* L);
 
-			void Fire(luaFireFunc fireFunc, ...);
+			static void pushWrappersToLua(lua_State* L, std::vector<VarWrapper> argList);
+
+			void Fire(std::vector<VarWrapper> argList);
 		private:
 			std::vector<EvtCon> connections;
 			std::vector<lua_State*> waiting;

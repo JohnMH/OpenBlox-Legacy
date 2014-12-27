@@ -1,5 +1,15 @@
-print(os.time());
-print(tick());
+local http = game:GetService("HttpService");
+
+local ws = http:CreateWebSocket("ws://echo.websocket.org");
+print(ws);
+ws.OnClose:connect(function()
+	print("WebSocket closed");
+end);
+ws.OnMessage:connect(function(data)
+	print(data);
+	ws:close();
+end);
+ws:send("Hello");
 
 --[[ Saved for more GUI testing
 local frame = Instance.new("Frame");

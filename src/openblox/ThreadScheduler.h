@@ -3,7 +3,9 @@
 
 #include "OpenBlox.h"
 
-#include "../ob_type/LuaEvent.h"
+namespace ob_type{
+	class VarWrapper;
+}
 
 namespace OpenBlox{
 	typedef void (task_func)(va_list);
@@ -30,8 +32,7 @@ namespace OpenBlox{
 			struct WaitingEvent{
 				lua_State* state;
 				int ref;
-				va_list args;
-				luaFireFunc fireFunc;
+				std::vector<ob_type::VarWrapper> argList;
 				int numArgs;
 			};
 			struct less_than_key{
@@ -50,7 +51,7 @@ namespace OpenBlox{
 			static int Wait(lua_State* L, long millis);
 			static void AddWaitingTask(lua_State* L, int nargs);
 			static void AddWaitingCall(lua_State* L, int nargs);
-			static void AddWaitingEvent(lua_State* L, int ref, luaFireFunc fireFunc, va_list args, int numArgs);
+			static void AddWaitingEvent(lua_State* L, int ref, std::vector<ob_type::VarWrapper> argList, int numArgs);
 			static void RunOnTaskThread(task_func* func, long millis, ...);
 			static bool isOnTaskThread();
 

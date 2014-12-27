@@ -63,9 +63,10 @@ namespace ob_instance{
 					}
 				}
 
-				Changed->Fire([](lua_State* L, va_list args){
-					lua_pushstring(L, "AbsolutePosition");
-				});
+				std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+				args.push_back(ob_type::VarWrapper("AbsolutePosition"));
+
+				Changed->Fire(args);
 			}
 		}
 	}
@@ -94,9 +95,10 @@ namespace ob_instance{
 					}
 				}
 
-				Changed->Fire([](lua_State* L, va_list args){
-					lua_pushstring(L, "AbsoluteSize");
-				});
+				std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+				args.push_back(ob_type::VarWrapper("AbsoluteSize"));
+
+				Changed->Fire(args);
 			}
 		}
 	}

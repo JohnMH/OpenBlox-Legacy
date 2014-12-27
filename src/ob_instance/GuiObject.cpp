@@ -140,9 +140,10 @@ namespace ob_instance{
 					if(go->Active != newVal){
 						go->Active = newVal;
 
-						go->Changed->Fire([](lua_State* L, va_list args){
-							lua_pushstring(L, "Active");
-						});
+						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+						args.push_back(ob_type::VarWrapper("Active"));
+
+						go->Changed->Fire(args);
 					}
 				}
 				return 0;
@@ -154,9 +155,10 @@ namespace ob_instance{
 					if(go->BackgroundColor3 != newVal){
 						go->BackgroundColor3 = newVal;
 
-						go->Changed->Fire([](lua_State* L, va_list args){
-							lua_pushstring(L, "BackgroundColor3");
-						});
+						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+						args.push_back(ob_type::VarWrapper("BackgroundColor3"));
+
+						go->Changed->Fire(args);
 					}
 				}
 				return 0;
@@ -168,9 +170,10 @@ namespace ob_instance{
 					if(go->BackgroundTransparency != newVal){
 						go->BackgroundTransparency = newVal;
 
-						go->Changed->Fire([](lua_State* L, va_list args){
-							lua_pushstring(L, "BackgroundTransparency");
-						});
+						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+						args.push_back(ob_type::VarWrapper("BackgroundTransparency"));
+
+						go->Changed->Fire(args);
 					}
 				}
 				return 0;
@@ -182,9 +185,10 @@ namespace ob_instance{
 					if(go->BorderColor3 != newVal){
 						go->BorderColor3 = newVal;
 
-						go->Changed->Fire([](lua_State* L, va_list args){
-							lua_pushstring(L, "BorderColor3");
-						});
+						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+						args.push_back(ob_type::VarWrapper("BorderColor3"));
+
+						go->Changed->Fire(args);
 					}
 				}
 				return 0;
@@ -196,9 +200,10 @@ namespace ob_instance{
 					if(go->BorderSizePixel != newVal){
 						go->BorderSizePixel = newVal;
 
-						go->Changed->Fire([](lua_State* L, va_list args){
-							lua_pushstring(L, "BorderSizePixel");
-						});
+						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+						args.push_back(ob_type::VarWrapper("BorderSizePixel"));
+
+						go->Changed->Fire(args);
 					}
 				}
 				return 0;
@@ -215,9 +220,10 @@ namespace ob_instance{
 					if(go->ClipsDescendants != newVal){
 						go->ClipsDescendants = newVal;
 
-						go->Changed->Fire([](lua_State* L, va_list args){
-							lua_pushstring(L, "ClipsDescendants");
-						});
+						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+						args.push_back(ob_type::VarWrapper("ClipsDescendants"));
+
+						go->Changed->Fire(args);
 					}
 				}
 				return 0;
@@ -234,9 +240,10 @@ namespace ob_instance{
 					if(go->Draggable != newVal){
 						go->Draggable = newVal;
 
-						go->Changed->Fire([](lua_State* L, va_list args){
-							lua_pushstring(L, "Draggable");
-						});
+						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+						args.push_back(ob_type::VarWrapper("Draggable"));
+
+						go->Changed->Fire(args);
 					}
 				}
 				return 0;
@@ -250,9 +257,10 @@ namespace ob_instance{
 
 						go->sizeChanged();
 
-						go->Changed->Fire([](lua_State* L, va_list args){
-							lua_pushstring(L, "Position");
-						});
+						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+						args.push_back(ob_type::VarWrapper("Position"));
+
+						go->Changed->Fire(args);
 					}
 				}
 				return 0;
@@ -264,9 +272,10 @@ namespace ob_instance{
 					if(go->Rotation != newVal){
 						go->Rotation = newVal;
 
-						go->Changed->Fire([](lua_State* L, va_list args){
-							lua_pushstring(L, "Rotation");
-						});
+						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+						args.push_back(ob_type::VarWrapper("Rotation"));
+
+						go->Changed->Fire(args);
 					}
 				}
 				return 0;
@@ -280,9 +289,10 @@ namespace ob_instance{
 
 						go->sizeChanged();
 
-						go->Changed->Fire([](lua_State* L, va_list args){
-							lua_pushstring(L, "Size");
-						});
+						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+						args.push_back(ob_type::VarWrapper("Size"));
+
+						go->Changed->Fire(args);
 					}
 				}
 				return 0;
@@ -299,9 +309,10 @@ namespace ob_instance{
 					if(go->Visible != newVal){
 						go->Visible = newVal;
 
-						go->Changed->Fire([](lua_State* L, va_list args){
-							lua_pushstring(L, "Visible");
-						});
+						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+						args.push_back(ob_type::VarWrapper("Visible"));
+
+						go->Changed->Fire(args);
 					}
 				}
 				return 0;
@@ -313,9 +324,10 @@ namespace ob_instance{
 					if(go->ZIndex != newVal){
 						go->ZIndex = newVal;
 
-						go->Changed->Fire([](lua_State* L, va_list args){
-							lua_pushstring(L, "ZIndex");
-						});
+						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+						args.push_back(ob_type::VarWrapper("ZIndex"));
+
+						go->Changed->Fire(args);
 					}
 				}
 				return 0;

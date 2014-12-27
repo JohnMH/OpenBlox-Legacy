@@ -120,6 +120,10 @@ namespace ob_instance{
 		return NULL;
 	}
 
+	ob_type::WebSocket* HttpService::CreateWebSocket(const char* uri){
+		return new ob_type::WebSocket(uri);
+	}
+
 	int HttpService::wrap_lua(lua_State* L){
 		HttpService** udata = (HttpService**)lua_newuserdata(L, sizeof(*this));
 		*udata = this;
@@ -179,6 +183,20 @@ namespace ob_instance{
 					return 1;
 				}
 				return luaL_error(L, COLONERR, "UrlEncode");
+			}},
+			{"CreateWebSocket",[](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(HttpService* hs = dynamic_cast<HttpService*>(inst)){
+					const char* inputStr = luaL_checkstring(L, 2);
+
+					ob_type::WebSocket* ws = hs->CreateWebSocket(inputStr);
+					if(ws){
+						return ws->wrap_lua(L);
+					}
+					lua_pushnil(L);
+					return 1;
+				}
+				return luaL_error(L, COLONERR, "CreateWebSocket");
 			}},
 			{NULL, NULL}
 		};

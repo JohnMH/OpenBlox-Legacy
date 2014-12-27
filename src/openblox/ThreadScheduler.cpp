@@ -1,5 +1,7 @@
 #include "ThreadScheduler.h"
 
+#include "../ob_type/LuaEvent.h"
+
 namespace OpenBlox{
 	Thread* ThreadScheduler::taskThread = NULL;
 
@@ -12,8 +14,6 @@ namespace OpenBlox{
 		lua_State* NL = lua_newthread(L);
 		lua_pushvalue(L, funcidx);
 		int r = lua_ref(L, LUA_REGISTRYINDEX);
-
-		LOGI("What");
 
 		long curTime = currentTimeMillis();
 
@@ -64,13 +64,11 @@ namespace OpenBlox{
 		waitingTasks.push_back(task);
 	}
 
-	void ThreadScheduler::AddWaitingEvent(lua_State* L, int ref, luaFireFunc fireFunc, va_list args, int numArgs){
+	void ThreadScheduler::AddWaitingEvent(lua_State* L, int ref, std::vector<ob_type::VarWrapper> argList, int numArgs){
 		WaitingEvent evt = WaitingEvent();
 		evt.state = L;
 		evt.ref = ref;
-		evt.fireFunc = fireFunc;
-		va_copy(evt.args, args);
-		va_end(args);
+		evt.argList = argList;
 		evt.numArgs = numArgs;
 
 		waitingEvents.push_back(evt);
@@ -196,16 +194,7 @@ namespace OpenBlox{
 
 						lua_rawgeti(L, LUA_REGISTRYINDEX, evt.ref);
 
-						if(evt.numArgs > 0){
-							va_list argList;
-							va_copy(evt.args, argList);
-
-							evt.fireFunc(L, argList);
-
-							va_end(argList);
-						}
-
-						va_end(evt.args);
+						ob_type::LuaEvent::pushWrappersToLua(L, evt.argList);
 
 						int stat = lua_pcall(L, evt.numArgs, LUA_MULTRET, 0);
 

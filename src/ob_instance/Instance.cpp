@@ -268,9 +268,10 @@ namespace ob_instance{
 			Parent->addChild(this);
 		}
 
-		Changed->Fire([](lua_State* L, va_list args){
-			lua_pushstring(L, "Parent");
-		});
+		std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+		args.push_back(ob_type::VarWrapper("Parent"));
+
+		Changed->Fire(args);
 	}
 
 	void Instance::removeChild(Instance* kid){
@@ -521,9 +522,10 @@ namespace ob_instance{
 			if(strcmp(newname, inst->Name) != 0){
 				inst->Name = newname;
 
-				inst->Changed->Fire([](lua_State* L, va_list args){
-					lua_pushstring(L, "Name");
-				});
+				std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+				args.push_back(ob_type::VarWrapper("Name"));
+
+				inst->Changed->Fire(args);
 			}
 			return 0;
 		}
@@ -589,9 +591,10 @@ namespace ob_instance{
 			if(inst->Archivable != newVal){
 				inst->Archivable = newVal;
 
-				inst->Changed->Fire([](lua_State* L, va_list args){
-					lua_pushstring(L, "Archivable");
-				});
+				std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+				args.push_back(ob_type::VarWrapper("Archivable"));
+
+				inst->Changed->Fire(args);
 			}
 		}
 		return 0;
