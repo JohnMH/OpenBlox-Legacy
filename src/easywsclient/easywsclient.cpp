@@ -88,14 +88,16 @@ socket_t hostname_connect(const std::string& hostname, int port) {
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
     snprintf(sport, 16, "%d", port);
-    if((ret = getaddrinfo(hostname.c_str(), sport, &hints, &result)) != 0){
+    if ((ret = getaddrinfo(hostname.c_str(), sport, &hints, &result)) != 0)
+    {
       fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(ret));
       return 1;
     }
-    for(p = result; p != NULL; p = p->ai_next){
+    for(p = result; p != NULL; p = p->ai_next)
+    {
         sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
-        if(sockfd == INVALID_SOCKET){continue;}
-        if(connect(sockfd, p->ai_addr, p->ai_addrlen) != SOCKET_ERROR){
+        if (sockfd == INVALID_SOCKET) { continue; }
+        if (connect(sockfd, p->ai_addr, p->ai_addrlen) != SOCKET_ERROR) {
             break;
         }
         closesocket(sockfd);
@@ -133,7 +135,7 @@ socket_t hostname_connect(const std::string& hostname, int port){
     }
     for(p = result; p != NULL; p = p->ai_next){
         sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
-        if(sockfd == INVALID_SOCKET) {continue;}
+        if(sockfd == INVALID_SOCKET){continue;}
         if(connect(sockfd, p->ai_addr, p->ai_addrlen) != SOCKET_ERROR){
             break;
         }
@@ -153,10 +155,11 @@ class _DummyWebSocket : public easywsclient::WebSocket{
     void sendBinary(const std::vector<uint8_t>& message){}
     void sendPing(){}
     void close(){}
-    readyStateValues getReadyState() const{return CLOSED;}
+    readyStateValues getReadyState() const {return CLOSED;}
     void _dispatch(Callback_Imp & callable){}
     void _dispatchBinary(BytesCallback_Imp& callable){}
 };
+
 
 class _RealWebSocket : public easywsclient::WebSocket{
   public:
@@ -180,11 +183,11 @@ class _RealWebSocket : public easywsclient::WebSocket{
     // + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
     // |                     Payload Data continued ...                |
     // +---------------------------------------------------------------+
-    struct wsheader_type{
+    struct wsheader_type {
         unsigned header_size;
         bool fin;
         bool mask;
-        enum opcode_type{
+        enum opcode_type {
             CONTINUATION = 0x0,
             TEXT_FRAME = 0x1,
             BINARY_FRAME = 0x2,
@@ -205,65 +208,70 @@ class _RealWebSocket : public easywsclient::WebSocket{
     readyStateValues readyState;
     bool useMask;
 
-    _RealWebSocket(socket_t sockfd, bool useMask) : sockfd(sockfd), readyState(OPEN), useMask(useMask){}
+    _RealWebSocket(socket_t sockfd, bool useMask) : sockfd(sockfd), readyState(OPEN), useMask(useMask) {
+    }
 
-    readyStateValues getReadyState() const{
+    readyStateValues getReadyState() const {
       return readyState;
     }
 
-    void poll(int timeout){ // timeout in milliseconds
-        if(readyState == CLOSED){
-            if(timeout > 0){
+    void poll(int timeout) { // timeout in milliseconds
+        if (readyState == CLOSED) {
+            if (timeout > 0) {
                 timeval tv = { timeout/1000, (timeout%1000) * 1000 };
                 select(0, NULL, NULL, NULL, &tv);
             }
             return;
         }
-        if(timeout > 0){
+        if (timeout > 0) {
             fd_set rfds;
             fd_set wfds;
             timeval tv = { timeout/1000, (timeout%1000) * 1000 };
             FD_ZERO(&rfds);
             FD_ZERO(&wfds);
             FD_SET(sockfd, &rfds);
-            if(txbuf.size()){FD_SET(sockfd, &wfds);}
+            if (txbuf.size()) { FD_SET(sockfd, &wfds); }
             select(sockfd + 1, &rfds, &wfds, NULL, &tv);
         }
-        while(true){
+        while (true) {
             // FD_ISSET(0, &rfds) will be true
             int N = rxbuf.size();
             ssize_t ret;
             rxbuf.resize(N + 1500);
             ret = recv(sockfd, (char*)&rxbuf[0] + N, 1500, 0);
-            if(false){
-            }else if(ret < 0 && (socketerrno == SOCKET_EWOULDBLOCK || socketerrno == SOCKET_EAGAIN_EINPROGRESS)){
+            if (false) { }
+            else if (ret < 0 && (socketerrno == SOCKET_EWOULDBLOCK || socketerrno == SOCKET_EAGAIN_EINPROGRESS)) {
                 rxbuf.resize(N);
                 break;
-            }else if(ret <= 0){
+            }
+            else if (ret <= 0) {
                 rxbuf.resize(N);
                 closesocket(sockfd);
                 readyState = CLOSED;
                 fputs(ret < 0 ? "Connection error!\n" : "Connection closed!\n", stderr);
                 break;
-            }else{
+            }
+            else {
                 rxbuf.resize(N + ret);
             }
         }
-        while(txbuf.size()){
+        while (txbuf.size()) {
             int ret = ::send(sockfd, (char*)&txbuf[0], txbuf.size(), 0);
-            if(false){} // ??
+            if (false) { } // ??
             else if (ret < 0 && (socketerrno == SOCKET_EWOULDBLOCK || socketerrno == SOCKET_EAGAIN_EINPROGRESS)) {
                 break;
-            }else if(ret <= 0){
+            }
+            else if (ret <= 0) {
                 closesocket(sockfd);
                 readyState = CLOSED;
                 fputs(ret < 0 ? "Connection error!\n" : "Connection closed!\n", stderr);
                 break;
-            }else{
+            }
+            else {
                 txbuf.erase(txbuf.begin(), txbuf.begin() + ret);
             }
         }
-        if(!txbuf.size() && readyState == CLOSING){
+        if (!txbuf.size() && readyState == CLOSING) {
             closesocket(sockfd);
             readyState = CLOSED;
         }
@@ -274,7 +282,7 @@ class _RealWebSocket : public easywsclient::WebSocket{
     // lambda:
     //template<class Callable>
     //void dispatch(Callable callable)
-    virtual void _dispatch(Callback_Imp & callable){
+    virtual void _dispatch(Callback_Imp & callable) {
         struct CallbackAdapter : public BytesCallback_Imp
             // Adapt void(const std::string<uint8_t>&) to void(const std::string&)
         {
@@ -366,20 +374,20 @@ class _RealWebSocket : public easywsclient::WebSocket{
         }
     }
 
-    void sendPing(){
+    void sendPing() {
         std::string empty;
         sendData(wsheader_type::PING, empty.size(), empty.begin(), empty.end());
     }
 
-    void send(const std::string& message){
+    void send(const std::string& message) {
         sendData(wsheader_type::TEXT_FRAME, message.size(), message.begin(), message.end());
     }
 
-    void sendBinary(const std::string& message){
+    void sendBinary(const std::string& message) {
         sendData(wsheader_type::BINARY_FRAME, message.size(), message.begin(), message.end());
     }
 
-    void sendBinary(const std::vector<uint8_t>& message){
+    void sendBinary(const std::vector<uint8_t>& message) {
         sendData(wsheader_type::BINARY_FRAME, message.size(), message.begin(), message.end());
     }
 
@@ -441,8 +449,8 @@ class _RealWebSocket : public easywsclient::WebSocket{
         }
     }
 
-    void close(){
-        if(readyState == CLOSING || readyState == CLOSED){return;}
+    void close() {
+        if(readyState == CLOSING || readyState == CLOSED) { return; }
         readyState = CLOSING;
         uint8_t closeFrame[6] = {0x88, 0x80, 0x00, 0x00, 0x00, 0x00}; // last 4 bytes are a masking key
         std::vector<uint8_t> header(closeFrame, closeFrame+6);
@@ -481,7 +489,7 @@ easywsclient::WebSocket::pointer from_url(const std::string& url, bool useMask, 
         fprintf(stderr, "ERROR: Could not parse WebSocket url: %s\n", url.c_str());
         return NULL;
     }
-    fprintf(stderr, "easywsclient: connecting: host=%s port=%d path=/%s\n", host, port, path);
+    //fprintf(stderr, "easywsclient: connecting: host=%s port=%d path=/%s\n", host, port, path);
     socket_t sockfd = hostname_connect(host, port);
     if (sockfd == INVALID_SOCKET) {
         fprintf(stderr, "Unable to connect to %s:%d\n", host, port);
@@ -525,7 +533,7 @@ easywsclient::WebSocket::pointer from_url(const std::string& url, bool useMask, 
 #else
     fcntl(sockfd, F_SETFL, O_NONBLOCK);
 #endif
-    fprintf(stderr, "Connected to: %s\n", url.c_str());
+    //fprintf(stderr, "Connected to: %s\n", url.c_str());
     return easywsclient::WebSocket::pointer(new _RealWebSocket(sockfd, useMask));
 }
 

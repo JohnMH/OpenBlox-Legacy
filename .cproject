@@ -23,7 +23,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/pthreads/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glfw/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/zlib/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1686796553" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -39,6 +39,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glfw/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/zlib/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.717218826" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -52,6 +53,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glfw/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/zlib/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.dialect.std.145401856" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.111102661" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
@@ -66,9 +68,12 @@
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="glew32"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pthreadGC2"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="glfw3dll"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="curldll"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="zdll"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ws2_32"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="curldll"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="eay32dll"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ssl32dll"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ssl"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="crypto"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.1958027440" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="" valueType="string"/>
 								<option id="gnu.cpp.link.option.userobjs.453120316" name="Other objects" superClass="gnu.cpp.link.option.userobjs" valueType="userObjs">
@@ -111,6 +116,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glfw/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/zlib/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.157599894" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -124,6 +130,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glfw/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/zlib/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.1558340493" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.127521029" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -137,6 +144,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glfw/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/zlib/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1473476161" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>

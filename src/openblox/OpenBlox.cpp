@@ -10,8 +10,7 @@
 #include "OpenBloxRenderUtil.h"
 
 #ifdef _WIN32
-#pragma comment( lib, "ws2_32" )
-#include <WinSock2.h>
+#include <winsock2.h>
 #endif
 
 OpenBlox::BaseGame* game;
