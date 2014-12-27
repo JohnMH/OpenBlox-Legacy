@@ -108,6 +108,16 @@ socket_t hostname_connect(const std::string& hostname, int port) {
 }
 #else
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+	void WSAAPI freeaddrinfo(struct addrinfo*);
+	int WSAAPI getaddrinfo(const char*, const char*, const struct addrinfo*, struct addrinfo**);
+	int WSAAPI getnameinfo(const struct sockaddr*, socklen_t, char*, DWORD, char*, DWORD, int);
+#ifdef __cplusplus
+}
+#endif
+
 socket_t hostname_connect(const std::string& hostname, int port) {
     struct addrinfo hints;
     struct addrinfo *result;
