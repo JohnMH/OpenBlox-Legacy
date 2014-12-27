@@ -1,6 +1,7 @@
 #include "BaseGame.h"
 
 #include "../ob_instance/DataModel.h"
+#include "../ob_instance/HttpService.h"
 
 #include "../ob_type/Vector3.h"
 #include "../ob_type/Vector2.h"
@@ -12,9 +13,13 @@
 
 #include "oboslib.h"
 
+#include <curl/curl.h>
+
 namespace OpenBlox{
 	static BaseGame* INSTANCE;
 	static long APP_START = currentTimeMillis();
+
+	static std::map<std::string, char*> libMap;
 
 	lua_State* BaseGame::GlobalLuaState = NULL;
 	Factory* BaseGame::InstanceFactory = NULL;
@@ -22,6 +27,9 @@ namespace OpenBlox{
 	BaseGame::BaseGame(){
 		INSTANCE = this;
 		datamodel = new ob_instance::DataModel();
+
+		libMap = std::map<std::string, char*>();
+		libMap["RbxUtility"] = "https://raw.githubusercontent.com/RobloxLabs/internal-code/master/library-scripts/RbxUtility-60595411.lua";
 
 		GlobalLuaState = lua_open();
 	}
@@ -84,6 +92,7 @@ namespace OpenBlox{
 		lua_register(L, "tick", lua_tick);
 		lua_register(L, "wait", lua_wait);
 		lua_register(L, "Wait", lua_wait);
+		lua_register(L, "LoadLibrary", lua_loadlibrary);
 
 		luaL_Reg instancelib[]{
 			{"new", lua_newInstance},
@@ -181,6 +190,58 @@ namespace OpenBlox{
 	int BaseGame::lua_spawn(lua_State* L){
 		luaL_checktype(L, 1, LUA_TFUNCTION);
 		return ThreadScheduler::Spawn(L, 1);
+	}
+
+	int BaseGame::lua_loadlibrary(lua_State* L){
+		const char* libName = luaL_checkstring(L, 1);
+		char* libURL = libMap[std::string(libName)];
+		if(libURL){
+			struct ob_instance::HttpService::response_body body;
+			body.size = 0;
+			body.data = new char[4096];
+			if(body.data == NULL){
+				LOGE("[LoadLibrary] Failed to allocate memory.");
+				return luaL_error(L, "Error loading library %s", libName);
+			}
+
+			body.data[0] = '\0';
+
+			CURL* curl;
+			CURLcode res;
+
+			curl = curl_easy_init();
+			if(curl){
+				curl_easy_setopt(curl, CURLOPT_URL, libURL);
+
+				curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
+
+				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+
+				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ob_instance::HttpService::write_data);
+				curl_easy_setopt(curl, CURLOPT_WRITEDATA, &body);
+
+				res = curl_easy_perform(curl);
+				if(res != CURLE_OK){
+					LOGE("[LoadLibrary] cURL Error: %s", curl_easy_strerror(res));
+					return luaL_error(L, "Error loading library %s", libName);
+				}
+
+				curl_easy_cleanup(curl);
+
+				int s = luaL_loadbuffer(L, body.data, strlen(body.data), libName);
+				if(s == 0){
+					s = lua_pcall(L, 0, 1, 0);
+					if(s == 0){
+						return 1;
+					}else{
+
+					}
+				}else{
+					return luaL_error(L, "Error loading library %s", libName);
+				}
+			}
+		}
+		return luaL_error(L, "Unknown library %s", libName);
 	}
 
 	int BaseGame::lua_tick(lua_State* L){

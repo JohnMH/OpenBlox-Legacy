@@ -43,6 +43,8 @@ namespace OpenBlox{
 			static int lua_delay(lua_State* L);
 			static int lua_spawn(lua_State* L);
 
+			static int lua_loadlibrary(lua_State* L);
+
 			static int lua_tick(lua_State* L);
 			static int lua_print(lua_State* L);
 			static int lua_elapsedTime(lua_State* L);
