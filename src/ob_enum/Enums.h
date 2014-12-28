@@ -22,5 +22,7 @@ namespace ob_enum{
 		CUSTOM,
 		SCRIPTABLE
 	};
+
+	void registerEnums(lua_State* L);
 };
 #endif

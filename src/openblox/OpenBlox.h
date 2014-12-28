@@ -14,7 +14,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <cstdarg>
-#include <cstdio>
 
 extern "C"{
 	#include "../lua/lua.h"

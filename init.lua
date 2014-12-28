@@ -1,3 +1,6 @@
+print(Enum);
+print(Enum.CameraType);
+
 print(Instance.new("Camera").CameraType);
 
 local http = game:GetService("HttpService");

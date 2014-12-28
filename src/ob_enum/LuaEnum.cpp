@@ -11,8 +11,10 @@ namespace ob_enum{
 		return *(LuaEnum**)luaL_checkudata(L, n, lua_enum_name);
 	}
 
+	std::map<std::string, LuaEnum*>* LuaEnum::Enums = NULL;
+
 	//LuaEnums
-	LuaEnum::LuaEnum(const char* type, int numValues, ...){
+	LuaEnum::LuaEnum(std::string type, int numValues, ...){
 		Type = type;
 		EnumValues = std::map<std::string, LuaEnumItem*>();
 		va_list args;
@@ -22,6 +24,12 @@ namespace ob_enum{
 			EnumValues[arg] = new LuaEnumItem(type, arg, i);
 		}
 		va_end(args);
+
+		if(Enums == NULL){
+			Enums = new std::map<std::string, LuaEnum*>();
+		}
+
+		Enums->insert(std::pair<std::string, ob_enum::LuaEnum*>(type, this));
 	}
 
 	LuaEnum::~LuaEnum(){}
@@ -87,7 +95,7 @@ namespace ob_enum{
 	}
 
 	//EnumItems
-	LuaEnumItem::LuaEnumItem(const char* type, const char* name, int value){
+	LuaEnumItem::LuaEnumItem(std::string type, const char* name, int value){
 		Type = type;
 		Name = name;
 		Value = value;
@@ -135,7 +143,7 @@ namespace ob_enum{
 
 		// there's only two items to an EnumItem, so only return those two
 		if(propname == "Name"){
-			lua_pushstring(L, itm->Name);
+			lua_pushstring(L, itm->Name.c_str());
 			return 1;
 		}
 		if(propname == "Value"){
