@@ -102,12 +102,32 @@ namespace ob_instance{
 		return "";
 	}
 
-	std::string HttpService::UrlEncode(const char* input){
+	std::string HttpService::UrlEncode(std::string input){
 		CURL* curl;
 
 		curl = curl_easy_init();
 		if(curl){
-			char* encoded = curl_easy_escape(curl, input, 0);
+			char* encoded = curl_easy_escape(curl, input.c_str(), 0);
+
+			size_t thingLen = strlen(encoded) + 1;
+			char* newGuy = new char[thingLen];
+			strcpy(newGuy, encoded);
+			//newGuy[thingLen] = '\0';
+
+			curl_free(encoded);
+			curl_easy_cleanup(curl);
+
+			return std::string(newGuy);
+		}
+		return "";
+	}
+
+	std::string HttpService::UrlDecode(std::string input){
+		CURL* curl;
+
+		curl = curl_easy_init();
+		if(curl){
+			char* encoded = curl_easy_unescape(curl, input.c_str(), 0, NULL);
 
 			size_t thingLen = strlen(encoded) + 1;
 			char* newGuy = new char[thingLen];
@@ -212,7 +232,7 @@ namespace ob_instance{
 			{"UrlEncode", [](lua_State* L)->int{
 				Instance* inst = checkInstance(L, 1);
 				if(HttpService* hs = dynamic_cast<HttpService*>(inst)){
-					const char* inputStr = luaL_checkstring(L, 2);
+					std::string inputStr = std::string(luaL_checkstring(L, 2));
 
 					std::string output = hs->UrlEncode(inputStr);
 
@@ -220,6 +240,18 @@ namespace ob_instance{
 					return 1;
 				}
 				return luaL_error(L, COLONERR, "UrlEncode");
+			}},
+			{"UrlDecode", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(HttpService* hs = dynamic_cast<HttpService*>(inst)){
+					std::string inputStr = std::string(luaL_checkstring(L, 2));
+
+					std::string output = hs->UrlDecode(inputStr);
+
+					lua_pushstring(L, output.c_str());
+					return 1;
+				}
+				return luaL_error(L, COLONERR, "UrlDecode");
 			}},
 			{"CreateWebSocket",[](lua_State* L)->int{
 				Instance* inst = checkInstance(L, 1);
