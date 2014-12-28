@@ -1,4 +1,3 @@
-
 #ifdef _WIN32
 	#define _WIN32_WINNT  0x501
     #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)

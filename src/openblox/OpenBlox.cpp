@@ -65,7 +65,6 @@ void taskLoop(){
 			if(dm->runService){
 				if(dm->runService->RenderStepped){
 					std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-
 					dm->runService->RenderStepped->Fire(args);
 				}
 			}
@@ -74,16 +73,18 @@ void taskLoop(){
 
 		if(dm){
 			if(dm->runService){
+				//double idiv = 0.33333333;
+				//ob_type::VarWrapper* wrapi = new ob_type::VarWrapper(idiv);
 				if(dm->runService->Heartbeat){
 					std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-					args.push_back(ob_type::VarWrapper(1/30));
+					//args.push_back(wrapi);
 
 					dm->runService->Heartbeat->Fire(args);
 				}
 				if(dm->runService->Stepped){
 					std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
 					args.push_back((OpenBlox::currentTimeMillis() - OpenBlox::BaseGame::elapsedTime()) / 1000.0);
-					args.push_back(ob_type::VarWrapper(1/30));
+					//args.push_back(wrapi);
 
 					dm->runService->Stepped->Fire(args);
 				}
@@ -244,7 +245,9 @@ int main(){
 	renderThread->join();
 	OpenBlox::ThreadScheduler::taskThread->join();
 
-	lua_close(L);
+	#ifndef __unix__
+		lua_close(L);
+	#endif
 
 	glfwDestroyWindow(window);
 	OpenBlox::BaseGame::getInstanceFactory()->releaseTable();

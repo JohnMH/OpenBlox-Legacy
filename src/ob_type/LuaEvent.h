@@ -15,10 +15,27 @@ namespace ob_type{
 		TYPE_INT,
 		TYPE_DOUBLE,
 		TYPE_BOOL,
-		TYPE_CONST_CHAR,
 		TYPE_CHAR,
 		TYPE_INSTANCE,
 		TYPE_UNKNOWN
+	};
+
+	class IntWrapper{
+		public:
+			IntWrapper(int val);
+			int val;
+	};
+
+	class DoubleWrapper{
+		public:
+			DoubleWrapper(double val);
+			double val;
+	};
+
+	class BoolWrapper{
+		public:
+			BoolWrapper(bool val);
+			bool val;
 	};
 
 	class VarWrapper{

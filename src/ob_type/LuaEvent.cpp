@@ -9,19 +9,31 @@ namespace ob_type{
 		wrapped = NULL;
 	}
 
+	IntWrapper::IntWrapper(int val){
+		this->val = val;
+	}
+
 	VarWrapper::VarWrapper(int var){
 		type = TYPE_INT;
-		wrapped = reinterpret_cast<void*>(var);
+		wrapped = reinterpret_cast<void*>(new IntWrapper(var));
+	}
+
+	DoubleWrapper::DoubleWrapper(double val){
+		this->val = val;
 	}
 
 	VarWrapper::VarWrapper(double var){
 		type = TYPE_DOUBLE;
-		wrapped = reinterpret_cast<void*>(&var);
+		wrapped = reinterpret_cast<void*>(new DoubleWrapper(var));
+	}
+
+	BoolWrapper::BoolWrapper(bool val){
+		this->val = val;
 	}
 
 	VarWrapper::VarWrapper(bool var){
 		type = TYPE_BOOL;
-		wrapped = reinterpret_cast<void*>(var);
+		wrapped =  reinterpret_cast<void*>(new BoolWrapper(var));
 	}
 
 	VarWrapper::VarWrapper(char* var){
@@ -30,13 +42,13 @@ namespace ob_type{
 	}
 
 	VarWrapper::VarWrapper(const char* var){
-		type = TYPE_CONST_CHAR;
+		type = TYPE_CHAR;
 		wrapped = reinterpret_cast<void*>(const_cast<char*>(var));
 	}
 
 	VarWrapper::VarWrapper(ob_instance::Instance* var){
 		type = TYPE_INSTANCE;
-		wrapped = reinterpret_cast<void*>(var);
+		wrapped = var;
 	}
 
 	VarWrapper::~VarWrapper(){}
@@ -293,19 +305,16 @@ namespace ob_type{
 			VarWrapper wrap = argList[i];
 			switch(wrap.type){
 				case TYPE_INT:
-					lua_pushnumber(L, reinterpret_cast<int &>(wrap.wrapped));
+					lua_pushnumber(L, reinterpret_cast<IntWrapper*>(wrap.wrapped)->val);
 					break;
 				case TYPE_DOUBLE:
-					lua_pushnumber(L, reinterpret_cast<double &>(wrap.wrapped));
+					lua_pushnumber(L, reinterpret_cast<DoubleWrapper*>(wrap.wrapped)->val);
 					break;
 				case TYPE_BOOL:
-					lua_pushboolean(L, reinterpret_cast<bool &>(wrap.wrapped));
+					lua_pushboolean(L, reinterpret_cast<BoolWrapper*>(wrap.wrapped)->val);
 					break;
 				case TYPE_CHAR:
 					lua_pushstring(L, reinterpret_cast<char*>(wrap.wrapped));
-					break;
-				case TYPE_CONST_CHAR:
-					lua_pushstring(L, reinterpret_cast<const char*>(wrap.wrapped));
 					break;
 				case TYPE_INSTANCE:
 					reinterpret_cast<ob_instance::Instance*>(wrap.wrapped)->wrap_lua(L);
