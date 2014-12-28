@@ -27,8 +27,8 @@ namespace ob_instance{
 		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
 	}
 
-	char* Instance::ClassName = "Instance";
-	char* Instance::LuaClassName = "luaL_Instance_Instance";
+	std::string Instance::ClassName = "Instance";
+	std::string Instance::LuaClassName = "luaL_Instance_Instance";
 
 	Instance::Instance(){
 		Archivable = true;
@@ -41,7 +41,6 @@ namespace ob_instance{
 	}
 
 	Instance::~Instance(){
-		delete[] Name;
 		delete Changed;
 	}
 
@@ -99,14 +98,11 @@ namespace ob_instance{
 		}
 	}
 
-	Instance* Instance::FindFirstChild(const char* name, bool recursive){
-		if(name == NULL){
-			return NULL;
-		}
+	Instance* Instance::FindFirstChild(std::string name, bool recursive){
 		for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
 			Instance* kid = children[i];
 			if(kid != NULL){
-				if(strcmp(name, kid->Name) == 0){
+				if(kid->Name == name){
 					return kid;
 				}
 			}
@@ -129,18 +125,15 @@ namespace ob_instance{
 		return children.data();
 	}
 
-	char* Instance::GetFullName(){
+	std::string Instance::GetFullName(){
 		std::string fullName = Name;
 		if(Parent != NULL){
 			fullName = Parent->GetFullName() + fullName;
 		}
-		char* full = new char[fullName.size() + 1];
-		std::copy(fullName.begin(), fullName.end(), full);
-		full[fullName.size()] = '\0';
-		return full;
+		return fullName;
 	}
 
-	bool Instance::IsA(const char* name){
+	bool Instance::IsA(std::string name){
 		return OpenBlox::BaseGame::getInstanceFactory()->isA(this, name);
 	}
 
@@ -175,7 +168,7 @@ namespace ob_instance{
 		return ancestor->IsAncestorOf(this);
 	}
 
-	char* Instance::getClassName(){
+	std::string Instance::getClassName(){
 		return ClassName;
 	}
 
@@ -191,10 +184,10 @@ namespace ob_instance{
 		}
 	}
 
-	void Instance::registerLuaClass(char* className, luaRegisterFunc register_metamethods, luaRegisterFunc register_methods, luaRegisterFunc register_getters, luaRegisterFunc register_setters, luaRegisterFunc register_events){
+	void Instance::registerLuaClass(std::string className, luaRegisterFunc register_metamethods, luaRegisterFunc register_methods, luaRegisterFunc register_getters, luaRegisterFunc register_setters, luaRegisterFunc register_events){
 		lua_State* L = OpenBlox::BaseGame::getGlobalState();
 
-		luaL_newmetatable(L, className);
+		luaL_newmetatable(L, className.c_str());
 		register_metamethods(L);
 
 		lua_pushstring(L, "__metatable");
@@ -238,7 +231,7 @@ namespace ob_instance{
 		lua_pop(L, 1);
 	}
 
-	char* Instance::toString(){
+	std::string Instance::toString(){
 		return Name;
 	}
 
@@ -365,7 +358,7 @@ namespace ob_instance{
 	//Metamethods
 	Instance* Instance::checkInstance(lua_State* L, int index){
 		if(lua_isuserdata(L, index)){
-			std::vector<const char*> existing = OpenBlox::BaseGame::getInstanceFactory()->getRegisteredMetatables();
+			std::vector<std::string> existing = OpenBlox::BaseGame::getInstanceFactory()->getRegisteredMetatables();
 			unsigned size = existing.size();
 			void* udata = lua_touserdata(L, index);
 			int meta = lua_getmetatable(L, index);
@@ -479,7 +472,7 @@ namespace ob_instance{
 	int Instance::lua_toString(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
 		if(inst){
-			lua_pushstring(L, inst->toString());
+			lua_pushstring(L, inst->toString().c_str());
 			return 1;
 		}
 		return 0;
@@ -489,8 +482,8 @@ namespace ob_instance{
 	int Instance::lua_getClassName(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
 		if(inst){
-			char* className = inst->getClassName();
-			lua_pushstring(L, className);
+			std::string className = inst->getClassName();
+			lua_pushstring(L, className.c_str());
 			return 1;
 		}
 		lua_pushnil(L);
@@ -506,7 +499,7 @@ namespace ob_instance{
 	int Instance::lua_getName(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
 		if(inst){
-			lua_pushstring(L, inst->Name);
+			lua_pushstring(L, inst->Name.c_str());
 			return 1;
 		}
 		return 0;
@@ -516,11 +509,8 @@ namespace ob_instance{
 		Instance* inst = checkInstance(L, 1);
 		if(inst){
 			std::string desired = std::string(luaL_checkstring(L, 2));
-			char* newname = new char[desired.size() + 1];
-			std::copy(desired.begin(), desired.end(), newname);
-			newname[desired.size()] = '\0';
-			if(strcmp(newname, inst->Name) != 0){
-				inst->Name = newname;
+			if(inst->Name != desired){
+				inst->Name = desired;
 
 				std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
 				args.push_back(ob_type::VarWrapper("Name"));
@@ -684,8 +674,8 @@ namespace ob_instance{
 	int Instance::lua_GetFullName(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
 		if(inst){
-			char* fullName = inst->GetFullName();
-			lua_pushstring(L, fullName);
+			std::string fullName = inst->GetFullName();
+			lua_pushstring(L, fullName.c_str());
 			return 1;
 		}
 		return luaL_error(L, COLONERR, "GetFullName");

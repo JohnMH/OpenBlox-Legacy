@@ -9,18 +9,18 @@ namespace ob_instance{
 			ServiceProvider();
 			virtual ~ServiceProvider();
 
-			virtual Instance* FindService(const char* className);
-			virtual Instance* GetService(const char* className);
+			virtual Instance* FindService(std::string className);
+			virtual Instance* GetService(std::string className);
 
-			virtual char* getClassName();
+			virtual std::string getClassName();
 
 			DECLARE_STATIC_INIT(ServiceProvider);
 
 			static int lua_FindService(lua_State* L);
 			static int lua_GetService(lua_State* L);
 		protected:
-			static char* ClassName;
-			static char* LuaClassName;
+			static std::string ClassName;
+			static std::string LuaClassName;
 
 			static void register_lua_methods(lua_State* L);
 	};

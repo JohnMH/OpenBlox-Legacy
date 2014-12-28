@@ -22,15 +22,15 @@ namespace ob_instance{
 			void setAbsoluteSize(ob_type::Vector2* newVec2);
 			ob_type::Vector2* getAbsoluteSize();
 
-			virtual char* getClassName();
+			virtual std::string getClassName();
 
 			static int lua_getAbsolutePosition(lua_State* L);
 			static int lua_getAbsoluteSize(lua_State* L);
 
 			DECLARE_STATIC_INIT(GuiBase2d);
 		protected:
-			static char* ClassName;
-			static char* LuaClassName;
+			static std::string ClassName;
+			static std::string LuaClassName;
 
 			static void register_lua_property_setters(lua_State* L);
 			static void register_lua_property_getters(lua_State* L);

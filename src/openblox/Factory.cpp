@@ -3,61 +3,45 @@
 #include "../ob_instance/Instance.h"
 
 namespace OpenBlox{
-	void Factory::addClass(const char* className, ClassMaker* const newClassMaker){
-		std::string keystr = std::string(className);
-		lokupTable[keystr] = newClassMaker;
-		registered.insert(registered.begin(), className);
+	void Factory::addClass(std::string className, ClassMaker* const newClassMaker){
+		lokupTable[className] = newClassMaker;
+		registered.push_back(className);
 	}
 
-	ob_instance::Instance* Factory::create(const char* className){
-		std::string keystr = std::string(className);
-
-		ob_instance::Instance* result = NULL;
-		std::map<std::string, ClassMaker*>::iterator it = lokupTable.find(keystr);
-
-		if(it != lokupTable.end()){
-			ClassMaker* maker = it->second;
+	ob_instance::Instance* Factory::create(std::string className){
+		if(lokupTable[className]){
+			ClassMaker* maker = lokupTable[className];
 			if(maker->isInstantiatable()){
-				result = maker->getInstance();
+				return maker->getInstance();
 			}
 		}
-		return result;
+
+		return NULL;
 	}
 
-	ob_instance::Instance* Factory::createService(const char* className, bool isDataModel){
-		std::string keystr = std::string(className);
-
-		ob_instance::Instance* result = NULL;
-		std::map<std::string, ClassMaker*>::iterator it = lokupTable.find(keystr);
-
-		if(it != lokupTable.end()){
-			ClassMaker* maker = it->second;
+	ob_instance::Instance* Factory::createService(std::string className, bool isDataModel){
+		if(lokupTable[className]){
+			ClassMaker* maker = lokupTable[className];
+			std::cout << maker << std::endl;
 			if(maker->isService(isDataModel)){
-				result = maker->getInstance();
+				return maker->getInstance();
 			}
 		}
-		return result;
+
+		return NULL;
 	}
 
-	std::vector<const char*> Factory::getRegisteredMetatables(){
+	std::vector<std::string> Factory::getRegisteredMetatables(){
 		return registered;
 	}
 
-	bool Factory::isA(const ob_instance::Instance* obj, const char* className){
-		std::string keystr = std::string(className);
-
-		std::map<std::string, ClassMaker*>::iterator it = lokupTable.find(keystr);
-
-		if(it != lokupTable.end()){
-			ClassMaker* maker = it->second;
+	bool Factory::isA(const ob_instance::Instance* obj, std::string className){
+		if(lokupTable[className]){
+			ClassMaker* maker = lokupTable[className];
 			return maker->isA(obj);
 		}
 		return false;
 	}
 
-	void Factory::releaseTable(){
-		for(std::map<std::string, ClassMaker*>::iterator it = lokupTable.begin(); it != lokupTable.end(); ++it){
-			delete it->second;
-		}
-	}
+	void Factory::releaseTable(){}
 }

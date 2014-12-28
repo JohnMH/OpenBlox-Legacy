@@ -19,13 +19,13 @@ namespace OpenBlox{
 	class Factory{
 		private:
 			std::map<std::string, ClassMaker*> lokupTable;
-			std::vector<const char*> registered;
+			std::vector<std::string> registered;
 		public:
-			std::vector<const char*> getRegisteredMetatables();
-			void addClass(const char* className, ClassMaker* const newClassMaker);
-			ob_instance::Instance* create(const char* className);
-			ob_instance::Instance* createService(const char* className, bool isDataModel);
-			bool isA(const ob_instance::Instance* obj, const char* className);
+			std::vector<std::string> getRegisteredMetatables();
+			void addClass(std::string className, ClassMaker* const newClassMaker);
+			ob_instance::Instance* create(std::string className);
+			ob_instance::Instance* createService(std::string className, bool isDataModel);
+			bool isA(const ob_instance::Instance* obj, std::string className);
 			void releaseTable();
 	};
 }

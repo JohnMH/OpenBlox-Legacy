@@ -25,8 +25,8 @@ namespace ob_instance{
 		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
 	}
 
-	char* ServiceProvider::ClassName = "ServiceProvider";
-	char* ServiceProvider::LuaClassName = "luaL_Instance_ServiceProvider";
+	std::string ServiceProvider::ClassName = "ServiceProvider";
+	std::string ServiceProvider::LuaClassName = "luaL_Instance_ServiceProvider";
 
 	ServiceProvider::ServiceProvider() : Instance(){
 		Name = ClassName;
@@ -34,11 +34,11 @@ namespace ob_instance{
 
 	ServiceProvider::~ServiceProvider(){}
 
-	Instance* ServiceProvider::FindService(const char* className){
+	Instance* ServiceProvider::FindService(std::string className){
 		for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
 			Instance* kid = children[i];
 			if(kid != NULL){
-				if(strcmp(kid->getClassName(), className) == 0){
+				if(kid->getClassName() == className){
 					return kid;
 				}
 			}
@@ -46,7 +46,7 @@ namespace ob_instance{
 		return NULL;
 	}
 
-	Instance* ServiceProvider::GetService(const char* className){
+	Instance* ServiceProvider::GetService(std::string className){
 		Instance* foundService = FindService(className);
 		if(foundService != NULL){
 			return foundService;
@@ -59,7 +59,7 @@ namespace ob_instance{
 		return newGuy;
 	}
 
-	char* ServiceProvider::getClassName(){
+	std::string ServiceProvider::getClassName(){
 		return ClassName;
 	}
 
@@ -76,7 +76,7 @@ namespace ob_instance{
 	int ServiceProvider::lua_FindService(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
 		if(ServiceProvider* sp = dynamic_cast<ServiceProvider*>(inst)){
-			const char* serviceName = luaL_checkstring(L, 2);
+			std::string serviceName = std::string(luaL_checkstring(L, 2));
 			Instance* foundGuy = sp->FindService(serviceName);
 			if(foundGuy != NULL){
 				return foundGuy->wrap_lua(L);
@@ -90,7 +90,7 @@ namespace ob_instance{
 	int ServiceProvider::lua_GetService(lua_State* L){
 		Instance* inst = checkInstance(L, 1);
 		if(ServiceProvider* sp = dynamic_cast<ServiceProvider*>(inst)){
-			const char* serviceName = luaL_checkstring(L, 2);
+			std::string serviceName = std::string(luaL_checkstring(L, 2));
 			Instance* foundGuy = sp->GetService(serviceName);
 			if(foundGuy != NULL){
 				return foundGuy->wrap_lua(L);

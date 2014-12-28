@@ -25,8 +25,8 @@ namespace ob_instance{
 		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
 	}
 
-	char* DataModel::ClassName = "DataModel";
-	char* DataModel::LuaClassName = "luaL_Instance_DataModel";
+	std::string DataModel::ClassName = "DataModel";
+	std::string DataModel::LuaClassName = "luaL_Instance_DataModel";
 
 	DataModel::DataModel() : ServiceProvider(){
 		Name = ClassName;
@@ -43,7 +43,7 @@ namespace ob_instance{
 
 	DataModel::~DataModel(){}
 
-	Instance* DataModel::GetService(const char* className){
+	Instance* DataModel::GetService(std::string className){
 		Instance* foundService = FindService(className);
 		if(foundService != NULL){
 			return foundService;
@@ -68,13 +68,13 @@ namespace ob_instance{
 		Instance** udata = (Instance**)lua_newuserdata(L, sizeof(*this));
 		*udata = this;
 
-		luaL_getmetatable(L, LuaClassName);
+		luaL_getmetatable(L, LuaClassName.c_str());
 		lua_setmetatable(L, -2);
 
 		return 1;
 	}
 
-	char* DataModel::getClassName(){
+	std::string DataModel::getClassName(){
 		return ClassName;
 	}
 

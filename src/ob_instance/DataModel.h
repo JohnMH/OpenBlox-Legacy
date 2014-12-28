@@ -12,19 +12,19 @@ namespace ob_instance{
 			virtual ~DataModel();
 
 			virtual void render();
-			virtual Instance* GetService(const char* className);
+			virtual Instance* GetService(std::string className);
 
 			int wrap_lua(lua_State* L);
 
-			virtual char* getClassName();
+			virtual std::string getClassName();
 
 			StarterGui* starterGui;
 			RunService* runService;
 
 			DECLARE_STATIC_INIT(DataModel);
 		protected:
-			static char* ClassName;
-			static char* LuaClassName;
+			static std::string ClassName;
+			static std::string LuaClassName;
 
 			static void register_lua_methods(lua_State* L);
 			static void register_lua_property_getters(lua_State* L);

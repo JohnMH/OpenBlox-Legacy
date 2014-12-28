@@ -21,8 +21,8 @@ namespace ob_instance{
 
 			DECLARE_STATIC_INIT(GuiObject);
 		protected:
-			static char* ClassName;
-			static char* LuaClassName;
+			static std::string ClassName;
+			static std::string LuaClassName;
 
 			ob_type::LuaEvent* DragBegin; //UDim2 initialPosition
 			ob_type::LuaEvent* DragStopped; //int x, int y

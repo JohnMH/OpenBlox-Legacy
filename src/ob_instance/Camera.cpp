@@ -25,8 +25,8 @@ namespace ob_instance{
 		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
 	}
 
-	char* Camera::ClassName = "Camera";
-	char* Camera::LuaClassName = "luaL_Instance_Camera";
+	std::string Camera::ClassName = "Camera";
+	std::string Camera::LuaClassName = "luaL_Instance_Camera";
 
 	Camera::Camera() : Instance(){
 		Name = ClassName;
@@ -38,7 +38,7 @@ namespace ob_instance{
 		Camera** udata = (Camera**)lua_newuserdata(L, sizeof(*this));
 		*udata = this;
 
-		luaL_getmetatable(L, LuaClassName);
+		luaL_getmetatable(L, LuaClassName.c_str());
 		lua_setmetatable(L, -2);
 
 		return 1;
@@ -50,7 +50,7 @@ namespace ob_instance{
 		return newGuy;
 	}
 
-	char* Camera::getClassName(){
+	std::string Camera::getClassName(){
 		return ClassName;
 	}
 }

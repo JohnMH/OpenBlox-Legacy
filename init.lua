@@ -1,16 +1,13 @@
+print(game);
+
 local http = game:GetService("HttpService");
 
-function Grüße(message)
-	print(message);
-end
-
-GrüßeAusDeutschland = "Hallo Welt äöüß";
-Grüße(GrüßeAusDeutschland);
+print(http);
 
 local ws = http:CreateWebSocket("ws://echo.websocket.org");
 print(ws);
 ws.OnOpen:connect(function()
-	ws:send({"test"});
+	ws:send("[\"test\"]");
 end);
 ws.OnClose:connect(function()
 	print("WebSocket closed");

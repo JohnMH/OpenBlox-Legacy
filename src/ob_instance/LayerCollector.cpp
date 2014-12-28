@@ -24,8 +24,8 @@ namespace ob_instance{
 
 		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
 	}
-	char* LayerCollector::ClassName = "LayerCollector";
-	char* LayerCollector::LuaClassName = "luaL_Instance_LayerCollector";
+	std::string LayerCollector::ClassName = "LayerCollector";
+	std::string LayerCollector::LuaClassName = "luaL_Instance_LayerCollector";
 
 	LayerCollector::LayerCollector() : GuiBase2d(){
 		Name = ClassName;
@@ -33,7 +33,7 @@ namespace ob_instance{
 
 	LayerCollector::~LayerCollector(){}
 
-	char* LayerCollector::getClassName(){
+	std::string LayerCollector::getClassName(){
 		return ClassName;
 	}
 }

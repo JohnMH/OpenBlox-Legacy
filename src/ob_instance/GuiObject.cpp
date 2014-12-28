@@ -25,8 +25,8 @@ namespace ob_instance{
 		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
 	}
 
-	char* GuiObject::ClassName = "GuiObject";
-	char* GuiObject::LuaClassName = "luaL_Instance_GuiObject";
+	std::string GuiObject::ClassName = "GuiObject";
+	std::string GuiObject::LuaClassName = "luaL_Instance_GuiObject";
 
 	GuiObject::GuiObject() : GuiBase2d(){
 		Name = ClassName;

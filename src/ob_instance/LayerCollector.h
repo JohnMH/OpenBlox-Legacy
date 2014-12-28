@@ -9,12 +9,12 @@ namespace ob_instance{
 			LayerCollector();
 			virtual ~LayerCollector();
 
-			virtual char* getClassName();
+			virtual std::string getClassName();
 
 			DECLARE_STATIC_INIT(LayerCollector);
 		protected:
-			static char* ClassName;
-			static char* LuaClassName;
+			static std::string ClassName;
+			static std::string LuaClassName;
 	};
 };
 #endif

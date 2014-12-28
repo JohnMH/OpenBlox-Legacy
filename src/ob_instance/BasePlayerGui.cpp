@@ -25,8 +25,8 @@ namespace ob_instance{
 		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
 	}
 
-	char* BasePlayerGui::ClassName = "BasePlayerGui";
-	char* BasePlayerGui::LuaClassName = "luaL_Instance_BasePlayerGui";
+	std::string BasePlayerGui::ClassName = "BasePlayerGui";
+	std::string BasePlayerGui::LuaClassName = "luaL_Instance_BasePlayerGui";
 
 	BasePlayerGui::BasePlayerGui() : Instance(){
 		Name = ClassName;
@@ -34,7 +34,7 @@ namespace ob_instance{
 
 	BasePlayerGui::~BasePlayerGui(){}
 
-	char* BasePlayerGui::getClassName(){
+	std::string BasePlayerGui::getClassName(){
 		return ClassName;
 	}
 }

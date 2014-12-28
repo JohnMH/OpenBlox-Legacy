@@ -25,8 +25,8 @@ namespace ob_instance{
 		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
 	}
 
-	char* Frame::ClassName = "Frame";
-	char* Frame::LuaClassName = "luaL_Instance_Frame";
+	std::string Frame::ClassName = "Frame";
+	std::string Frame::LuaClassName = "luaL_Instance_Frame";
 
 	Frame::Frame() : GuiObject(){
 		Name = ClassName;
@@ -95,7 +95,7 @@ namespace ob_instance{
 		Frame** udata = (Frame**)lua_newuserdata(L, sizeof(*this));
 		*udata = this;
 
-		luaL_getmetatable(L, LuaClassName);
+		luaL_getmetatable(L, LuaClassName.c_str());
 		lua_setmetatable(L, -2);
 
 		return 1;
@@ -121,7 +121,7 @@ namespace ob_instance{
 		return newGuy;
 	}
 
-	char* Frame::getClassName(){
+	std::string Frame::getClassName(){
 		return ClassName;
 	}
 }

@@ -11,14 +11,14 @@ namespace ob_instance{
 
 			virtual Instance* cloneImpl();
 
-			virtual char* getClassName();
+			virtual std::string getClassName();
 
 			virtual int wrap_lua(lua_State* L);
 
 			DECLARE_STATIC_INIT(Camera);
 		protected:
-			static char* ClassName;
-			static char* LuaClassName;
+			static std::string ClassName;
+			static std::string LuaClassName;
 	};
 }
 #endif

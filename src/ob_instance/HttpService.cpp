@@ -29,8 +29,8 @@ namespace ob_instance{
 		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
 	}
 
-	char* HttpService::ClassName = "HttpService";
-	char* HttpService::LuaClassName = "luaL_Instance_HttpService";
+	std::string HttpService::ClassName = "HttpService";
+	std::string HttpService::LuaClassName = "luaL_Instance_" + ClassName;
 
 	HttpService::HttpService() : Instance(){
 		Name = ClassName;
@@ -63,7 +63,7 @@ namespace ob_instance{
 		return n;
 	}
 
-	char* HttpService::GetAsync(const char* url, bool nocache){
+	std::string HttpService::GetAsync(const char* url, bool nocache){
 		struct response_body body;
 		body.size = 0;
 		body.data = new char[4096];
@@ -97,12 +97,12 @@ namespace ob_instance{
 
 			curl_easy_cleanup(curl);
 
-			return body.data;
+			return std::string(body.data);
 		}
-		return NULL;
+		return "";
 	}
 
-	char* HttpService::UrlEncode(const char* input){
+	std::string HttpService::UrlEncode(const char* input){
 		CURL* curl;
 
 		curl = curl_easy_init();
@@ -112,21 +112,21 @@ namespace ob_instance{
 			size_t thingLen = strlen(encoded) + 1;
 			char* newGuy = new char[thingLen];
 			strcpy(newGuy, encoded);
-			newGuy[thingLen] = '\0';
+			//newGuy[thingLen] = '\0';
 
 			curl_free(encoded);
 			curl_easy_cleanup(curl);
 
-			return newGuy;
+			return std::string(newGuy);
 		}
-		return NULL;
+		return "";
 	}
 
 	ob_type::WebSocket* HttpService::CreateWebSocket(const char* uri){
 		return new ob_type::WebSocket(uri);
 	}
 
-	char* HttpService::GenerateGUID(bool wrapInCurlyBraces){
+	std::string HttpService::GenerateGUID(bool wrapInCurlyBraces){
 		GuidGenerator gen = GuidGenerator();
 		Guid guid = gen.newGuid();
 
@@ -149,14 +149,14 @@ namespace ob_instance{
 		strcat(returned, gs);
 		returned[len] = '\0';
 
-		return returned;
+		return std::string(returned);
 	}
 
 	int HttpService::wrap_lua(lua_State* L){
 		HttpService** udata = (HttpService**)lua_newuserdata(L, sizeof(*this));
 		*udata = this;
 
-		luaL_getmetatable(L, LuaClassName);
+		luaL_getmetatable(L, LuaClassName.c_str());
 		lua_setmetatable(L, -2);
 
 		return 1;
@@ -166,7 +166,7 @@ namespace ob_instance{
 		return NULL;
 	}
 
-	char* HttpService::getClassName(){
+	std::string HttpService::getClassName(){
 		return ClassName;
 	}
 
@@ -185,13 +185,8 @@ namespace ob_instance{
 						}
 					}
 
-					char* body = hs->GetAsync(url, nocache);
-
-					if(body){
-						lua_pushstring(L, body);
-					}else{
-						lua_pushnil(L);
-					}
+					std::string body = hs->GetAsync(url, nocache);
+					lua_pushstring(L, body.c_str());
 					return 1;
 				}
 				return luaL_error(L, COLONERR, "GetAsync");
@@ -208,13 +203,8 @@ namespace ob_instance{
 						}
 					}
 
-					char* body = hs->GenerateGUID(wrapInCurlyBraces);
-
-					if(body){
-						lua_pushstring(L, body);
-					}else{
-						lua_pushnil(L);
-					}
+					std::string body = hs->GenerateGUID(wrapInCurlyBraces);
+					lua_pushstring(L, body.c_str());
 					return 1;
 				}
 				return luaL_error(L, COLONERR, "GenerateGUID");
@@ -224,13 +214,9 @@ namespace ob_instance{
 				if(HttpService* hs = dynamic_cast<HttpService*>(inst)){
 					const char* inputStr = luaL_checkstring(L, 2);
 
-					char* output = hs->UrlEncode(inputStr);
+					std::string output = hs->UrlEncode(inputStr);
 
-					if(output){
-						lua_pushstring(L, output);
-					}else{
-						lua_pushnil(L);
-					}
+					lua_pushstring(L, output.c_str());
 					return 1;
 				}
 				return luaL_error(L, COLONERR, "UrlEncode");

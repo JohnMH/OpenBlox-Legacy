@@ -13,7 +13,7 @@ namespace ob_instance{
 
 			virtual Instance* cloneImpl();
 
-			virtual char* getClassName();
+			virtual std::string getClassName();
 
 			virtual int wrap_lua(lua_State* L);
 
@@ -23,8 +23,8 @@ namespace ob_instance{
 
 			DECLARE_STATIC_INIT(RunService);
 		protected:
-			static char* ClassName;
-			static char* LuaClassName;
+			static std::string ClassName;
+			static std::string LuaClassName;
 
 			static void register_lua_events(lua_State* L);
 	};

@@ -17,25 +17,25 @@ namespace ob_instance{
 			virtual Instance* Clone();
 			virtual void Destroy();
 			virtual void Remove();
-			virtual Instance* FindFirstChild(const char* name, bool recursive = false);
+			virtual Instance* FindFirstChild(std::string name, bool recursive = false);
 			virtual Instance** GetChildren();
-			virtual char* GetFullName();
-			virtual bool IsA(const char *name);
+			virtual std::string GetFullName();
+			virtual bool IsA(std::string name);
 			virtual bool IsAncestorOf(Instance* descendant);
 			virtual bool IsDescendantOf(Instance* ancestor);
 			//virtual Instance* WaitForChild(char* childName);
 
 			void parentLock();
 
-			virtual char* getClassName();
+			virtual std::string getClassName();
 
 			virtual void render();
 			virtual void renderChildren();
 
 			typedef void (*luaRegisterFunc)(lua_State* L);
-			static void registerLuaClass(char* className, luaRegisterFunc register_metamethods, luaRegisterFunc register_methods, luaRegisterFunc register_getters, luaRegisterFunc register_setters, luaRegisterFunc register_events);
+			static void registerLuaClass(std::string className, luaRegisterFunc register_metamethods, luaRegisterFunc register_methods, luaRegisterFunc register_getters, luaRegisterFunc register_setters, luaRegisterFunc register_events);
 
-			virtual char* toString();
+			virtual std::string toString();
 			virtual void setParent(Instance* parent);
 
 			virtual int wrap_lua(lua_State* L) = 0;
@@ -73,9 +73,9 @@ namespace ob_instance{
 			DECLARE_STATIC_INIT(Instance);
 		protected:
 			bool Archivable;
-			static char* ClassName;
-			static char* LuaClassName;
-			char* Name;
+			static std::string ClassName;
+			static std::string LuaClassName;
+			std::string Name;
 			Instance* Parent;
 			bool ParentLocked;
 
