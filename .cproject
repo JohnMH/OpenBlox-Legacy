@@ -74,6 +74,7 @@
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ssl32dll"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ssl"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="crypto"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ole32"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.1958027440" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="" valueType="string"/>
 								<option id="gnu.cpp.link.option.userobjs.453120316" name="Other objects" superClass="gnu.cpp.link.option.userobjs" valueType="userObjs">

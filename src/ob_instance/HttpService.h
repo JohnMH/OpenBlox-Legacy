@@ -25,6 +25,8 @@ namespace ob_instance{
 
 			ob_type::WebSocket* CreateWebSocket(const char* uri);
 
+			char* GenerateGUID(bool wrapInCurlyBraces = true);
+
 			virtual Instance* cloneImpl();
 
 			virtual char* getClassName();

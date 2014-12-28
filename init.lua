@@ -1,28 +1,6 @@
 local http = game:GetService("HttpService");
 
-local util = LoadLibrary("RbxUtility");
-
-local doSocketify;
-
-doSocketify = function()
-	local ws = http:CreateWebSocket("ws://echo.websocket.org");
-	print(ws);
-	ws.OnOpen:connect(function()
-		print("open");
-		local toEncode = {["bob"] = "testingThings"};
-		ws:send(util.EncodeJSON(toEncode));
-	end);
-	ws.OnClose:connect(function()
-		print("WebSocket closed");
-		Delay(1, doSocketify);
-	end);
-	ws.OnMessage:connect(function(data)
-		data = util.DecodeJSON(data);
-		print(data["bob"]);
-		ws:close();
-	end);
-end
-doSocketify();
+print(http:GenerateGUID());
 
 --[[ Saved for more GUI testing
 local frame = Instance.new("Frame");

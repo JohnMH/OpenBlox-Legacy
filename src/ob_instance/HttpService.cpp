@@ -2,6 +2,8 @@
 
 #include <curl/curl.h>
 
+#include "../crossguid/guid.h"
+
 namespace ob_instance{
 	struct HttpServiceClassMaker: public OpenBlox::ClassMaker{
 		ob_instance::Instance* getInstance() const{
@@ -124,6 +126,32 @@ namespace ob_instance{
 		return new ob_type::WebSocket(uri);
 	}
 
+	char* HttpService::GenerateGUID(bool wrapInCurlyBraces){
+		GuidGenerator gen = GuidGenerator();
+		Guid guid = gen.newGuid();
+
+		ostringstream ss;
+		ss << guid;
+
+		std::string guidstring = ss.str();
+
+		if(wrapInCurlyBraces){
+			guidstring = "{" + guidstring + "}";
+		}
+
+		std::transform(guidstring.begin(), guidstring.end(), guidstring.begin(), ::toupper);
+
+		const char* gs = guidstring.c_str();
+
+		int len = strlen(gs) + 1;
+
+		char* returned = new char[len];
+		strcat(returned, gs);
+		returned[len] = '\0';
+
+		return returned;
+	}
+
 	int HttpService::wrap_lua(lua_State* L){
 		HttpService** udata = (HttpService**)lua_newuserdata(L, sizeof(*this));
 		*udata = this;
@@ -167,6 +195,29 @@ namespace ob_instance{
 					return 1;
 				}
 				return luaL_error(L, COLONERR, "GetAsync");
+			}},
+			{"GenerateGUID", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(HttpService* hs = dynamic_cast<HttpService*>(inst)){
+					bool wrapInCurlyBraces = true;
+					if(!lua_isnoneornil(L, 2)){
+						if(lua_isboolean(L, 2)){
+							wrapInCurlyBraces = lua_toboolean(L, 2);
+						}else{
+							wrapInCurlyBraces = false;
+						}
+					}
+
+					char* body = hs->GenerateGUID(wrapInCurlyBraces);
+
+					if(body){
+						lua_pushstring(L, body);
+					}else{
+						lua_pushnil(L);
+					}
+					return 1;
+				}
+				return luaL_error(L, COLONERR, "GenerateGUID");
 			}},
 			{"UrlEncode", [](lua_State* L)->int{
 				Instance* inst = checkInstance(L, 1);

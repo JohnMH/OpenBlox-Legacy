@@ -30,6 +30,9 @@ namespace OpenBlox{
 
 		libMap = std::map<std::string, char*>();
 		libMap["RbxUtility"] = "https://raw.githubusercontent.com/RobloxLabs/internal-code/master/library-scripts/RbxUtility-60595411.lua";
+		libMap["RbxGear"] = "https://raw.githubusercontent.com/RobloxLabs/internal-code/master/library-scripts/RbxGear-45374389.lua";
+		libMap["RbxStamper"] = "https://raw.githubusercontent.com/RobloxLabs/internal-code/master/library-scripts/RbxStamper-73157242.lua";
+		libMap["RbxGui"] = "https://raw.githubusercontent.com/RobloxLabs/internal-code/master/library-scripts/RbxGui-45284430.lua";
 
 		GlobalLuaState = lua_open();
 	}
