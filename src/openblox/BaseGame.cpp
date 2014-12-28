@@ -136,6 +136,17 @@ namespace OpenBlox{
 		};
 		luaL_register(L, "UDim2", udim2lib);
 
+		lua_newtable(L);{//Enums
+			lua_pushstring(L, "CameraType");
+			ob_enum::LuaCameraType->wrap_lua(L);
+			lua_rawset(L, -3);
+
+			lua_pushstring(L, "FormFactor");
+			ob_enum::LuaFormFactor->wrap_lua(L);
+			lua_rawset(L, -3);
+		}
+		lua_setglobal(L, "Enum");
+
 		ob_instance::DataModel* dm = INSTANCE->getDataModel();
 		int gm = dm->wrap_lua(L);
 		lua_pushvalue(L, -gm);

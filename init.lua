@@ -1,8 +1,6 @@
-print(game);
+print(Instance.new("Camera").CameraType);
 
 local http = game:GetService("HttpService");
-
-print(http);
 
 local ws = http:CreateWebSocket("ws://echo.websocket.org");
 print(ws);

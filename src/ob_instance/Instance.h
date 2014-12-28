@@ -2,8 +2,12 @@
 #define OB_INSTANCE_INSTANCE_H_
 
 #include "../openblox/OpenBlox.h"
+
 #include "constants.h"
+
 #include "../ob_type/LuaEvent.h"
+
+#include "../ob_enum/Enums.h"
 
 namespace ob_instance{
 	class Instance{
