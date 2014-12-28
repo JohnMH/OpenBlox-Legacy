@@ -97,8 +97,8 @@ namespace ob_type{
 
 	Vector2* Vector2::getNormalized(){
 		Vector2* newGuy = new Vector2();
-		newGuy->x = x;
-		newGuy->y = y;
+		newGuy->x = x/magnitude;
+		newGuy->y = y/magnitude;
 		return newGuy;
 	}
 

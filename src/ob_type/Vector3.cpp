@@ -101,9 +101,9 @@ namespace ob_type{
 
 	Vector3* Vector3::getNormalized(){
 		Vector3* newGuy = new Vector3();
-		newGuy->x = x;
-		newGuy->y = y;
-		newGuy->z = z;
+		newGuy->x = x/magnitude;
+		newGuy->y = y/magnitude;
+		newGuy->z = z/magnitude;
 		return newGuy;
 	}
 
