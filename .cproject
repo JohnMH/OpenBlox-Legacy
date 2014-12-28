@@ -94,8 +94,8 @@
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
-		<cconfiguration id="cdt.managedbuild.config.gnu.mingw.exe.release.25132262">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.mingw.exe.release.25132262" moduleId="org.eclipse.cdt.core.settings" name="Release">
+		<cconfiguration id="org.eclipse.cdt.msvc.exe.debug.1757965917.1410626257">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="org.eclipse.cdt.msvc.exe.debug.1757965917.1410626257" moduleId="org.eclipse.cdt.core.settings" name="Release">
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -105,72 +105,84 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.mingw.exe.release.25132262" name="Release" parent="cdt.managedbuild.config.gnu.mingw.exe.release" prebuildStep="windres ../src/resources.rc -o ../Resources/resources.o">
-					<folderInfo id="cdt.managedbuild.config.gnu.mingw.exe.release.25132262." name="/" resourcePath="">
-						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.exe.release.195865410" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.exe.release">
-							<targetPlatform id="cdt.managedbuild.target.gnu.platform.mingw.exe.release.227450068" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.mingw.exe.release"/>
-							<builder buildPath="${workspace_loc:/OpenBlox}/Release" id="cdt.managedbuild.tool.gnu.builder.mingw.base.1754684530" keepEnvironmentInBuildfile="false" name="CDT Internal Builder" superClass="cdt.managedbuild.tool.gnu.builder.mingw.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.exe.release.1524400568" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.exe.release">
-								<option id="gnu.both.asm.option.include.paths.1638811148" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+				<configuration artifactExtension="exe" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" description="" id="org.eclipse.cdt.msvc.exe.debug.1757965917.1410626257" name="Release" parent="org.eclipse.cdt.msvc.exe.debug" prebuildStep="windres ../src/resources.rc -o ../Resources/resources.o">
+					<folderInfo id="org.eclipse.cdt.msvc.exe.debug.1757965917.1410626257." name="/" resourcePath="">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base.145405551" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.base">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE" id="cdt.managedbuild.target.gnu.platform.mingw.base.1089601568" name="Debug Platform" osList="win32" superClass="cdt.managedbuild.target.gnu.platform.mingw.base"/>
+							<builder buildPath="${workspace_loc:/OpenBlox}/Debug" id="org.eclipse.cdt.build.core.internal.builder.1332915720" keepEnvironmentInBuildfile="false" name="CDT Internal Builder" superClass="org.eclipse.cdt.build.core.internal.builder"/>
+							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.base.388950934" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base">
+								<option id="gnu.both.asm.option.include.paths.1306282055" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glew/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/pthreads/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glfw/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/zlib/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
 								</option>
-								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.157599894" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.318407216" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.archiver.mingw.base.1114617046" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.mingw.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.exe.release.242708588" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.exe.release">
-								<option id="gnu.cpp.compiler.mingw.exe.release.option.optimization.level.997646716" name="Optimization Level" superClass="gnu.cpp.compiler.mingw.exe.release.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.mingw.exe.release.option.debugging.level.1501061131" name="Debug Level" superClass="gnu.cpp.compiler.mingw.exe.release.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.include.paths.417063267" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+							<tool id="cdt.managedbuild.tool.gnu.archiver.mingw.base.397899360" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.mingw.base"/>
+							<tool commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}" id="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.1217659753" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base">
+								<option id="gnu.cpp.compiler.option.optimization.level.26813705" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.debugging.level.2009443152" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.dialect.std.1254251808" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.other.other.1969198864" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -Wno-write-strings -Wno-non-virtual-dtor" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.include.paths.317091493" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glew/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/pthreads/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glfw/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/zlib/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.dialect.std.1558340493" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
-								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.127521029" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+								<option id="gnu.cpp.compiler.option.preprocessor.undef.671861934" name="Undefined symbols (-U)" superClass="gnu.cpp.compiler.option.preprocessor.undef"/>
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1767406019" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release.1002099755" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release">
-								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.mingw.exe.release.option.optimization.level.491142967" name="Optimization Level" superClass="gnu.c.compiler.mingw.exe.release.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
-								<option id="gnu.c.compiler.mingw.exe.release.option.debugging.level.986310935" name="Debug Level" superClass="gnu.c.compiler.mingw.exe.release.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.none" valueType="enumerated"/>
-								<option id="gnu.c.compiler.option.include.paths.475401513" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.base.1795717167" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.base">
+								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.1297801105" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.debugging.level.1616790096" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.misc.other.672432727" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0" valueType="string"/>
+								<option id="gnu.c.compiler.option.include.paths.1443431816" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glew/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/pthreads/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glfw/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/zlib/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
 								</option>
-								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1473476161" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+								<option id="gnu.c.compiler.option.dialect.std.1389656255" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.preprocessor.undef.symbol.1091014271" name="Undefined symbols (-U)" superClass="gnu.c.compiler.option.preprocessor.undef.symbol"/>
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1234170337" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release.125501310" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.release.861203723" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.release">
-								<option id="gnu.cpp.link.option.libs.585136477" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.base.1879975758" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.base"/>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base.1881355548" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base">
+								<option id="gnu.cpp.link.option.paths.264069965" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/lib}&quot;"/>
+								</option>
+								<option id="gnu.cpp.link.option.libs.742861995" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="opengl32"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="glew32"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pthreadGC2"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="glfw3dll"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ws2_32"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="curldll"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="eay32dll"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ssl32dll"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ssl"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="crypto"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ole32"/>
 								</option>
-								<option id="gnu.cpp.link.option.paths.1829844910" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/lib}&quot;"/>
-								</option>
-								<option id="gnu.cpp.link.option.userobjs.1190892288" name="Other objects" superClass="gnu.cpp.link.option.userobjs" valueType="userObjs">
+								<option id="gnu.cpp.link.option.flags.656200715" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="" valueType="string"/>
+								<option id="gnu.cpp.link.option.userobjs.1233811934" name="Other objects" superClass="gnu.cpp.link.option.userobjs" valueType="userObjs">
 									<listOptionValue builtIn="false" value="Resources/resources.o"/>
 								</option>
-								<option id="gnu.cpp.link.option.flags.757154863" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-mwindows" valueType="string"/>
-								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1260548131" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.503413639" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
 								</inputType>
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<sourceEntries>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
@@ -194,17 +206,8 @@
 		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.msvc.exe.release.618303857;org.eclipse.cdt.msvc.exe.release.618303857.;org.eclipse.cdt.msvc.cl.c.exe.release.1221874664;org.eclipse.cdt.msvc.cl.inputType.c.307874815">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.mingw.exe.release.25132262;cdt.managedbuild.config.gnu.mingw.exe.release.25132262.;cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release.1002099755;cdt.managedbuild.tool.gnu.c.compiler.input.1473476161">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.msvc.exe.debug.1757965917;org.eclipse.cdt.msvc.exe.debug.1757965917.;cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.869286918;cdt.managedbuild.tool.gnu.cpp.compiler.input.717218826">
+		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.msvc.exe.debug.1757965917.1410626257;org.eclipse.cdt.msvc.exe.debug.1757965917.1410626257.;cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.1217659753;cdt.managedbuild.tool.gnu.cpp.compiler.input.1767406019">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.msvc.exe.release.1215221484;org.eclipse.cdt.msvc.exe.release.1215221484.;org.eclipse.cdt.msvc.cl.exe.release.260973909;org.eclipse.cdt.msvc.cl.inputType.1673109349">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.msvc.exe.debug.1757965917;org.eclipse.cdt.msvc.exe.debug.1757965917.;cdt.managedbuild.tool.gnu.c.compiler.mingw.base.917936967;cdt.managedbuild.tool.gnu.c.compiler.input.111102661">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.msvc.exe.release.1215221484;org.eclipse.cdt.msvc.exe.release.1215221484.;org.eclipse.cdt.msvc.cl.c.exe.release.914245214;org.eclipse.cdt.msvc.cl.inputType.c.2127657183">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
@@ -213,6 +216,33 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.mingw.exe.release.25132262;cdt.managedbuild.config.gnu.mingw.exe.release.25132262.;cdt.managedbuild.tool.gnu.cpp.compiler.mingw.exe.release.242708588;cdt.managedbuild.tool.gnu.cpp.compiler.input.127521029">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.msvc.exe.debug.1757965917.1410626257;org.eclipse.cdt.msvc.exe.debug.1757965917.1410626257.;cdt.managedbuild.tool.gnu.c.compiler.mingw.base.1795717167;cdt.managedbuild.tool.gnu.c.compiler.input.1234170337">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.mingw.exe.release.1956664926;cdt.managedbuild.config.gnu.mingw.exe.release.1956664926.;cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release.95443126;cdt.managedbuild.tool.gnu.c.compiler.input.873052069">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.mingw.exe.release.25132262;cdt.managedbuild.config.gnu.mingw.exe.release.25132262.;cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release.1002099755;cdt.managedbuild.tool.gnu.c.compiler.input.1473476161">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.msvc.exe.debug.1757965917;org.eclipse.cdt.msvc.exe.debug.1757965917.;cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.869286918;cdt.managedbuild.tool.gnu.cpp.compiler.input.717218826">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.mingw.exe.release.1984547475;cdt.managedbuild.config.gnu.mingw.exe.release.1984547475.;cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release.129282612;cdt.managedbuild.tool.gnu.c.compiler.input.1937432904">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.msvc.exe.release.1215221484;org.eclipse.cdt.msvc.exe.release.1215221484.;org.eclipse.cdt.msvc.cl.exe.release.260973909;org.eclipse.cdt.msvc.cl.inputType.1673109349">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.msvc.exe.debug.1757965917;org.eclipse.cdt.msvc.exe.debug.1757965917.;cdt.managedbuild.tool.gnu.c.compiler.mingw.base.917936967;cdt.managedbuild.tool.gnu.c.compiler.input.111102661">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.mingw.exe.release.1984547475;cdt.managedbuild.config.gnu.mingw.exe.release.1984547475.;cdt.managedbuild.tool.gnu.cpp.compiler.mingw.exe.release.841809175;cdt.managedbuild.tool.gnu.cpp.compiler.input.554102301">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.mingw.exe.release.1956664926;cdt.managedbuild.config.gnu.mingw.exe.release.1956664926.;cdt.managedbuild.tool.gnu.cpp.compiler.mingw.exe.release.154032215;cdt.managedbuild.tool.gnu.cpp.compiler.input.959547200">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.msvc.exe.debug.1757965917;org.eclipse.cdt.msvc.exe.debug.1757965917.;org.eclipse.cdt.msvc.cl.c.exe.debug.1386831457;org.eclipse.cdt.msvc.cl.inputType.c.1624616651">
