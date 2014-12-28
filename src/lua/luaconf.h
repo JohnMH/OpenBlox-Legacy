@@ -761,3 +761,17 @@ union luai_Cast { double l_d; long l_l; };
 
 #endif
 
+#ifdef LUA_CORE
+// all utf-8 chars are always alphabetic character (everthing higher then
+// 2^7 is always a valid char), end of stream (-1) is not valid
+#define isalpha(zeich) (((0x80&zeich)||isalpha(zeich))&&zeich!=-1)
+// all utf-8 chars are always alphabetic character or numbers, end of
+// stream (-1) is not valid
+#define isalnum(zeich) (((0x80&zeich)||isalnum(zeich))&&zeich!=-1)
+// all utf-8 chars are never numbers, end of stream (-1) is not valid
+#define isdigit(zeich) ((!(0x80&zeich)&&isdigit(zeich))&&zeich!=-1)
+// all utf-8 chars are never whitespace characters, end of stream (-1) is
+// not valid
+#define isspace(zeich) ((!(0x80&zeich)&&isspace(zeich))&&zeich!=-1)
+#endif
+

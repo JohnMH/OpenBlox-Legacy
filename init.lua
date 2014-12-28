@@ -1,9 +1,16 @@
 local http = game:GetService("HttpService");
 
+function Grüße(message)
+	print(message);
+end
+
+GrüßeAusDeutschland = "Hallo Welt äöüß";
+Grüße(GrüßeAusDeutschland);
+
 local ws = http:CreateWebSocket("ws://echo.websocket.org");
 print(ws);
 ws.OnOpen:connect(function()
-	ws:send(http:GenerateGUID());
+	ws:send({"test"});
 end);
 ws.OnClose:connect(function()
 	print("WebSocket closed");
