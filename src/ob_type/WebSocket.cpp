@@ -59,12 +59,16 @@ namespace ob_type{
 	OpenBlox::Thread* WebSocket::webSocketThread = NULL;
 	std::vector<WebSocket*>* WebSocket::activeWebSockets = NULL;
 
+	#ifndef _WIN32
 	bool WebSocket::isLocked = false;
+	#endif
 
 	WebSocket::WebSocket(const char* uri){
 		this->uri = uri;
 
+		#ifndef _WIN32
 		sendQueue = std::vector<std::string>();
+		#endif
 
 		inited = false;
 
@@ -109,6 +113,7 @@ namespace ob_type{
 							break;
 						}
 					}
+					#ifndef _WIN32
 					isLocked = true;
 					for(std::vector<WebSocket>::size_type i = 0; i != activeWebSockets->size(); i++){
 						WebSocket* ws = (*activeWebSockets)[i];
@@ -125,6 +130,7 @@ namespace ob_type{
 						}
 					}
 					isLocked = false;
+					#endif
 					usleep(100);
 				}
 				//delete activeWebSockets;
@@ -141,11 +147,14 @@ namespace ob_type{
 	}
 
 	void WebSocket::send(const char* msg){
-		if(isLocked){
-			while(isLocked){}
-		}
-		//ws->send(std::string(msg));
-		sendQueue.push_back(std::string(msg));
+		#ifndef _WIN32
+			if(isLocked){
+				while(isLocked){}
+			}
+			sendQueue.push_back(std::string(msg));
+		#else
+			ws->send(std::string(msg));
+		#endif
 	}
 
 	void WebSocket::handleMessage(const std::string& msg, easywsclient::WebSocket::pointer ws){
@@ -174,9 +183,13 @@ namespace ob_type{
 		WebSocket* LuaWebSocket = checkWebSocket(L, 1);
 		if(LuaWebSocket != NULL){
 			if(LuaWebSocket->ws){
-				if(!LuaWebSocket->shouldClose){
-					LuaWebSocket->shouldClose = true;
-				}
+				#ifndef _WIN32
+					if(!LuaWebSocket->shouldClose){
+						LuaWebSocket->shouldClose = true;
+					}
+				#else
+					LuaWebSocket->ws->close();
+				#endif
 			}else{
 				luaL_error(L, "WebSocket is already closed.");
 			}

@@ -31,10 +31,12 @@ namespace ob_type{
 		protected:
 			bool inited;
 
+			#ifndef _WIN32
 			std::vector<std::string> sendQueue;
 			bool shouldClose;
 
 			static bool isLocked;
+			#endif
 
 			LuaEvent* OnOpen;
 			LuaEvent* OnClose;
