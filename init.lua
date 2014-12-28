@@ -1,6 +1,17 @@
 local http = game:GetService("HttpService");
 
-print(http:GenerateGUID());
+local ws = http:CreateWebSocket("ws://echo.websocket.org");
+print(ws);
+ws.OnOpen:connect(function()
+	ws:send(http:GenerateGUID());
+end);
+ws.OnClose:connect(function()
+	print("WebSocket closed");
+end);
+ws.OnMessage:connect(function(data)
+	print(data);
+	ws:close();
+end);
 
 --[[ Saved for more GUI testing
 local frame = Instance.new("Frame");
