@@ -48,30 +48,6 @@ namespace OpenBlox{
 		return datamodel;
 	}
 
-	std::wstring widen(std::string const& s, std::locale loc){
-	    std::char_traits<wchar_t>::state_type state = {0};
-
-	    typedef std::codecvt<wchar_t, char, std::char_traits<wchar_t>::state_type> ConverterFacet;
-
-	    ConverterFacet const& converter(std::use_facet<ConverterFacet>(loc));
-
-	    char const* nextToRead = s.data();
-	    wchar_t buffer[BUFSIZ];
-	    wchar_t* nextToWrite;
-	    std::codecvt_base::result result;
-	    std::wstring wresult;
-
-	    while((result = converter.in (state, nextToRead, s.data()+s.size(), nextToRead, buffer, buffer+sizeof(buffer)/sizeof(*buffer), nextToWrite)) == std::codecvt_base::partial){
-	        wresult.append(buffer, nextToWrite);
-	    }
-
-	    if(result == std::codecvt_base::error){
-	        throw std::runtime_error("Encoding error");
-	    }
-	    wresult.append(buffer, nextToWrite);
-	    return wresult;
-	}
-
 	//TODO: Implement LogService print, warn, error
 	void BaseGame::print(const char* output){
 		LOGI(output);
