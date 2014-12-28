@@ -20,9 +20,9 @@ namespace OpenBlox{
 			BaseGame();
 			virtual ~BaseGame();
 
-			void print(const char* output);
-			void warn(const char* output);
-			void print_error(const char* output);
+			void print(std::string output);
+			void warn(std::string output);
+			void print_error(std::string output);
 			void handle_lua_errors(lua_State* L);
 
 			ob_instance::DataModel* getDataModel();

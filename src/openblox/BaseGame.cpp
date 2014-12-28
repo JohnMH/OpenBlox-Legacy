@@ -22,7 +22,7 @@ namespace OpenBlox{
 	static BaseGame* INSTANCE;
 	static long APP_START = currentTimeMillis();
 
-	static std::map<std::string, char*> libMap;
+	static std::map<std::string, std::string> libMap;
 
 	lua_State* BaseGame::GlobalLuaState = NULL;
 	Factory* BaseGame::InstanceFactory = NULL;
@@ -31,7 +31,7 @@ namespace OpenBlox{
 		INSTANCE = this;
 		datamodel = new ob_instance::DataModel();
 
-		libMap = std::map<std::string, char*>();
+		libMap = std::map<std::string, std::string>();
 		libMap["RbxUtility"] = "https://raw.githubusercontent.com/RobloxLabs/internal-code/master/library-scripts/RbxUtility-60595411.lua";
 		libMap["RbxGear"] = "https://raw.githubusercontent.com/RobloxLabs/internal-code/master/library-scripts/RbxGear-45374389.lua";
 		libMap["RbxStamper"] = "https://raw.githubusercontent.com/RobloxLabs/internal-code/master/library-scripts/RbxStamper-73157242.lua";
@@ -49,16 +49,16 @@ namespace OpenBlox{
 	}
 
 	//TODO: Implement LogService print, warn, error
-	void BaseGame::print(const char* output){
-		LOGI(output);
+	void BaseGame::print(std::string output){
+		LOGI(output.c_str());
 	}
 
-	void BaseGame::warn(const char* output){
-		LOGW(output);
+	void BaseGame::warn(std::string output){
+		LOGW(output.c_str());
 	}
 
-	void BaseGame::print_error(const char* output){
-		LOGE(output);
+	void BaseGame::print_error(std::string output){
+		LOGE(output.c_str());
 	}
 
 	void BaseGame::handle_lua_errors(lua_State* L){
@@ -199,15 +199,15 @@ namespace OpenBlox{
 	}
 
 	int BaseGame::lua_loadlibrary(lua_State* L){
-		const char* libName = luaL_checkstring(L, 1);
-		char* libURL = libMap[std::string(libName)];
-		if(libURL){
+		std::string libName = std::string(luaL_checkstring(L, 1));
+		std::map<std::string, std::string>::iterator it = libMap.find(libName);
+		if(it != libMap.end()){
 			struct ob_instance::HttpService::response_body body;
 			body.size = 0;
 			body.data = new char[4096];
 			if(body.data == NULL){
 				LOGE("[LoadLibrary] Failed to allocate memory.");
-				return luaL_error(L, "Error loading library %s", libName);
+				return luaL_error(L, "Error loading library %s", libName.c_str());
 			}
 
 			body.data[0] = '\0';
@@ -217,7 +217,7 @@ namespace OpenBlox{
 
 			curl = curl_easy_init();
 			if(curl){
-				curl_easy_setopt(curl, CURLOPT_URL, libURL);
+				curl_easy_setopt(curl, CURLOPT_URL, it->second.c_str());
 
 				curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
 
@@ -229,12 +229,12 @@ namespace OpenBlox{
 				res = curl_easy_perform(curl);
 				if(res != CURLE_OK){
 					LOGE("[LoadLibrary] cURL Error: %s", curl_easy_strerror(res));
-					return luaL_error(L, "Error loading library %s", libName);
+					return luaL_error(L, "Error loading library %s", libName.c_str());
 				}
 
 				curl_easy_cleanup(curl);
 
-				int s = luaL_loadbuffer(L, body.data, strlen(body.data), libName);
+				int s = luaL_loadbuffer(L, body.data, strlen(body.data), libName.c_str());
 				if(s == 0){
 					s = lua_pcall(L, 0, 1, 0);
 					if(s == 0){
@@ -243,11 +243,11 @@ namespace OpenBlox{
 
 					}
 				}else{
-					return luaL_error(L, "Error loading library %s", libName);
+					return luaL_error(L, "Error loading library %s", libName.c_str());
 				}
 			}
 		}
-		return luaL_error(L, "Unknown library %s", libName);
+		return luaL_error(L, "Unknown library %s", libName.c_str());
 	}
 
 	int BaseGame::lua_tick(lua_State* L){
@@ -282,7 +282,7 @@ namespace OpenBlox{
 		}
 
 		if(INSTANCE != NULL){
-			INSTANCE->print(output.c_str());
+			INSTANCE->print(output);
 		}
 
 		return 0;
@@ -325,28 +325,26 @@ namespace OpenBlox{
 		}
 
 		if(INSTANCE != NULL){
-			INSTANCE->warn(output.c_str());
+			INSTANCE->warn(output);
 		}
 
 		return 0;
 	}
 
 	int BaseGame::lua_newInstance(lua_State* L){
-		const char* className = luaL_checkstring(L, 1);
+		std::string className = std::string(luaL_checkstring(L, 1));
 		ob_instance::Instance* par = ob_instance::Instance::checkInstance(L, 2);
-		if(className != NULL){
-			if(BaseGame::InstanceFactory != NULL){
-				ob_instance::Instance* newGuy = BaseGame::InstanceFactory->create(className);
-				if(newGuy != NULL){
-					if(par != NULL){
-						try{
-							newGuy->setParent(par);
-						}catch(std::runtime_error& ex){
-							return luaL_error(L, ex.what());
-						}
+		if(BaseGame::InstanceFactory != NULL){
+			ob_instance::Instance* newGuy = BaseGame::InstanceFactory->create(className);
+			if(newGuy != NULL){
+				if(par != NULL){
+					try{
+						newGuy->setParent(par);
+					}catch(std::runtime_error& ex){
+						return luaL_error(L, ex.what());
 					}
-					return newGuy->wrap_lua(L);
 				}
+				return newGuy->wrap_lua(L);
 			}
 		}
 		lua_pushnil(L);
