@@ -472,23 +472,38 @@ easywsclient::WebSocket::pointer from_url(const std::string& url, bool useMask, 
       fprintf(stderr, "ERROR: origin size limit exceeded: %s\n", origin.c_str());
       return NULL;
     }
-    if (false) { }
-    else if (sscanf(url.c_str(), "ws://%[^:/]:%d/%s", host, &port, path) == 3) {
-    }
-    else if (sscanf(url.c_str(), "ws://%[^:/]/%s", host, path) == 2) {
-        port = 80;
-    }
-    else if (sscanf(url.c_str(), "ws://%[^:/]:%d", host, &port) == 2) {
-        path[0] = '\0';
-    }
-    else if (sscanf(url.c_str(), "ws://%[^:/]", host) == 1) {
-        port = 80;
-        path[0] = '\0';
-    }
-    else {
+	bool useSSL = false;
+	const char* curl = url.c_str();
+	if(sscanf(curl, "wss://%[^:/]:%d/%s", host, &port, path) == 3){
+		useSSL = true;
+	}else if(sscanf(curl, "wss://%[^:/]/%s", host, path) == 2){
+		useSSL = true;
+		port = 443;
+	}else if(sscanf(curl, "wss://%[^:/]:%d", host, &port) == 2){
+		useSSL = true;
+		path[0] = '\0';
+	}else if(sscanf(curl, "wss://%[^:/]", host) == 1){
+		useSSL = true;
+		port = 443;
+		path[0] = '\0';
+	}else if(sscanf(curl, "ws://%[^:/]:%d/%s", host, &port, path) == 3){
+	}else if(sscanf(curl, "ws://%[^:/]/%s", host, path) == 2){
+		port = 80;
+	}else if(sscanf(curl, "ws://%[^:/]:%d", host, &port) == 2){
+		path[0] = '\0';
+	}else if(sscanf(curl, "ws://%[^:/]", host) == 1){
+		port = 80;
+		path[0] = '\0';
+	}else{
         fprintf(stderr, "ERROR: Could not parse WebSocket url: %s\n", url.c_str());
         return NULL;
     }
+
+	if(useSSL){
+		fprintf(stderr, "OpenBlox does not currently support the wss protocol.");
+		return NULL;
+	}
+
     //fprintf(stderr, "easywsclient: connecting: host=%s port=%d path=/%s\n", host, port, path);
     socket_t sockfd = hostname_connect(host, port);
     if (sockfd == INVALID_SOCKET) {

@@ -27,6 +27,9 @@ namespace ob_type{
 		luaL_Reg props[]{
 			{"readyState", lua_getReadyState},
 			{"ReadyState", lua_getReadyState},
+			{"OnOpen", lua_getOnOpen},
+			{"onOpen", lua_getOnOpen},
+			{"onopen", lua_getOnOpen},
 			{"OnClose", lua_getOnClose},
 			{"onClose", lua_getOnClose},
 			{"onclose", lua_getOnClose},
@@ -59,42 +62,55 @@ namespace ob_type{
 	WebSocket::WebSocket(const char* uri){
 		this->uri = uri;
 
+		inited = false;
+
+		OnOpen = new LuaEvent("OnOpen", 0);
 		OnClose = new LuaEvent("OnClose", 0);//0 at this time. 2 expected in the future, long code, char* reason - https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent
 		OnMessage = new LuaEvent("OnMessage", 1);
 
-		ws = easywsclient::WebSocket::from_url(std::string(uri));
+		ws = NULL;
 
-		if(ws){
-			if(activeWebSockets == NULL){
-				activeWebSockets = new std::vector<WebSocket*>();
-			}
-			activeWebSockets->push_back(this);
-			if(webSocketThread == NULL){
-				webSocketThread = new OpenBlox::Thread([](){
-					while(!activeWebSockets->empty()){
-						for(std::vector<WebSocket>::size_type i = 0; i != activeWebSockets->size(); i++){
-							WebSocket* ws = (*activeWebSockets)[i];
-							if(ws != NULL && ws->ws->getReadyState() != easywsclient::WebSocket::CLOSED){
-								ws->ws->poll();
-								ws->ws->dispatch(handleMessage);
-							}else{
-								if(ws != NULL){
-									std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-									ws->OnClose->Fire(args);
-									delete ws->ws;
-									ws->ws = NULL;
+		if(activeWebSockets == NULL){
+			activeWebSockets = new std::vector<WebSocket*>();
+		}
+		activeWebSockets->push_back(this);
+		if(webSocketThread == NULL){
+			webSocketThread = new OpenBlox::Thread([](){
+				while(!activeWebSockets->empty()){
+					for(std::vector<WebSocket>::size_type i = 0; i != activeWebSockets->size(); i++){
+						WebSocket* ws = (*activeWebSockets)[i];
+						if(ws != NULL){
+							if(ws->ws == NULL && !ws->inited){
+								ws->ws = easywsclient::WebSocket::from_url(std::string(ws->uri));
+								if(ws->ws != NULL){
+									if(ws->ws->getReadyState() == easywsclient::WebSocket::OPEN){
+										std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+										ws->OnOpen->Fire(args);
+									}
 								}
-								activeWebSockets->erase(activeWebSockets->begin() + (i - 1));
-								break;
+								ws->inited = true;
 							}
 						}
+						if(ws != NULL && ws->ws != NULL && ws->ws->getReadyState() != easywsclient::WebSocket::CLOSED){
+							ws->ws->poll();
+							ws->ws->dispatch(handleMessage);
+						}else{
+							if(ws != NULL && ws->ws != NULL){
+								std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+								ws->OnClose->Fire(args);
+								delete ws->ws;
+								ws->ws = NULL;
+							}
+							activeWebSockets->erase(activeWebSockets->begin() + (i - 1));
+							break;
+						}
 					}
-					//delete activeWebSockets;
-					activeWebSockets = NULL;
-					webSocketThread = NULL;
-				});
-				webSocketThread->start();
-			}
+				}
+				//delete activeWebSockets;
+				activeWebSockets = NULL;
+				webSocketThread = NULL;
+			});
+			webSocketThread->start();
 		}
 	}
 
@@ -147,11 +163,25 @@ namespace ob_type{
 			int state = 3;
 			if(LuaWebSocket->ws){
 				state = LuaWebSocket->ws->getReadyState();
+			}else{
+				if(!LuaWebSocket->inited){
+					lua_pushnumber(L, easywsclient::WebSocket::CONNECTING);
+					return 1;
+				}
 			}
 			lua_pushnumber(L, state);
 			return 1;
 		}
 		lua_pushnumber(L, 2);
+		return 1;
+	}
+
+	int WebSocket::lua_getOnOpen(lua_State* L){
+		WebSocket* LuaWebSocket = checkWebSocket(L, 1);
+		if(LuaWebSocket != NULL){
+			return LuaWebSocket->OnOpen->wrap_lua(L);
+		}
+		lua_pushnil(L);
 		return 1;
 	}
 

@@ -29,12 +29,16 @@ namespace ob_type{
 
 			int wrap_lua(lua_State* L);
 		protected:
+			bool inited;
+
+			LuaEvent* OnOpen;
 			LuaEvent* OnClose;
 			LuaEvent* OnMessage;
 
 			static int lua_send(lua_State* L);
 			static int lua_close(lua_State* L);
 			static int lua_getReadyState(lua_State* L);
+			static int lua_getOnOpen(lua_State* L);
 			static int lua_getOnClose(lua_State* L);
 			static int lua_getOnMessage(lua_State* L);
 
