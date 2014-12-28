@@ -22,7 +22,6 @@ namespace OpenBlox{
 	ob_instance::Instance* Factory::createService(std::string className, bool isDataModel){
 		if(lokupTable[className]){
 			ClassMaker* maker = lokupTable[className];
-			std::cout << maker << std::endl;
 			if(maker->isService(isDataModel)){
 				return maker->getInstance();
 			}
