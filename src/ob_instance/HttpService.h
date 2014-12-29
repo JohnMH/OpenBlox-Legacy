@@ -18,8 +18,8 @@ namespace ob_instance{
 
 			static size_t write_data(void* ptr, size_t size, size_t nmemb, struct response_body* data);
 
-			std::string GetAsync(const char* url, bool nocache = false);
-			//std::string PostAsync(char* url, char* data, Enum HttpContentType content_type = ApplicationJson); //GOD DAMN IT DEVDIGGY! DO ENUMS!
+			std::string GetAsync(std::string url, bool nocache = false);
+			std::string PostAsync(std::string url, std::string data, ob_enum::HttpContentType content_type = ob_enum::HttpContentType::ApplicationJson);
 
 			std::string UrlEncode(std::string input);
 			std::string UrlDecode(std::string input);

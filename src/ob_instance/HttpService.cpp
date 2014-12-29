@@ -63,7 +63,7 @@ namespace ob_instance{
 		return n;
 	}
 
-	std::string HttpService::GetAsync(const char* url, bool nocache){
+	std::string HttpService::GetAsync(std::string url, bool nocache){
 		struct response_body body;
 		body.size = 0;
 		body.data = new char[4096];
@@ -79,7 +79,73 @@ namespace ob_instance{
 
 		curl = curl_easy_init();
 		if(curl){
-			curl_easy_setopt(curl, CURLOPT_URL, url);
+			curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
+			curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
+
+			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+
+			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
+
+			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &body);
+
+			res = curl_easy_perform(curl);
+			if(res != CURLE_OK){
+				LOGE("[HttpService] cURL Error: %s", curl_easy_strerror(res));
+			}
+
+			curl_easy_cleanup(curl);
+
+			return std::string(body.data);
+		}
+		return "";
+	}
+
+	std::string HttpService::PostAsync(std::string url, std::string data, ob_enum::HttpContentType content_type){
+		struct response_body body;
+		body.size = 0;
+		body.data = new char[4096];
+		if(body.data == NULL){
+			LOGE("[HttpService] Failed to allocate memory.");
+			return NULL;
+		}
+
+		body.data[0] = '\0';
+
+		CURL* curl;
+		CURLcode res;
+
+		curl = curl_easy_init();
+		if(curl){
+			struct curl_slist* chunk = NULL;
+
+			switch(content_type){
+				case ob_enum::HttpContentType::ApplicationXml:
+					chunk = curl_slist_append(chunk, "Content-Type: application/xml");
+					break;
+				case ob_enum::HttpContentType::ApplicationUrlEncoded:
+					chunk = curl_slist_append(chunk, "Content-Type: application/x-www-form-urlencoded");
+					break;
+				case ob_enum::HttpContentType::TextPlain:
+					chunk = curl_slist_append(chunk, "Content-Type: text/plain");
+					break;
+				case ob_enum::HttpContentType::TextXml:
+					chunk = curl_slist_append(chunk, "Content-Type: text/xml");
+					break;
+				default:
+					chunk = curl_slist_append(chunk, "Content-Type: application/json");
+			}
+
+			res = curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+			if(res != CURLE_OK){
+				LOGE("[HttpService] cURL Error: %s", curl_easy_strerror(res));
+			}
+
+			curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
+			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
 
 			curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1);
 
@@ -195,7 +261,15 @@ namespace ob_instance{
 			{"GetAsync", [](lua_State* L)->int{
 				Instance* inst = checkInstance(L, 1);
 				if(HttpService* hs = dynamic_cast<HttpService*>(inst)){
-					const char* url = luaL_checkstring(L, 2);
+					std::string url = std::string(luaL_checkstring(L, 2));
+
+					std::string http = "http://";
+					std::string https = "https://";
+
+					if(url.substr(0, http.length()) != http && url.substr(0, https.length()) != https){
+						return luaL_error(L, "trust check failed");
+					}
+
 					bool nocache = false;
 					if(!lua_isnoneornil(L, 2)){
 						if(lua_isboolean(L, 2)){
@@ -207,6 +281,33 @@ namespace ob_instance{
 
 					std::string body = hs->GetAsync(url, nocache);
 					lua_pushstring(L, body.c_str());
+					return 1;
+				}
+				return luaL_error(L, COLONERR, "GetAsync");
+			}},
+			{"PostAsync", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(HttpService* hs = dynamic_cast<HttpService*>(inst)){
+					std::string url = std::string(luaL_checkstring(L, 2));
+					std::string data = "";
+
+					if(!lua_isnoneornil(L, 3)){
+						if(lua_istable(L, 3)){
+							//Convert to JSON (devDiggy!!!!!)
+						}else{
+							data = std::string(luaL_checkstring(L, 3));
+						}
+					}
+
+					std::string http = "http://";
+					std::string https = "https://";
+
+					if(url.substr(0, http.length()) != http && url.substr(0, https.length()) != https){
+						return luaL_error(L, "trust check failed");
+					}
+
+					//std::string body = hs->PostAsync(url, nocache);
+					//lua_pushstring(L, body.c_str());
 					return 1;
 				}
 				return luaL_error(L, COLONERR, "GetAsync");

@@ -1,6 +1,6 @@
 #include "WindowUtils.h"
 
-#if defined(OPENBLOX_JNI)
+#ifdef OPENBLOX_ANDROID
 
 #elif defined(_WIN32)
 	void glfwMaximizeWindow(GLFWwindow* window){

@@ -28,8 +28,10 @@ void render(){
 	double currentTime = glfwGetTime();
 	nbFrames++;
 	if(currentTime - lastTime >= 1.0){
-		std::string newTitle = "OpenBlox - TPS: ";
-		newTitle = newTitle + ((std::ostringstream&)(std::ostringstream() << std::dec << 1000.0/double(nbFrames))).str();
+		std::string newTitle = "OpenBlox - ";
+		double tpf = 1000.0/double(nbFrames);//Milliseconds per frame
+		double fps = 1000/tpf;
+		newTitle = newTitle + ((std::ostringstream&)(std::ostringstream() << std::dec << fps)).str() + " FPS";
 
 		glfwSetWindowTitle(OpenBlox::getWindow(), newTitle.c_str());
 
@@ -108,13 +110,29 @@ void size_callback(int width, int height){
 	wasResized = true;
 }
 
-#ifndef OPENBLOX_JNI
+#ifndef OPENBLOX_ANDROID
 void glfw_error_callback(int error, const char* description){
 	LOGE("[GLFW] %s", description);
 }
 
 void glfw_window_size_callback(GLFWwindow* window, int width, int height){
 	size_callback(width, height);
+}
+
+void glfw_window_click_callback(GLFWwindow* window, int btn, int action, int mods){
+	double x;
+	double y;
+	glfwGetCursorPos(window, &x, &y);
+
+	bool down = action == GLFW_PRESS;
+
+	if(btn == GLFW_MOUSE_BUTTON_LEFT){
+		LOGI("Left state %d", action);
+	}else if(btn == GLFW_MOUSE_BUTTON_RIGHT){
+		LOGI("Right state %d", action);
+	}else if(btn == GLFW_MOUSE_BUTTON_MIDDLE){
+		LOGI("Middle state %d", action);
+	}
 }
 
 void renderLoop(){
@@ -194,6 +212,8 @@ int main(){
 	glfwMakeContextCurrent(NULL);
 
 	glfwSetWindowSizeCallback(window, glfw_window_size_callback);
+
+	glfwSetMouseButtonCallback(window, glfw_window_click_callback);
 
 	renderThread = new OpenBlox::Thread(renderLoop);
 	OpenBlox::ThreadScheduler::taskThread = new OpenBlox::Thread(taskLoop);

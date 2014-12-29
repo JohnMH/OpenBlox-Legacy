@@ -21,7 +21,7 @@ extern "C"{
 	#include "../lua/lauxlib.h"
 }
 
-#ifndef OPENBLOX_JNI
+#ifndef OPENBLOX_ANDROID
 #include <GL/glew.h>
 
 #define GLFW_DLL

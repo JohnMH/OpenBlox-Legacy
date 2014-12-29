@@ -1,7 +1,7 @@
 #ifndef OPENBLOX_WINDOWUTILS_H_
 #define OPENBLOX_WINDOWUTILS_H_
 
-#ifndef OPENBLOX_JNI
+#ifndef OPENBLOX_ANDROID
 
 #include <iostream>
 

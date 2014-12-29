@@ -1,17 +1,14 @@
 #include "OpenBloxRenderUtil.h"
 
-#ifndef OPENBLOX_JNI
+#ifndef OPENBLOX_ANDROID
 #include "WindowUtils.h"
 #endif
 
 namespace OpenBlox{
 	bool renderLock = false;
 
-#ifndef OPENBLOX_JNI
+#ifndef OPENBLOX_ANDROID
 	static GLFWwindow* window;
-
-	std::map<std::string, GLuint> shaderMap;
-	std::map<std::string, GLuint> programMap;
 
 	void getFramebufferSize(int* width, int* height){
 		if(window == NULL){
