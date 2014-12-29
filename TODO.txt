@@ -1,8 +1,0 @@
-Events (Such as Instance.Changed)
-
-? Redo Instance::GetChildren
-Instance::lua_GetChildren
-Instance::lua_index return children
-
-? Macro for setting up classes? Since we have to implement wrap_lua, ClassName, LuaClassName and getClassName in every class.
-? Macro for ClassMaker structs?
