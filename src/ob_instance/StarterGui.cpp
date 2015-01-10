@@ -74,6 +74,7 @@ namespace ob_instance{
 	void StarterGui::Destroy(){}
 
 	void StarterGui::render(){
+		#ifndef OPENBLOX_SERVER
 		if(ShowDevelopmentGui){
 			int width;
 			int height;
@@ -99,6 +100,7 @@ namespace ob_instance{
 				}
 			}
 		}
+		#endif
 	}
 
 	int StarterGui::wrap_lua(lua_State* L){

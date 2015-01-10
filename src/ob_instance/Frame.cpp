@@ -35,6 +35,7 @@ namespace ob_instance{
 	Frame::~Frame(){}
 
 	void Frame::render(){
+		#ifndef OPENBLOX_SERVER
 		if(Visible){
 			double halfX = AbsolutePosition->x + (AbsoluteSize->x/2);
 			double halfY = AbsolutePosition->y + (AbsoluteSize->y/2);
@@ -89,6 +90,7 @@ namespace ob_instance{
 			glRotated(-Rotation, 0, 0, 1);
 			glTranslated(-halfX, -halfY, 0);
 		}
+		#endif
 	}
 
 	int Frame::wrap_lua(lua_State* L){

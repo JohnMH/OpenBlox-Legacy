@@ -5,9 +5,11 @@
 #include <unistd.h>
 #include <stdio.h>
 
+#ifndef OPENBLOX_SERVER
 #include "WindowUtils.h"
 
 #include "OpenBloxRenderUtil.h"
+#endif
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -15,9 +17,10 @@
 
 OpenBlox::BaseGame* game;
 
-OpenBlox::Thread* renderThread;
-
 lua_State* L = NULL;
+
+#ifndef OPENBLOX_SERVER
+OpenBlox::Thread* renderThread;
 
 double lastTime = glfwGetTime();
 int nbFrames = 0;
@@ -57,11 +60,12 @@ void render(){
 }
 
 bool wasResized = false;
+#endif
+
+bool shouldClose = false;
 
 void taskLoop(){
-	GLFWwindow* window = OpenBlox::getWindow();
-
-	while(!glfwWindowShouldClose(window)){
+	while(!shouldClose){
 		ob_instance::DataModel* dm = game->getDataModel();
 		OpenBlox::ThreadScheduler::Tick();
 
@@ -87,6 +91,7 @@ void taskLoop(){
 					dm->runService->RenderStepped->Fire(args);
 				}
 			}
+			#ifndef OPENBLOX_SERVER
 			if(wasResized){
 				wasResized = false;
 				if(dm->starterGui){
@@ -97,16 +102,20 @@ void taskLoop(){
 					dm->starterGui->sizeChanged(w, h);
 				}
 			}
+			#endif
 		}
 		usleep(10000);
 	}
 }
 
+#ifndef OPENBLOX_SERVER
 void size_callback(int width, int height){
 	wasResized = true;
 }
+#endif
 
 #ifndef OPENBLOX_ANDROID
+#ifndef OPENBLOX_SERVER
 void glfw_error_callback(int error, const char* description){
 	LOGE("[GLFW] %s", description);
 }
@@ -154,6 +163,7 @@ void renderLoop(){
 		usleep(500);
 	}
 }
+#endif
 
 #include "../easywsclient/easywsclient.hpp"
 
@@ -168,17 +178,21 @@ int main(){
 		}
 	#endif
 
+	#ifndef OPENBLOX_SERVER
 	glfwSetErrorCallback(glfw_error_callback);
 	if(!glfwInit()){
 		LOGE("[GLFW] Failed to initialize library.");
 		return 1;
 	}
+	#endif
 
 	OpenBlox::BaseGame::InstanceFactory = new OpenBlox::Factory();
 
 	game = new OpenBlox::BaseGame();
 
 	static_init::execute();
+
+	#ifndef OPENBLOX_SERVER
 
 	#ifdef __APPLE__
 	{
@@ -212,20 +226,24 @@ int main(){
 	glfwSetMouseButtonCallback(window, glfw_window_click_callback);
 
 	renderThread = new OpenBlox::Thread(renderLoop);
+	#endif
 	OpenBlox::ThreadScheduler::taskThread = new OpenBlox::Thread(taskLoop);
 
 	int val;
+	#ifndef OPENBLOX_SERVER
 	val = renderThread->start();
 	if(val){
 		LOGE("[CORE] Failed to create render thread.");
 		glfwTerminate();
 		return 1;
 	}
-
+	#endif
 	val = OpenBlox::ThreadScheduler::taskThread->start();
 	if(val){
 		LOGE("[CORE] Failed to create task thread.");
+		#ifndef OPENBLOX_SERVER
 		glfwTerminate();
+		#endif
 		return 1;
 	}
 
@@ -238,7 +256,11 @@ int main(){
 
 		if(!OpenBlox::fileIsReadable(fileName)){
 			LOGE("init.lua does not exist or is not readable.");
+			#ifndef OPENBLOX_SERVER
 			glfwSetWindowShouldClose(OpenBlox::getWindow(), true);
+			#else
+			shouldClose = true;
+			#endif
 			return;
 		}
 
@@ -254,21 +276,28 @@ int main(){
 		}
 	}, 100);
 
+	#ifndef OPENBLOX_SERVER
 	while(!glfwWindowShouldClose(window)){
 		glfwWaitEvents();
 	}
+	shouldClose = true;
 
 	renderThread->join();
+	#endif
 	OpenBlox::ThreadScheduler::taskThread->join();
 
 	#ifndef __unix__
 		lua_close(L);
 	#endif
 
+	#ifndef OPENBLOX_SERVER
 	glfwDestroyWindow(window);
+	#endif
 	OpenBlox::BaseGame::getInstanceFactory()->releaseTable();
 	delete game;
+	#ifndef OPENBLOX_SERVER
 	glfwTerminate();
+	#endif
 	#ifdef _WIN32
 		WSACleanup();
 	#endif

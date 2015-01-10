@@ -8,7 +8,7 @@ namespace OpenBlox{
 
 	void getFramebufferSize(int* width, int* height);
 	bool createGLContext();
-	#ifndef OPENBLOX_ANDROID
+	#if !defined(OPENBLOX_ANDROID) && !defined(OPENBLOX_SERVER)
 	GLFWwindow* getWindow();
 	#endif
 }

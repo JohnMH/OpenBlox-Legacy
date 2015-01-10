@@ -22,10 +22,13 @@ extern "C"{
 }
 
 #ifndef OPENBLOX_ANDROID
-#include <GL/glew.h>
 
-#define GLFW_DLL
-#include <GLFW/glfw3.h>
+#ifndef OPENBLOX_SERVER
+	#include <GL/glew.h>
+
+	#define GLFW_DLL
+	#include <GLFW/glfw3.h>
+#endif
 
 #define LOGI(...) printf(__VA_ARGS__); printf("\n"); fflush(stdout);
 #define LOGW(...) printf(__VA_ARGS__); printf("\n"); fflush(stdout);
