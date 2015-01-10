@@ -4,16 +4,17 @@
 #include "LuaEnum.h"
 
 namespace ob_enum{
-	extern LuaEnum* LuaFormFactor;
-	extern LuaEnum* LuaCameraType;
+	#define LENUM(typeName) extern LuaEnum* Lua##typeName; \
+	enum class typeName
 
-	enum class FormFactor{
+	LENUM(FormFactor){
 		SYMMETRIC = 0,
 		BRICK = 1,
 		PLATE = 2,
 		CUSTOM = 3
 	};
-	enum class CameraType{
+
+	LENUM(CameraType){
 		FIXED = 0,
 		ATTACH = 1,
 		WATCH = 2,
@@ -22,7 +23,8 @@ namespace ob_enum{
 		CUSTOM = 5,
 		SCRIPTABLE = 6
 	};
-	enum class HttpContentType{
+
+	LENUM(HttpContentType){
 		ApplicationJson = 0,
 		ApplicationXml = 1,
 		ApplicationUrlEncoded = 2,

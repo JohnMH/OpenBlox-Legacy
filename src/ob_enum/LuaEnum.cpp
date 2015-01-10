@@ -3,7 +3,21 @@
 
 namespace ob_enum{
 	//Util
-	LuaEnumItem* checkEnumItem(lua_State* L, int n){
+	LuaEnumItem* checkEnumItem(lua_State* L, int n, LuaEnum* enum_type){
+		if(enum_type != NULL){
+			if(lua_isstring(L, n)){
+				std::string item_name = std::string(lua_tostring(L, n));
+				for(std::map<std::string, LuaEnumItem*>::iterator it = enum_type->EnumValues.begin(); it != enum_type->EnumValues.end(); ++it){
+					if(it->second->Name == item_name){
+						return it->second;
+					}
+				}
+				return NULL;
+			}
+			if(lua_isnumber(L, n)){
+				return enum_type->GetEnumItem(lua_tointeger(L, n));
+			}
+		}
 		return *(LuaEnumItem**)luaL_checkudata(L, n, lua_enumitem_name);
 	}
 
@@ -19,7 +33,7 @@ namespace ob_enum{
 		EnumValues = std::map<std::string, LuaEnumItem*>();
 		va_list args;
 		va_start(args, numValues);
-		for(int i=0; i<numValues; i++){
+		for(int i = 0; i < numValues; i++){
 			const char* arg = va_arg(args, const char*);
 			EnumValues[arg] = new LuaEnumItem(type, arg, i);
 		}
@@ -79,7 +93,7 @@ namespace ob_enum{
 			const char* name = luaL_checkstring(L, 2);
 			//TODO: make this work
 			LuaEnumItem* enm = con->EnumValues[std::string(name)];
-			if (enm != NULL) {
+			if(enm != NULL){
 				return enm->wrap_lua(L);
 			}
 		}
@@ -138,7 +152,7 @@ namespace ob_enum{
 	}
 
 	int LuaEnumItem::lua_index(lua_State* L){
-		LuaEnumItem* itm = checkEnumItem(L, 1);
+		LuaEnumItem* itm = checkEnumItem(L, 1, NULL);
 		std::string propname = std::string(luaL_checkstring(L, 2));
 
 		// there's only two items to an EnumItem, so only return those two
@@ -154,7 +168,7 @@ namespace ob_enum{
 	}
 
 	int LuaEnumItem::lua_toString(lua_State* L){
-		LuaEnumItem* itm = checkEnumItem(L, 1);
+		LuaEnumItem* itm = checkEnumItem(L, 1, NULL);
 		std::string name = "Enum.";
 		name += itm->Type;
 		name += ".";

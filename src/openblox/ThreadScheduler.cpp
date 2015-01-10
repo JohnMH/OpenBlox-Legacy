@@ -121,7 +121,7 @@ namespace OpenBlox{
 					if(L == NULL){
 						return;
 					}
-					if(lua_status(L) != LUA_YIELD && task.ref == -1){
+					if(lua_status(L) != LUA_YIELD){
 						tasks.pop_back();
 						return;
 					}
@@ -186,11 +186,11 @@ namespace OpenBlox{
 			while(!waitingEvents.empty()){
 				try{
 					WaitingEvent evt = waitingEvents.at(waitingEvents.size() - 1);
-					lua_State* L = evt.state;
+					lua_State* oL = evt.state;
 
-					if(L != NULL){
-						//lua_State* L = lua_newthread(oL);
-						//lua_resume(L, 0);
+					if(oL != NULL){
+						lua_State* L = lua_newthread(oL);
+						lua_resume(L, 0);
 
 						lua_rawgeti(L, LUA_REGISTRYINDEX, evt.ref);
 

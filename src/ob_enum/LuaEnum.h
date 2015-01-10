@@ -29,6 +29,7 @@ namespace ob_enum{
 			LuaEnum(std::string type, int numValues, ...);
 			virtual ~LuaEnum();
 
+			std::map<std::string, LuaEnumItem*> EnumValues;
 			std::string Type;
 			LuaEnumItem* GetEnumItem(int value);
 
@@ -39,11 +40,9 @@ namespace ob_enum{
 			static std::map<std::string, LuaEnum*>* Enums;
 
 			DECLARE_STATIC_INIT(LuaEnum);
-		protected:
-			std::map<std::string, LuaEnumItem*> EnumValues;
 	};
 
-	LuaEnumItem* checkEnumItem(lua_State* L, int idx);
+	LuaEnumItem* checkEnumItem(lua_State* L, int idx, LuaEnum* enum_type);
 	LuaEnum* checkEnum(lua_State* L, int idx);
 };
 #endif

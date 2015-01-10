@@ -64,7 +64,7 @@ namespace ob_instance{
 
 	int Camera::lua_setCameraType(lua_State* L){
 		Camera* cam = (Camera*)Instance::checkInstance(L, 1);
-		ob_enum::LuaEnumItem* val = ob_enum::checkEnumItem(L, 2);
+		ob_enum::LuaEnumItem* val = ob_enum::checkEnumItem(L, 2, ob_enum::LuaCameraType);
 		cam->CameraType = (ob_enum::CameraType)val->Value;
 		return 0;
 	}

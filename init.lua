@@ -1,22 +1,4 @@
-print(Enum);
-print(Enum.CameraType);
-
-print(Instance.new("Camera").CameraType);
-
-local http = game:GetService("HttpService");
-
-local ws = http:CreateWebSocket("ws://echo.websocket.org");
-print(ws);
-ws.OnOpen:connect(function()
-	ws:send("[\"test\"]");
-end);
-ws.OnClose:connect(function()
-	print("WebSocket closed");
-end);
-ws.OnMessage:connect(function(data)
-	print(data);
-	ws:close();
-end);
+print(game:GetService("HttpService"):PostAsync("http://localhost/reqinfo.php", "Hi there.", "TextPlain"));
 
 --[[ Saved for more GUI testing
 local frame = Instance.new("Frame");
@@ -25,13 +7,8 @@ frame.BorderColor3 = Color3.new(1, 1, 1);
 frame.Position = UDim2.new(0.5, -50, 0.5, -100);
 frame.Parent = Instance.new("ScreenGui", game:GetService("StarterGui"));
 
-spawn(function()
-	while true do
-		for i = 0, 360 do
-			frame.Rotation = i;
-			wait();
-		end
-	end
+game:GetService("RunService").RenderStepped:connect(function()
+	frame.Rotation = frame.Rotation + 1
 end);
 
 local extents = 500;

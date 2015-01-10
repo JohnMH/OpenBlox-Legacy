@@ -290,6 +290,7 @@ namespace ob_instance{
 				if(HttpService* hs = dynamic_cast<HttpService*>(inst)){
 					std::string url = std::string(luaL_checkstring(L, 2));
 					std::string data = "";
+					ob_enum::HttpContentType cont_type = ob_enum::HttpContentType::ApplicationJson;
 
 					if(!lua_isnoneornil(L, 3)){
 						if(lua_istable(L, 3)){
@@ -299,6 +300,11 @@ namespace ob_instance{
 						}
 					}
 
+					if(!lua_isnoneornil(L, 4)){
+						ob_enum::LuaEnumItem* val = ob_enum::checkEnumItem(L, 4, ob_enum::LuaHttpContentType);
+						cont_type = (ob_enum::HttpContentType)val->Value;
+					}
+
 					std::string http = "http://";
 					std::string https = "https://";
 
@@ -306,8 +312,8 @@ namespace ob_instance{
 						return luaL_error(L, "trust check failed");
 					}
 
-					//std::string body = hs->PostAsync(url, nocache);
-					//lua_pushstring(L, body.c_str());
+					std::string body = hs->PostAsync(url, data, cont_type);
+					lua_pushstring(L, body.c_str());
 					return 1;
 				}
 				return luaL_error(L, COLONERR, "GetAsync");

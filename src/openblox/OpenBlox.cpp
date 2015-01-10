@@ -63,14 +63,6 @@ void taskLoop(){
 
 	while(!glfwWindowShouldClose(window)){
 		ob_instance::DataModel* dm = game->getDataModel();
-		if(dm){
-			if(dm->runService){
-				if(dm->runService->RenderStepped){
-					std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-					dm->runService->RenderStepped->Fire(args);
-				}
-			}
-		}
 		OpenBlox::ThreadScheduler::Tick();
 
 		if(dm){
@@ -89,6 +81,10 @@ void taskLoop(){
 					//args.push_back(wrapi);
 
 					dm->runService->Stepped->Fire(args);
+				}
+				if(dm->runService->RenderStepped){
+					std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+					dm->runService->RenderStepped->Fire(args);
 				}
 			}
 			if(wasResized){
