@@ -1,7 +1,9 @@
 --print(game:GetService("HttpService"):PostAsync("http://localhost/reqinfo.php", "Hi there.", "TextPlain"));
 
+print(Instance.new("Camera"));
+
 local ns = game:GetService("NetworkServer");
-ns:Start();
+--ns:Start();
 
 --[[ Saved for more GUI testing
 local frame = Instance.new("Frame");

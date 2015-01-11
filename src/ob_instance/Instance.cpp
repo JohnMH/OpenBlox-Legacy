@@ -168,6 +168,28 @@ namespace ob_instance{
 		return ancestor->IsAncestorOf(this);
 	}
 
+	void Instance::serialize_impl(rapidjson::Writer<rapidjson::StringBuffer>* writer){
+		writer->String("ClassName");
+		writer->String(getClassName().c_str());
+
+		writer->String("Name");
+		writer->String(Name.c_str());
+
+		writer->String("Parent");
+		writer->String("DEBUG_NULL");//TODO: Instance DebugID
+
+		writer->String("Archivable");
+		writer->Bool(Archivable);
+	}
+
+	void Instance::serialize(rapidjson::Writer<rapidjson::StringBuffer>* writer){
+		writer->StartObject();
+
+		serialize_impl(writer);
+
+		writer->EndObject();
+	}
+
 	std::string Instance::getClassName(){
 		return ClassName;
 	}
@@ -232,7 +254,13 @@ namespace ob_instance{
 	}
 
 	std::string Instance::toString(){
-		return Name;
+		//return Name;
+		rapidjson::StringBuffer s;
+		rapidjson::Writer<rapidjson::StringBuffer> writer(s);
+
+		serialize(&writer);
+
+		return s.GetString();
 	}
 
 	void Instance::setParent(Instance* parent){

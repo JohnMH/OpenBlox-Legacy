@@ -9,6 +9,9 @@
 
 #include "../ob_enum/Enums.h"
 
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+
 namespace ob_instance{
 	class Instance{
 		public:
@@ -28,6 +31,9 @@ namespace ob_instance{
 			virtual bool IsAncestorOf(Instance* descendant);
 			virtual bool IsDescendantOf(Instance* ancestor);
 			//virtual Instance* WaitForChild(char* childName);
+
+			virtual void serialize_impl(rapidjson::Writer<rapidjson::StringBuffer>* writer);
+			virtual void serialize(rapidjson::Writer<rapidjson::StringBuffer>* writer);
 
 			void parentLock();
 
