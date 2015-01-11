@@ -176,6 +176,8 @@ int main(){
 		if(rc){
 			LOGW("WSAStartup failed.");
 		}
+
+		timeBeginPeriod(1);
 	#endif
 
 	#ifndef OPENBLOX_SERVER
