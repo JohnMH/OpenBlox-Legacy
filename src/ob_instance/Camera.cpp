@@ -56,6 +56,13 @@ namespace ob_instance{
 		return ClassName;
 	}
 
+	void Camera::serialize_impl(rapidjson::Writer<rapidjson::StringBuffer>* writer){
+		Instance::serialize_impl(writer);
+
+		writer->String("CameraType");
+		writer->Int((int)CameraType);
+	}
+
 	int Camera::lua_getCameraType(lua_State* L){
 		Camera* cam = (Camera*)Instance::checkInstance(L, 1);
 		ob_enum::LuaEnumItem* val = ob_enum::LuaCameraType->GetEnumItem((int)cam->CameraType);

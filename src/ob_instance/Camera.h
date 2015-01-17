@@ -13,6 +13,8 @@ namespace ob_instance{
 
 			virtual std::string getClassName();
 
+			virtual void serialize_impl(rapidjson::Writer<rapidjson::StringBuffer>* writer);
+
 			virtual int wrap_lua(lua_State* L);
 
 			static int lua_getCameraType(lua_State* L);
