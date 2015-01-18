@@ -28,16 +28,7 @@ namespace ob_instance{
 
 			std::string GenerateGUID(bool wrapInCurlyBraces = true);
 
-			virtual Instance* cloneImpl();
-
-			virtual std::string getClassName();
-
-			virtual int wrap_lua(lua_State* L);
-
-			DECLARE_STATIC_INIT(HttpService);
-		protected:
-			static std::string ClassName;
-			static std::string LuaClassName;
+			DECLARE_CLASS(HttpService);
 
 			static void register_lua_methods(lua_State* L);
 	};

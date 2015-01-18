@@ -11,16 +11,7 @@ namespace ob_instance{
 
 			virtual void SetOutgoingKBPSLimit(int limit) = 0;
 
-			virtual Instance* cloneImpl();
-
-			virtual std::string getClassName();
-
-			virtual int wrap_lua(lua_State* L);
-
-			DECLARE_STATIC_INIT(NetworkPeer);
-		protected:
-			static std::string ClassName;
-			static std::string LuaClassName;
+			DECLARE_CLASS(NetworkPeer);
 
 			static int lua_setOutgoingKBPSLimit(lua_State* L);
 

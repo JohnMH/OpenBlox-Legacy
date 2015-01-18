@@ -5,32 +5,7 @@
 #include "../crossguid/guid.h"
 
 namespace ob_instance{
-	struct HttpServiceClassMaker: public OpenBlox::ClassMaker{
-		ob_instance::Instance* getInstance() const{
-			return new HttpService;
-		}
-
-		bool isA(const ob_instance::Instance* obj){
-			return (dynamic_cast<const HttpService*>(obj)) != 0;
-		}
-
-		bool isInstantiatable(){
-			return false;
-		}
-
-		bool isService(bool isDataModel){
-			return isDataModel;
-		}
-	};
-
-	STATIC_INIT(HttpService){
-		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new HttpServiceClassMaker());
-
-		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
-	}
-
-	std::string HttpService::ClassName = "HttpService";
-	std::string HttpService::LuaClassName = "luaL_Instance_" + ClassName;
+	DEFINE_CLASS(HttpService, false, isDataModel);
 
 	HttpService::HttpService() : Instance(){
 		Name = ClassName;
@@ -238,22 +213,8 @@ namespace ob_instance{
 		return std::string(returned);
 	}
 
-	int HttpService::wrap_lua(lua_State* L){
-		HttpService** udata = (HttpService**)lua_newuserdata(L, sizeof(*this));
-		*udata = this;
-
-		luaL_getmetatable(L, LuaClassName.c_str());
-		lua_setmetatable(L, -2);
-
-		return 1;
-	}
-
 	Instance* HttpService::cloneImpl(){
 		return NULL;
-	}
-
-	std::string HttpService::getClassName(){
-		return ClassName;
 	}
 
 	void HttpService::register_lua_methods(lua_State* L){

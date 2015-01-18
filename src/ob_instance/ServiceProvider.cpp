@@ -1,38 +1,17 @@
 #include "ServiceProvider.h"
 
 namespace ob_instance{
-	struct ServiceProviderClassMaker: public OpenBlox::ClassMaker{
-		ob_instance::Instance* getInstance() const{
-			return NULL;
-		}
-
-		bool isA(const ob_instance::Instance* obj){
-			return (dynamic_cast<const ServiceProvider*>(obj)) != 0;
-		}
-
-		bool isInstantiatable(){
-			return false;
-		}
-
-		bool isService(bool isDataModel){
-			return false;
-		}
-	};
-
-	STATIC_INIT(ServiceProvider){
-		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new ServiceProviderClassMaker());
-
-		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
-	}
-
-	std::string ServiceProvider::ClassName = "ServiceProvider";
-	std::string ServiceProvider::LuaClassName = "luaL_Instance_ServiceProvider";
+	DEFINE_ABS_CLASS(ServiceProvider);
 
 	ServiceProvider::ServiceProvider() : Instance(){
 		Name = ClassName;
 	}
 
 	ServiceProvider::~ServiceProvider(){}
+
+	Instance* ServiceProvider::cloneImpl(){
+		return NULL;
+	}
 
 	Instance* ServiceProvider::FindService(std::string className){
 		for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
@@ -57,10 +36,6 @@ namespace ob_instance{
 			newGuy->parentLock();
 		}
 		return newGuy;
-	}
-
-	std::string ServiceProvider::getClassName(){
-		return ClassName;
 	}
 
 	void ServiceProvider::register_lua_methods(lua_State* L){

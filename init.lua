@@ -1,6 +1,10 @@
 --print(game:GetService("HttpService"):PostAsync("http://localhost/reqinfo.php", "Hi there.", "TextPlain"));
 
-print(Instance.new("Camera"));
+--print(Instance.new("Camera"));
+
+local cp = game:GetService("ContentProvider");
+print(cp);
+cp:Preload("http://t3.rbxcdn.com/85868eeed4d9bcb356b6388907018ad9");
 
 local ns = game:GetService("NetworkServer");
 --ns:Start();

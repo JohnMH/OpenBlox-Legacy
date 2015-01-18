@@ -11,20 +11,11 @@ namespace ob_instance{
 
 			virtual void Destroy();
 
-			virtual Instance* cloneImpl();
-
-			virtual std::string getClassName();
-
-			virtual int wrap_lua(lua_State* L);
-
 			ob_type::LuaEvent* RenderStepped;
 			ob_type::LuaEvent* Stepped;
 			ob_type::LuaEvent* Heartbeat;
 
-			DECLARE_STATIC_INIT(RunService);
-		protected:
-			static std::string ClassName;
-			static std::string LuaClassName;
+			DECLARE_CLASS(RunService);
 
 			static void register_lua_events(lua_State* L);
 	};

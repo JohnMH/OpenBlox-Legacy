@@ -19,10 +19,7 @@ namespace ob_instance{
 			ob_type::Vector2* calculateRenderPosision(ob_type::Vector2* seed);
 			ob_type::Vector2* calculateRenderSize(ob_type::Vector2* seed);
 
-			DECLARE_STATIC_INIT(GuiObject);
-		protected:
-			static std::string ClassName;
-			static std::string LuaClassName;
+			DECLARE_CLASS(GuiObject);
 
 			ob_type::LuaEvent* DragBegin; //UDim2 initialPosition
 			ob_type::LuaEvent* DragStopped; //int x, int y

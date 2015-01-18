@@ -1,38 +1,33 @@
 #include "Frame.h"
 
 namespace ob_instance{
-	struct FrameClassMaker: public OpenBlox::ClassMaker{
-		ob_instance::Instance* getInstance() const{
-			return new Frame;
-		}
-
-		bool isA(const ob_instance::Instance* obj){
-			return (dynamic_cast<const Frame*>(obj)) != 0;
-		}
-
-		bool isInstantiatable(){
-			return true;
-		}
-
-		bool isService(bool isDataModel){
-			return false;
-		}
-	};
-
-	STATIC_INIT(Frame){
-		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new FrameClassMaker());
-
-		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
-	}
-
-	std::string Frame::ClassName = "Frame";
-	std::string Frame::LuaClassName = "luaL_Instance_Frame";
+	DEFINE_CLASS(Frame, true, false);
 
 	Frame::Frame() : GuiObject(){
 		Name = ClassName;
 	}
 
 	Frame::~Frame(){}
+
+	Instance* Frame::cloneImpl(){
+		Frame* newGuy = new Frame;
+		newGuy->Name = Name;
+
+		newGuy->Active = Active;
+		newGuy->BackgroundColor3 = BackgroundColor3->clone();
+		newGuy->BackgroundTransparency = BackgroundTransparency;
+		newGuy->BorderColor3 = BorderColor3;
+		newGuy->BorderSizePixel = BorderSizePixel;
+		newGuy->ClipsDescendants = ClipsDescendants;
+		newGuy->Draggable = Draggable;
+		newGuy->Position = Position->clone();
+		newGuy->Rotation = Rotation;
+		newGuy->Size = Size->clone();
+		newGuy->Visible = Visible;
+		newGuy->ZIndex = ZIndex;
+
+		return newGuy;
+	}
 
 	void Frame::render(){
 		#ifndef OPENBLOX_SERVER
@@ -91,39 +86,5 @@ namespace ob_instance{
 			glTranslated(-halfX, -halfY, 0);
 		}
 		#endif
-	}
-
-	int Frame::wrap_lua(lua_State* L){
-		Frame** udata = (Frame**)lua_newuserdata(L, sizeof(*this));
-		*udata = this;
-
-		luaL_getmetatable(L, LuaClassName.c_str());
-		lua_setmetatable(L, -2);
-
-		return 1;
-	}
-
-	Instance* Frame::cloneImpl(){
-		Frame* newGuy = new Frame;
-		newGuy->Name = Name;
-
-		newGuy->Active = Active;
-		newGuy->BackgroundColor3 = BackgroundColor3->clone();
-		newGuy->BackgroundTransparency = BackgroundTransparency;
-		newGuy->BorderColor3 = BorderColor3;
-		newGuy->BorderSizePixel = BorderSizePixel;
-		newGuy->ClipsDescendants = ClipsDescendants;
-		newGuy->Draggable = Draggable;
-		newGuy->Position = Position->clone();
-		newGuy->Rotation = Rotation;
-		newGuy->Size = Size->clone();
-		newGuy->Visible = Visible;
-		newGuy->ZIndex = ZIndex;
-
-		return newGuy;
-	}
-
-	std::string Frame::getClassName(){
-		return ClassName;
 	}
 }

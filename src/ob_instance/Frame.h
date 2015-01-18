@@ -11,16 +11,7 @@ namespace ob_instance{
 
 			virtual void render();
 
-			virtual Instance* cloneImpl();
-
-			virtual std::string getClassName();
-
-			virtual int wrap_lua(lua_State* L);
-
-			DECLARE_STATIC_INIT(Frame);
-		protected:
-			static std::string ClassName;
-			static std::string LuaClassName;
+			DECLARE_CLASS(Frame);
 
 			//Enum FrameStyle Style
 	};

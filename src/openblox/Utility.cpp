@@ -1,7 +1,7 @@
 #include "Utility.h"
 
 namespace OpenBlox{
-	char* covertToLower(char* s){
+	char* convertToLower(char* s){
 		if(s != NULL){
 			int i;
 			int sz = strlen(s);
@@ -12,7 +12,7 @@ namespace OpenBlox{
 		return s;
 	}
 
-	char* covertToLower(const char* s){
+	char* convertToLower(const char* s){
 		if(s != NULL){
 			int i;
 			int sz = strlen(s);
@@ -25,7 +25,7 @@ namespace OpenBlox{
 		return NULL;
 	}
 
-	char* covertToUpper(char* s){
+	char* convertToUpper(char* s){
 		if(s != NULL){
 			int i;
 			int sz = strlen(s);
@@ -36,7 +36,7 @@ namespace OpenBlox{
 		return s;
 	}
 
-	char* covertToUpper(const char* s){
+	char* convertToUpper(const char* s){
 		if(s != NULL){
 			int i;
 			int sz = strlen(s);

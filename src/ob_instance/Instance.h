@@ -13,6 +13,81 @@
 #include "rapidjson/stringbuffer.h"
 
 namespace ob_instance{
+	class Instance;
+
+	#define DECLARE_CLASS(Class_Name) \
+		virtual Instance* cloneImpl(); \
+		virtual std::string getClassName(); \
+		virtual int wrap_lua(lua_State* L); \
+		DECLARE_STATIC_INIT(Class_Name); \
+		protected: \
+			static std::string ClassName; \
+			static std::string LuaClassName
+
+	#define DEFINE_CLASS(Class_Name, isInstable, isAService) \
+		struct Class_Name##ClassMaker: public OpenBlox::ClassMaker{ \
+			ob_instance::Instance* getInstance() const{ \
+				return new Class_Name; \
+			} \
+			bool isA(const ob_instance::Instance* obj){ \
+				return (dynamic_cast<const Class_Name*>(obj)) != 0; \
+			} \
+			bool isInstantiatable(){ \
+				return isInstable; \
+			} \
+			bool isService(bool isDataModel){ \
+				return isAService; \
+			} \
+		}; \
+		STATIC_INIT(Class_Name){ \
+			OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new Class_Name##ClassMaker()); \
+			registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events); \
+		} \
+		std::string Class_Name::ClassName = #Class_Name; \
+		std::string Class_Name::LuaClassName = "luaL_Instance_" + ClassName; \
+		int Class_Name::wrap_lua(lua_State* L){ \
+			Class_Name** udata = (Class_Name**)lua_newuserdata(L, sizeof(*this)); \
+			*udata = this; \
+			luaL_getmetatable(L, LuaClassName.c_str()); \
+			lua_setmetatable(L, -2); \
+			return 1; \
+		} \
+		std::string Class_Name::getClassName(){ \
+			return ClassName; \
+		}
+
+	#define DEFINE_ABS_CLASS(Class_Name) \
+		struct Class_Name##ClassMaker: public OpenBlox::ClassMaker{ \
+			ob_instance::Instance* getInstance() const{ \
+				return NULL; \
+			} \
+			bool isA(const ob_instance::Instance* obj){ \
+				return (dynamic_cast<const Class_Name*>(obj)) != 0; \
+			} \
+			bool isInstantiatable(){ \
+				return false; \
+			} \
+			bool isService(bool isDataModel){ \
+				return false; \
+			} \
+		}; \
+		STATIC_INIT(Class_Name){ \
+			OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new Class_Name##ClassMaker()); \
+			registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events); \
+		} \
+		std::string Class_Name::ClassName = #Class_Name; \
+		std::string Class_Name::LuaClassName = "luaL_Instance_" + ClassName; \
+		int Class_Name::wrap_lua(lua_State* L){ \
+			Class_Name** udata = (Class_Name**)lua_newuserdata(L, sizeof(*this)); \
+			*udata = this; \
+			luaL_getmetatable(L, LuaClassName.c_str()); \
+			lua_setmetatable(L, -2); \
+			return 1; \
+		} \
+		std::string Class_Name::getClassName(){ \
+			return ClassName; \
+		}
+
 	class Instance{
 		public:
 			Instance();

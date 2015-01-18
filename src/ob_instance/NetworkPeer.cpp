@@ -1,32 +1,7 @@
 #include "NetworkPeer.h"
 
 namespace ob_instance{
-	struct NetworkPeerClassMaker: public OpenBlox::ClassMaker{
-		ob_instance::Instance* getInstance() const{
-			return NULL;
-		}
-
-		bool isA(const ob_instance::Instance* obj){
-			return (dynamic_cast<const NetworkPeer*>(obj)) != 0;
-		}
-
-		bool isInstantiatable(){
-			return false;
-		}
-
-		bool isService(bool isDataModel){
-			return false;
-		}
-	};
-
-	STATIC_INIT(NetworkPeer){
-		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new NetworkPeerClassMaker());
-
-		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
-	}
-
-	std::string NetworkPeer::ClassName = "NetworkPeer";
-	std::string NetworkPeer::LuaClassName = "luaL_Instance_NetworkPeer";
+	DEFINE_ABS_CLASS(NetworkPeer);
 
 	NetworkPeer::NetworkPeer() : Instance(){
 		Name = ClassName;
@@ -34,22 +9,8 @@ namespace ob_instance{
 
 	NetworkPeer::~NetworkPeer(){}
 
-	int NetworkPeer::wrap_lua(lua_State* L){
-		NetworkPeer** udata = (NetworkPeer**)lua_newuserdata(L, sizeof(*this));
-		*udata = this;
-
-		luaL_getmetatable(L, LuaClassName.c_str());
-		lua_setmetatable(L, -2);
-
-		return 1;
-	}
-
 	Instance* NetworkPeer::cloneImpl(){
 		return NULL;
-	}
-
-	std::string NetworkPeer::getClassName(){
-		return ClassName;
 	}
 
 	int NetworkPeer::lua_setOutgoingKBPSLimit(lua_State* L){

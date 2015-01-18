@@ -54,6 +54,7 @@ extern "C"{
 #include "Factory.h"
 #include "Thread.h"
 #include "ThreadScheduler.h"
+#include "AssetLocator.h"
 
 #include "BaseGame.h"
 #endif

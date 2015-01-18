@@ -9,12 +9,7 @@ namespace ob_instance{
 			GuiBase();
 			virtual ~GuiBase();
 
-			virtual std::string getClassName();
-
-			DECLARE_STATIC_INIT(GuiBase);
-		protected:
-			static std::string ClassName;
-			static std::string LuaClassName;
+			DECLARE_CLASS(GuiBase);
 	};
 };
 #endif

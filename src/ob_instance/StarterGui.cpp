@@ -7,32 +7,7 @@
 #include "../openblox/OpenBloxRenderUtil.h"
 
 namespace ob_instance{
-	struct StarterGuiClassMaker: public OpenBlox::ClassMaker{
-		ob_instance::Instance* getInstance() const{
-			return new StarterGui;
-		}
-
-		bool isA(const ob_instance::Instance* obj){
-			return (dynamic_cast<const StarterGui*>(obj)) != 0;
-		}
-
-		bool isInstantiatable(){
-			return false;
-		}
-
-		bool isService(bool isDataModel){
-			return isDataModel;
-		}
-	};
-
-	STATIC_INIT(StarterGui){
-		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new StarterGuiClassMaker());
-
-		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
-	}
-
-	std::string StarterGui::ClassName = "StarterGui";
-	std::string StarterGui::LuaClassName = "luaL_Instance_StarterGui";
+	DEFINE_CLASS(StarterGui, false, isDataModel);
 
 	StarterGui::StarterGui() : BasePlayerGui(){
 		Name = ClassName;
@@ -40,6 +15,10 @@ namespace ob_instance{
 	}
 
 	StarterGui::~StarterGui(){}
+
+	Instance* StarterGui::cloneImpl(){
+		return NULL;
+	}
 
 	void StarterGui::sizeChanged(int width, int height){
 		ob_type::Vector2* sizeVec = new ob_type::Vector2(width, height);
@@ -101,24 +80,6 @@ namespace ob_instance{
 			}
 		}
 		#endif
-	}
-
-	int StarterGui::wrap_lua(lua_State* L){
-		StarterGui** udata = (StarterGui**)lua_newuserdata(L, sizeof(*this));
-		*udata = this;
-
-		luaL_getmetatable(L, LuaClassName.c_str());
-		lua_setmetatable(L, -2);
-
-		return 1;
-	}
-
-	Instance* StarterGui::cloneImpl(){
-		return NULL;
-	}
-
-	std::string StarterGui::getClassName(){
-		return ClassName;
 	}
 
 	void StarterGui::addChild(Instance* kid){

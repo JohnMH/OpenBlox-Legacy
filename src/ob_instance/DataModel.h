@@ -14,23 +14,14 @@ namespace ob_instance{
 			virtual void render();
 			virtual Instance* GetService(std::string className);
 
-			int wrap_lua(lua_State* L);
-
-			virtual std::string getClassName();
-
 			StarterGui* starterGui;
 			RunService* runService;
 
-			DECLARE_STATIC_INIT(DataModel);
-		protected:
-			static std::string ClassName;
-			static std::string LuaClassName;
+			DECLARE_CLASS(DataModel);
 
 			static void register_lua_methods(lua_State* L);
 			static void register_lua_property_getters(lua_State* L);
 			static void register_lua_property_setters(lua_State* L);
-
-			virtual Instance* cloneImpl();
 	};
 }
 #endif

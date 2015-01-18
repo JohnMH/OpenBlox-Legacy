@@ -17,18 +17,9 @@ namespace ob_instance{
 
 			virtual void render();
 
-			virtual Instance* cloneImpl();
+			DECLARE_CLASS(StarterGui);
 
-			virtual std::string getClassName();
-
-			virtual int wrap_lua(lua_State* L);
-
-			DECLARE_STATIC_INIT(StarterGui);
-		protected:
 			bool ShowDevelopmentGui;
-
-			static std::string ClassName;
-			static std::string LuaClassName;
 
 			virtual void removeChild(Instance* kid);
 			virtual void addChild(Instance* kid);

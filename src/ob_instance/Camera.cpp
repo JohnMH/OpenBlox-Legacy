@@ -1,32 +1,7 @@
 #include "Camera.h"
 
 namespace ob_instance{
-	struct CameraClassMaker: public OpenBlox::ClassMaker{
-		ob_instance::Instance* getInstance() const{
-			return new Camera;
-		}
-
-		bool isA(const ob_instance::Instance* obj){
-			return (dynamic_cast<const Camera*>(obj)) != 0;
-		}
-
-		bool isInstantiatable(){
-			return true;
-		}
-
-		bool isService(bool isDataModel){
-			return false;
-		}
-	};
-
-	STATIC_INIT(Camera){
-		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new CameraClassMaker());
-
-		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
-	}
-
-	std::string Camera::ClassName = "Camera";
-	std::string Camera::LuaClassName = "luaL_Instance_Camera";
+	DEFINE_CLASS(Camera, true, false);
 
 	Camera::Camera() : Instance(){
 		Name = ClassName;
@@ -36,24 +11,10 @@ namespace ob_instance{
 
 	Camera::~Camera(){}
 
-	int Camera::wrap_lua(lua_State* L){
-		Camera** udata = (Camera**)lua_newuserdata(L, sizeof(*this));
-		*udata = this;
-
-		luaL_getmetatable(L, LuaClassName.c_str());
-		lua_setmetatable(L, -2);
-
-		return 1;
-	}
-
 	Instance* Camera::cloneImpl(){
 		Camera* newGuy = new Camera;
 		newGuy->Name = Name;
 		return newGuy;
-	}
-
-	std::string Camera::getClassName(){
-		return ClassName;
 	}
 
 	void Camera::serialize_impl(rapidjson::Writer<rapidjson::StringBuffer>* writer){

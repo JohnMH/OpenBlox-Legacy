@@ -1,32 +1,7 @@
 #include "RunService.h"
 
 namespace ob_instance{
-	struct RunServiceClassMaker: public OpenBlox::ClassMaker{
-		ob_instance::Instance* getInstance() const{
-			return new RunService;
-		}
-
-		bool isA(const ob_instance::Instance* obj){
-			return (dynamic_cast<const RunService*>(obj)) != 0;
-		}
-
-		bool isInstantiatable(){
-			return false;
-		}
-
-		bool isService(bool isDataModel){
-			return isDataModel;
-		}
-	};
-
-	STATIC_INIT(RunService){
-		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new RunServiceClassMaker());
-
-		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
-	}
-
-	std::string RunService::ClassName = "RunService";
-	std::string RunService::LuaClassName = "luaL_Instance_RunService";
+	DEFINE_CLASS(RunService, false, isDataModel);
 
 	RunService::RunService() : Instance(){
 		Name = ClassName;
@@ -43,22 +18,8 @@ namespace ob_instance{
 
 	void RunService::Destroy(){}
 
-	int RunService::wrap_lua(lua_State* L){
-		RunService** udata = (RunService**)lua_newuserdata(L, sizeof(*this));
-		*udata = this;
-
-		luaL_getmetatable(L, LuaClassName.c_str());
-		lua_setmetatable(L, -2);
-
-		return 1;
-	}
-
 	Instance* RunService::cloneImpl(){
 		return NULL;
-	}
-
-	std::string RunService::getClassName(){
-		return ClassName;
 	}
 
 	void RunService::register_lua_events(lua_State* L){

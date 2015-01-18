@@ -13,16 +13,7 @@ namespace ob_instance{
 
 			bool isMouseCaptured(int x, int y);
 
-			virtual Instance* cloneImpl();
-
-			virtual std::string getClassName();
-
-			virtual int wrap_lua(lua_State* L);
-
-			DECLARE_STATIC_INIT(ScreenGui);
-		protected:
-			static std::string ClassName;
-			static std::string LuaClassName;
+			DECLARE_CLASS(ScreenGui);
 
 			virtual void removeChild(Instance* kid);
 			virtual void addChild(Instance* kid);

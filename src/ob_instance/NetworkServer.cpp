@@ -4,32 +4,7 @@
 
 #ifdef OPENBLOX_SERVER
 namespace ob_instance{
-	struct NetworkServerClassMaker: public OpenBlox::ClassMaker{
-		ob_instance::Instance* getInstance() const{
-			return new NetworkServer;
-		}
-
-		bool isA(const ob_instance::Instance* obj){
-			return (dynamic_cast<const NetworkServer*>(obj)) != 0;
-		}
-
-		bool isInstantiatable(){
-			return false;
-		}
-
-		bool isService(bool isDataModel){
-			return isDataModel;
-		}
-	};
-
-	STATIC_INIT(NetworkServer){
-		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new NetworkServerClassMaker());
-
-		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
-	}
-
-	std::string NetworkServer::ClassName = "NetworkServer";
-	std::string NetworkServer::LuaClassName = "luaL_Instance_NetworkServer";
+	DEFINE_CLASS(NetworkServer, false, true);
 
 	static int outgoingKBPSLimit = 0;
 	static int netThreadSleepTime = 20;
@@ -122,22 +97,8 @@ namespace ob_instance{
 		return Port;
 	}
 
-	int NetworkServer::wrap_lua(lua_State* L){
-		NetworkServer** udata = (NetworkServer**)lua_newuserdata(L, sizeof(*this));
-		*udata = this;
-
-		luaL_getmetatable(L, LuaClassName.c_str());
-		lua_setmetatable(L, -2);
-
-		return 1;
-	}
-
 	Instance* NetworkServer::cloneImpl(){
 		return NULL;
-	}
-
-	std::string NetworkServer::getClassName(){
-		return ClassName;
 	}
 
 	void NetworkServer::register_lua_property_getters(lua_State* L){

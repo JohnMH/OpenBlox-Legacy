@@ -9,21 +9,12 @@ namespace ob_instance{
 			Camera();
 			virtual ~Camera();
 
-			virtual Instance* cloneImpl();
-
-			virtual std::string getClassName();
-
 			virtual void serialize_impl(rapidjson::Writer<rapidjson::StringBuffer>* writer);
-
-			virtual int wrap_lua(lua_State* L);
 
 			static int lua_getCameraType(lua_State* L);
 			static int lua_setCameraType(lua_State* L);
 
-			DECLARE_STATIC_INIT(Camera);
-		protected:
-			static std::string ClassName;
-			static std::string LuaClassName;
+			DECLARE_CLASS(Camera);
 
 			ob_enum::CameraType CameraType;
 

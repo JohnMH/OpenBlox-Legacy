@@ -9,12 +9,7 @@ namespace ob_instance{
 			BasePlayerGui();
 			virtual ~BasePlayerGui();
 
-			virtual std::string getClassName();
-
-			DECLARE_STATIC_INIT(BasePlayerGui);
-		protected:
-			static std::string ClassName;
-			static std::string LuaClassName;
+			DECLARE_CLASS(BasePlayerGui);
 	};
 }
 #endif

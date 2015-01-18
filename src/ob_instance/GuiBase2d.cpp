@@ -1,32 +1,7 @@
 #include "GuiBase2d.h"
 
 namespace ob_instance{
-	struct GuiBase2dClassMaker: public OpenBlox::ClassMaker{
-		ob_instance::Instance* getInstance() const{
-			return NULL;
-		}
-
-		bool isA(const ob_instance::Instance* obj){
-			return (dynamic_cast<const GuiBase2d*>(obj)) != 0;
-		}
-
-		bool isInstantiatable(){
-			return false;
-		}
-
-		bool isService(bool isDataModel){
-			return false;
-		}
-	};
-
-	STATIC_INIT(GuiBase2d){
-		OpenBlox::BaseGame::getInstanceFactory()->addClass(ClassName, new GuiBase2dClassMaker());
-
-		registerLuaClass(LuaClassName, register_lua_metamethods, register_lua_methods, register_lua_property_getters, register_lua_property_setters, register_lua_events);
-	}
-
-	std::string GuiBase2d::ClassName = "GuiBase2d";
-	std::string GuiBase2d::LuaClassName = "luaL_Instance_GuiBase2d";
+	DEFINE_ABS_CLASS(GuiBase2d);
 
 	GuiBase2d::GuiBase2d() : GuiBase(){
 		Name = ClassName;
@@ -42,6 +17,10 @@ namespace ob_instance{
 		if(AbsoluteSize){
 			delete AbsoluteSize;
 		}
+	}
+
+	Instance* GuiBase2d::cloneImpl(){
+		return NULL;
 	}
 
 	void GuiBase2d::sizeChanged(){}
@@ -108,10 +87,6 @@ namespace ob_instance{
 			return AbsoluteSize->clone();
 		}
 		return NULL;
-	}
-
-	std::string GuiBase2d::getClassName(){
-		return ClassName;
 	}
 
 	int GuiBase2d::lua_getAbsolutePosition(lua_State* L){

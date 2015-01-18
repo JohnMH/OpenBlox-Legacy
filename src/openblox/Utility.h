@@ -10,11 +10,11 @@
 #include <unistd.h>
 
 namespace OpenBlox{
-	char* covertToLower(char* str);
-	char* covertToLower(const char* str);
+	char* convertToLower(char* str);
+	char* convertToLower(const char* str);
 
-	char* covertToUpper(char* str);
-	char* covertToUpper(const char* str);
+	char* convertToUpper(char* str);
+	char* convertToUpper(const char* str);
 
 	typedef int64_t msec_t;
 
