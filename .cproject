@@ -25,6 +25,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/rapidjson/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/fmodex/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/boost/include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1686796553" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -41,6 +43,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/rapidjson/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/fmodex/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/boost/include}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.undef.710422709" name="Undefined symbols (-U)" superClass="gnu.cpp.compiler.option.preprocessor.undef"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.717218826" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -56,6 +60,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/rapidjson/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/fmodex/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/boost/include}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.dialect.std.145401856" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.preprocessor.undef.symbol.365399111" name="Undefined symbols (-U)" superClass="gnu.c.compiler.option.preprocessor.undef.symbol"/>
@@ -65,6 +71,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base.940418687" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base">
 								<option id="gnu.cpp.link.option.paths.572533080" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/boost/libs}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.115256848" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="opengl32"/>
@@ -79,6 +86,9 @@
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="crypto"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ole32"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="Winmm"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="fmodex"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="boost_filesystem-mgw48-mt-1_57"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="boost_system-mgw48-mt-1_57"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.1958027440" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="" valueType="string"/>
 								<option id="gnu.cpp.link.option.userobjs.453120316" name="Other objects" superClass="gnu.cpp.link.option.userobjs" valueType="userObjs">
@@ -122,6 +132,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/rapidjson/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/fmodex/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/boost/include}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.318407216" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -138,6 +150,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/rapidjson/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/fmodex/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/boost/include}&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.undef.671861934" name="Undefined symbols (-U)" superClass="gnu.cpp.compiler.option.preprocessor.undef"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1767406019" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -153,6 +167,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/rapidjson/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/fmodex/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/boost/include}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.dialect.std.1389656255" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.preprocessor.undef.symbol.1091014271" name="Undefined symbols (-U)" superClass="gnu.c.compiler.option.preprocessor.undef.symbol"/>
@@ -162,6 +178,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base.1881355548" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base">
 								<option id="gnu.cpp.link.option.paths.264069965" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/lib}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/boost/libs}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.742861995" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="opengl32"/>

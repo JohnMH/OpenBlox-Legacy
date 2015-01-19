@@ -181,6 +181,13 @@ namespace ob_instance{
 				}
 				return 0;
 			}},
+			{"ImageColor3", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(ImageLabel* il = dynamic_cast<ImageLabel*>(inst)){
+					return il->ImageColor3->wrap_lua(L);
+				}
+				return 0;
+			}},
 			{NULL, NULL}
 		};
 		luaL_register(L, NULL, props);
@@ -196,6 +203,21 @@ namespace ob_instance{
 					std::string newImage = std::string(luaL_checkstring(L, 2));
 					il->setImage(newImage);
 					return 0;
+				}
+				return 0;
+			}},
+			{"ImageColor3", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(ImageLabel* il = dynamic_cast<ImageLabel*>(inst)){
+					ob_type::Color3* newVal = ob_type::checkColor3(L, 2);
+					if(il->ImageColor3 != newVal){
+						il->ImageColor3 = newVal;
+
+						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+						args.push_back(ob_type::VarWrapper("ImageColor3"));
+
+						il->Changed->Fire(args);
+					}
 				}
 				return 0;
 			}},

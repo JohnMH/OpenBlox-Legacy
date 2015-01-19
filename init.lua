@@ -5,7 +5,7 @@
 local cp = game:GetService("ContentProvider");
 print(cp);
 --cp:Preload("http://t3.rbxcdn.com/85868eeed4d9bcb356b6388907018ad9");
-cp:Preload("file://img_test.png");
+cp:Preload("res://icon.png");
 
 --local ns = game:GetService("NetworkServer");
 --ns:Start();
@@ -13,8 +13,9 @@ cp:Preload("file://img_test.png");
 -- Saved for more GUI testing
 local img = Instance.new("ImageLabel");
 img.BackgroundTransparency = 1;
---img.BorderColor3 = Color3.new(1, 1, 1);
-img.Image = "file://img_test.png";
+img.Image = "res://icon.png";
+img.ImageColor3 = Color3.new(0, 1, 0);
+img.Size = UDim2.new(0, 32, 0, 32);
 img.Position = UDim2.new(0.5, -50, 0.5, -100);
 img.Parent = Instance.new("ScreenGui", game:GetService("StarterGui"));
 

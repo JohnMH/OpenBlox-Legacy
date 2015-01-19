@@ -4,6 +4,8 @@
 
 #include <curl/curl.h>
 
+#include <boost/filesystem.hpp>
+
 namespace OpenBlox{
 	static std::map<std::string, asset_response_body*> contentCache = std::map<std::string, asset_response_body*>();
 
@@ -37,6 +39,10 @@ namespace OpenBlox{
 			return contentCache[url];
 		}
 
+		if(startsWith(url, "file://")){
+			return NULL;
+		}
+
 		asset_response_body* body = new asset_response_body();
 		body->size = 0;
 		body->data = new char[4096];
@@ -46,6 +52,44 @@ namespace OpenBlox{
 		}
 
 		body->data[0] = '\0';
+
+		if(startsWith(url, "res://")){
+			boost::filesystem::path startPath = boost::filesystem::canonical(boost::filesystem::path("res/"));
+			std::string startStr = startPath.generic_string();
+
+			std::string toAdd = url.substr(6);
+			boost::filesystem::path newPath = boost::filesystem::path(startStr + "/" + toAdd);
+			if(boost::filesystem::exists(newPath)){
+				newPath = boost::filesystem::canonical(newPath);
+
+				const char* newPathStr = newPath.generic_string().c_str();
+				if(startsWith(newPathStr, startStr.c_str())){
+					if(boost::filesystem::is_regular_file(newPath)){
+						char* file_contents;
+						long file_size;
+
+						FILE *input_file = fopen(newPathStr, "rb");
+						fseek(input_file, 0, SEEK_END);
+						file_size = ftell(input_file);
+						rewind(input_file);
+						file_contents = (char*)malloc((file_size + 1) * sizeof(char));
+						fread(file_contents, sizeof(char), file_size, input_file);
+						fclose(input_file);
+
+						//file_contents[file_size] = '\0';
+
+						body->data = file_contents;
+						body->size = file_size;
+
+						contentCache[url] = body;
+
+						return body;
+					}
+				}
+			}
+
+			return NULL;
+		}
 
 		CURL* curl;
 		CURLcode res;

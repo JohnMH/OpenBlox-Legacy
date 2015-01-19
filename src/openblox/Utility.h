@@ -9,7 +9,11 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#include <string>
+
 namespace OpenBlox{
+	bool startsWith(std::string str, std::string str2);
+
 	char* convertToLower(char* str);
 	char* convertToLower(const char* str);
 
