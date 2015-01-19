@@ -243,23 +243,10 @@ int main(){
 	#endif
 	OpenBlox::ThreadScheduler::taskThread = new OpenBlox::Thread(taskLoop);
 
-	int val;
 	#ifndef OPENBLOX_SERVER
-	val = renderThread->start();
-	if(val){
-		LOGE("[CORE] Failed to create render thread.");
-		glfwTerminate();
-		return 1;
-	}
+	renderThread->start();
 	#endif
-	val = OpenBlox::ThreadScheduler::taskThread->start();
-	if(val){
-		LOGE("[CORE] Failed to create task thread.");
-		#ifndef OPENBLOX_SERVER
-		glfwTerminate();
-		#endif
-		return 1;
-	}
+	OpenBlox::ThreadScheduler::taskThread->start();
 
 	L = OpenBlox::BaseGame::newLuaState();
 

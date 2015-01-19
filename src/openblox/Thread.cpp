@@ -5,6 +5,7 @@ namespace OpenBlox{
 
 	Thread::Thread(thread_func* func){
 		this->func = func;
+		curThread = NULL;
 	}
 
 	Thread::~Thread(){
@@ -24,41 +25,32 @@ namespace OpenBlox{
 		}
 	}
 
-	int Thread::start(){
+	void Thread::start(){
 		allThreads.push_back(this);
 
-		return pthread_create(&thread_struct, NULL, threadFunc, this);
+		curThread = new boost::thread(func);
 	}
 
 	void Thread::join(){
-		void* status;
-
-		pthread_join(thread_struct, &status);
+		if(curThread){
+			curThread->join();
+		}
 	}
 
 	bool Thread::isCurrent(){
 		return this == getCurrent();
 	}
 
-	void* Thread::threadFunc(void* myThread){
-		Thread* theThread = (Thread*)myThread;
-		if(theThread){
-			if(theThread->func){
-				theThread->func();
-			}
-		}
-		pthread_exit(NULL);
-		return NULL;
-	}
-
 	Thread* Thread::getCurrent(){
-		pthread_t theThread = pthread_self();
+		boost::thread::id tID = boost::this_thread::get_id();
 
 		for(std::vector<Thread*>::size_type i = 0; i != allThreads.size(); i++){
 			Thread* tkid = allThreads[i];
 			if(tkid != NULL){
-				if(pthread_equal(theThread, tkid->thread_struct) != 0){
-					return tkid;
+				if(boost::thread* tT = tkid->curThread){
+					if(tT->get_id() == tID){
+						return tkid;
+					}
 				}
 			}
 		}

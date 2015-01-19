@@ -20,7 +20,6 @@
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.base.1021288447" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base">
 								<option id="gnu.both.asm.option.include.paths.545357966" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glew/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/pthreads/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glfw/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
@@ -38,7 +37,6 @@
 								<option id="gnu.cpp.compiler.option.other.other.34718632" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -Wno-write-strings -Wno-non-virtual-dtor" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.include.paths.693371537" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glew/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/pthreads/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glfw/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
@@ -55,7 +53,6 @@
 								<option id="gnu.c.compiler.option.misc.other.1229865226" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0" valueType="string"/>
 								<option id="gnu.c.compiler.option.include.paths.1977773072" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glew/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/pthreads/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glfw/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
@@ -76,7 +73,6 @@
 								<option id="gnu.cpp.link.option.libs.115256848" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="opengl32"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="glew32"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pthreadGC2"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="glfw3dll"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ws2_32"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="curldll"/>
@@ -89,6 +85,7 @@
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="fmodex"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="boost_filesystem-mgw48-mt-1_57"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="boost_system-mgw48-mt-1_57"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="boost_thread-mgw48-mt-1_57"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.1958027440" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="" valueType="string"/>
 								<option id="gnu.cpp.link.option.userobjs.453120316" name="Other objects" superClass="gnu.cpp.link.option.userobjs" valueType="userObjs">
@@ -127,7 +124,6 @@
 							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.base.388950934" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base">
 								<option id="gnu.both.asm.option.include.paths.1306282055" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glew/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/pthreads/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glfw/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
@@ -145,7 +141,6 @@
 								<option id="gnu.cpp.compiler.option.other.other.1969198864" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -Wno-write-strings -Wno-non-virtual-dtor" valueType="string"/>
 								<option id="gnu.cpp.compiler.option.include.paths.317091493" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glew/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/pthreads/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glfw/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
@@ -162,7 +157,6 @@
 								<option id="gnu.c.compiler.option.misc.other.672432727" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0" valueType="string"/>
 								<option id="gnu.c.compiler.option.include.paths.1443431816" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glew/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/pthreads/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/glfw/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/libcurl/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/OpenBlox/deps/openssl/include}&quot;"/>
@@ -183,7 +177,6 @@
 								<option id="gnu.cpp.link.option.libs.742861995" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="opengl32"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="glew32"/>
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="pthreadGC2"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="glfw3dll"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="ws2_32"/>
 									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="curldll"/>
