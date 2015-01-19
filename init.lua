@@ -2,8 +2,10 @@
 
 --print(Instance.new("Camera"));
 
+print(game:GetService("HttpService"):GenerateGUID(true));
+
 local cp = game:GetService("ContentProvider");
-print(cp);
+--print(cp);
 --cp:Preload("http://t3.rbxcdn.com/85868eeed4d9bcb356b6388907018ad9");
 cp:Preload("res://icon.png");
 

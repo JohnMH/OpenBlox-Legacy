@@ -2,7 +2,9 @@
 
 #include <curl/curl.h>
 
-#include "../crossguid/guid.h"
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 namespace ob_instance{
 	DEFINE_CLASS(HttpService, false, isDataModel);
@@ -188,13 +190,9 @@ namespace ob_instance{
 	}
 
 	std::string HttpService::GenerateGUID(bool wrapInCurlyBraces){
-		GuidGenerator gen = GuidGenerator();
-		Guid guid = gen.newGuid();
+		boost::uuids::uuid uuid = boost::uuids::random_generator()();
 
-		ostringstream ss;
-		ss << guid;
-
-		std::string guidstring = ss.str();
+		std::string guidstring = lexical_cast<std::string>(uuid);
 
 		if(wrapInCurlyBraces){
 			guidstring = "{" + guidstring + "}";

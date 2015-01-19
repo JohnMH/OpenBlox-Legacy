@@ -21,6 +21,10 @@ extern "C"{
 	#include "../lua/lauxlib.h"
 }
 
+#include <boost/lexical_cast.hpp>
+
+#define lexical_cast boost::lexical_cast
+
 #ifndef OPENBLOX_ANDROID
 
 #ifndef OPENBLOX_SERVER
