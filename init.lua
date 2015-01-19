@@ -4,33 +4,34 @@
 
 local cp = game:GetService("ContentProvider");
 print(cp);
-cp:Preload("http://t3.rbxcdn.com/85868eeed4d9bcb356b6388907018ad9");
+--cp:Preload("http://t3.rbxcdn.com/85868eeed4d9bcb356b6388907018ad9");
+cp:Preload("file://img_test.png");
 
-local ns = game:GetService("NetworkServer");
+--local ns = game:GetService("NetworkServer");
 --ns:Start();
 
---[[ Saved for more GUI testing
-local frame = Instance.new("Frame");
-frame.BackgroundColor3 = Color3.new(1, 0, 0);
-frame.BorderColor3 = Color3.new(1, 1, 1);
-frame.Position = UDim2.new(0.5, -50, 0.5, -100);
-frame.Parent = Instance.new("ScreenGui", game:GetService("StarterGui"));
+-- Saved for more GUI testing
+local img = Instance.new("ImageLabel");
+img.BackgroundTransparency = 1;
+--img.BorderColor3 = Color3.new(1, 1, 1);
+img.Image = "file://img_test.png";
+img.Position = UDim2.new(0.5, -50, 0.5, -100);
+img.Parent = Instance.new("ScreenGui", game:GetService("StarterGui"));
 
 game:GetService("RunService").RenderStepped:connect(function()
-	frame.Rotation = frame.Rotation + 1
+	img.Rotation = img.Rotation + 1;
 end);
 
 local extents = 500;
 
 while true do
 	for i = -extents, extents do
-		frame.Position = UDim2.new(0.5, i, 0.5, i/2);
+		img.Position = UDim2.new(0.5, i, 0.5, i/2);
 		wait();
 	end
 	wait();
 	for i = extents, -extents, -1 do
-		frame.Position = UDim2.new(0.5, i, 0.5, i/2);
+		img.Position = UDim2.new(0.5, i, 0.5, i/2);
 		wait();
 	end
 end
-]]

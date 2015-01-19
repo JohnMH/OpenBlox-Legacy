@@ -24,10 +24,14 @@ extern "C"{
 #ifndef OPENBLOX_ANDROID
 
 #ifndef OPENBLOX_SERVER
+	#define GL_GLEXT_PROTOTYPES
+
 	#include <GL/glew.h>
 
 	#define GLFW_DLL
 	#include <GLFW/glfw3.h>
+
+	#include "../soil/SOIL.h"
 #endif
 
 #define LOGI(...) printf(__VA_ARGS__); printf("\n"); fflush(stdout);

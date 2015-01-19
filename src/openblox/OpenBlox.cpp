@@ -220,6 +220,18 @@ int main(){
 			glfwTerminate();
 			return 1;
 		}
+		if(GLEW_VERSION_3_0){
+			if(GLEW_ARB_texture_non_power_of_two){
+				SOIL_non_NPOT_capability();
+			}
+		}else{
+			const char* EXTS = (char const*)glGetString(GL_EXTENSIONS);
+			if(EXTS){
+				if(strstr(EXTS, "GL_ARB_texture_non_power_of_two")){
+					SOIL_non_NPOT_capability();
+				}
+			}
+		}
 	}
 	glfwMakeContextCurrent(NULL);
 
