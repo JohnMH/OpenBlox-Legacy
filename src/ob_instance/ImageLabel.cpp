@@ -28,10 +28,7 @@ namespace ob_instance{
 
 			needsReload = true;
 
-			std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-			args.push_back(ob_type::VarWrapper("Image"));
-
-			Changed->Fire(args);
+			propertyChanged("Image");
 		}
 	}
 
@@ -213,10 +210,7 @@ namespace ob_instance{
 					if(il->ImageColor3 != newVal){
 						il->ImageColor3 = newVal;
 
-						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-						args.push_back(ob_type::VarWrapper("ImageColor3"));
-
-						il->Changed->Fire(args);
+						propertyChanged("ImageColor3", il);
 					}
 				}
 				return 0;

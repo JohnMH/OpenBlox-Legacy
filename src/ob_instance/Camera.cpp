@@ -25,15 +25,21 @@ namespace ob_instance{
 	}
 
 	int Camera::lua_getCameraType(lua_State* L){
-		Camera* cam = (Camera*)Instance::checkInstance(L, 1);
-		ob_enum::LuaEnumItem* val = ob_enum::LuaCameraType->GetEnumItem((int)cam->CameraType);
-		return val->wrap_lua(L);
+		Instance* inst = Instance::checkInstance(L, 1);
+		if (Camera* cam = dynamic_cast<Camera*>(inst)){
+			ob_enum::LuaEnumItem* val = ob_enum::LuaCameraType->GetEnumItem((int)cam->CameraType);
+			return val->wrap_lua(L);
+		}
+		return 0;
 	}
 
 	int Camera::lua_setCameraType(lua_State* L){
-		Camera* cam = (Camera*)Instance::checkInstance(L, 1);
-		ob_enum::LuaEnumItem* val = ob_enum::checkEnumItem(L, 2, ob_enum::LuaCameraType);
-		cam->CameraType = (ob_enum::CameraType)val->Value;
+		Instance* inst = Instance::checkInstance(L, 1);
+		if (Camera* cam = dynamic_cast<Camera*>(inst)){
+			ob_enum::LuaEnumItem* val = ob_enum::checkEnumItem(L, 2, ob_enum::LuaCameraType);
+			cam->CameraType = (ob_enum::CameraType)val->Value;
+			propertyChanged("CameraType", cam);
+		}
 		return 0;
 	}
 

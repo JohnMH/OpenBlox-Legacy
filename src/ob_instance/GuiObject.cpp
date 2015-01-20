@@ -120,9 +120,7 @@ namespace ob_instance{
 						go->Active = newVal;
 
 						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-						args.push_back(ob_type::VarWrapper("Active"));
-
-						go->Changed->Fire(args);
+						propertyChanged("Active", go);
 					}
 				}
 				return 0;
@@ -134,10 +132,7 @@ namespace ob_instance{
 					if(go->BackgroundColor3 != newVal){
 						go->BackgroundColor3 = newVal;
 
-						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-						args.push_back(ob_type::VarWrapper("BackgroundColor3"));
-
-						go->Changed->Fire(args);
+						propertyChanged("BackgroundColor3", go);
 					}
 				}
 				return 0;
@@ -149,10 +144,7 @@ namespace ob_instance{
 					if(go->BackgroundTransparency != newVal){
 						go->BackgroundTransparency = newVal;
 
-						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-						args.push_back(ob_type::VarWrapper("BackgroundTransparency"));
-
-						go->Changed->Fire(args);
+						propertyChanged("BackgroundTransparency", go);
 					}
 				}
 				return 0;
@@ -164,10 +156,7 @@ namespace ob_instance{
 					if(go->BorderColor3 != newVal){
 						go->BorderColor3 = newVal;
 
-						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-						args.push_back(ob_type::VarWrapper("BorderColor3"));
-
-						go->Changed->Fire(args);
+						propertyChanged("BorderColor3", go);
 					}
 				}
 				return 0;
@@ -179,10 +168,7 @@ namespace ob_instance{
 					if(go->BorderSizePixel != newVal){
 						go->BorderSizePixel = newVal;
 
-						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-						args.push_back(ob_type::VarWrapper("BorderSizePixel"));
-
-						go->Changed->Fire(args);
+						propertyChanged("BorderSizePixel", go);
 					}
 				}
 				return 0;
@@ -199,10 +185,7 @@ namespace ob_instance{
 					if(go->ClipsDescendants != newVal){
 						go->ClipsDescendants = newVal;
 
-						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-						args.push_back(ob_type::VarWrapper("ClipsDescendants"));
-
-						go->Changed->Fire(args);
+						propertyChanged("ClipsDescendants", go);
 					}
 				}
 				return 0;
@@ -219,10 +202,7 @@ namespace ob_instance{
 					if(go->Draggable != newVal){
 						go->Draggable = newVal;
 
-						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-						args.push_back(ob_type::VarWrapper("Draggable"));
-
-						go->Changed->Fire(args);
+						propertyChanged("Draggable", go);
 					}
 				}
 				return 0;
@@ -236,10 +216,7 @@ namespace ob_instance{
 
 						go->sizeChanged();
 
-						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-						args.push_back(ob_type::VarWrapper("Position"));
-
-						go->Changed->Fire(args);
+						propertyChanged("Position", go);
 					}
 				}
 				return 0;
@@ -251,10 +228,7 @@ namespace ob_instance{
 					if(go->Rotation != newVal){
 						go->Rotation = newVal;
 
-						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-						args.push_back(ob_type::VarWrapper("Rotation"));
-
-						go->Changed->Fire(args);
+						propertyChanged("Rotation", go);
 					}
 				}
 				return 0;
@@ -268,10 +242,7 @@ namespace ob_instance{
 
 						go->sizeChanged();
 
-						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-						args.push_back(ob_type::VarWrapper("Size"));
-
-						go->Changed->Fire(args);
+						propertyChanged("Size", go);
 					}
 				}
 				return 0;
@@ -288,10 +259,7 @@ namespace ob_instance{
 					if(go->Visible != newVal){
 						go->Visible = newVal;
 
-						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-						args.push_back(ob_type::VarWrapper("Visible"));
-
-						go->Changed->Fire(args);
+						propertyChanged("Visible", go);
 					}
 				}
 				return 0;
@@ -303,10 +271,7 @@ namespace ob_instance{
 					if(go->ZIndex != newVal){
 						go->ZIndex = newVal;
 
-						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-						args.push_back(ob_type::VarWrapper("ZIndex"));
-
-						go->Changed->Fire(args);
+						propertyChanged("Visible", go);
 					}
 				}
 				return 0;

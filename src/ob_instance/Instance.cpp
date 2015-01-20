@@ -47,6 +47,13 @@ namespace ob_instance{
 		Changed->Fire(args);
 	}
 
+	void Instance::propertyChanged(const char* property, Instance* inst){
+			std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+			args.push_back(ob_type::VarWrapper(property));
+
+			inst->Changed->Fire(args);
+		}
+
 	Instance::~Instance(){
 		delete Changed;
 	}
@@ -296,10 +303,7 @@ namespace ob_instance{
 			Parent->addChild(this);
 		}
 
-		std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-		args.push_back(ob_type::VarWrapper("Parent"));
-
-		Changed->Fire(args);
+		propertyChanged("Parent");
 	}
 
 	void Instance::removeChild(Instance* kid){
@@ -547,10 +551,7 @@ namespace ob_instance{
 			if(inst->Name != desired){
 				inst->Name = desired;
 
-				std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-				args.push_back(ob_type::VarWrapper("Name"));
-
-				inst->Changed->Fire(args);
+				propertyChanged("Name", inst);
 			}
 			return 0;
 		}
@@ -582,6 +583,7 @@ namespace ob_instance{
 			if(otherInst != NULL || !throwErrorIf){
 				try{
 					inst->setParent(otherInst);
+					propertyChanged("Parent", inst);
 				}catch(std::runtime_error& ex){
 					return luaL_error(L, ex.what());
 				}
@@ -616,10 +618,7 @@ namespace ob_instance{
 			if(inst->Archivable != newVal){
 				inst->Archivable = newVal;
 
-				std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
-				args.push_back(ob_type::VarWrapper("Archivable"));
-
-				inst->Changed->Fire(args);
+				propertyChanged("Archivable", inst);
 			}
 		}
 		return 0;
