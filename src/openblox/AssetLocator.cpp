@@ -6,7 +6,16 @@
 
 #include <boost/filesystem.hpp>
 
-namespace OpenBlox{
+#include <boost/archive/iterators/binary_from_base64.hpp>
+#include <boost/archive/iterators/transform_width.hpp>
+
+#include <openssl/bio.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+
+#include <stdio.h>
+
+namespace OpenBlox {
 	static std::map<std::string, asset_response_body*> contentCache = std::map<std::string, asset_response_body*>();
 
 	size_t write_data(void* ptr, size_t size, size_t nmemb, struct asset_response_body* data){
@@ -34,6 +43,19 @@ namespace OpenBlox{
 		return n;
 	}
 
+	int calcDecodeLength(const char* b64input){
+		int len = strlen(b64input);
+		int padding = 0;
+
+		if(b64input[len-1] == '=' && b64input[len-2] == '='){
+			padding = 2;
+		}else if (b64input[len-1] == '='){
+			padding = 1;
+		}
+
+		return (int)len*0.75 - padding;
+	}
+
 	asset_response_body* AssetLocator::getAsset(std::string url){
 		if(contentCache.count(url)){
 			return contentCache[url];
@@ -53,8 +75,76 @@ namespace OpenBlox{
 
 		body->data[0] = '\0';
 
+		if(startsWith(url, "data:")){
+			std::string nURL = url.substr(5);
+
+			std::vector<std::string> knownMimeTypes = {"text/plain", "text/html", "image/png", "image/jpeg"};
+
+			for(std::vector<std::string>::size_type i = 0;
+					i < knownMimeTypes.size(); i++){
+				std::string knownType = knownMimeTypes[i];
+				if(startsWith(nURL, knownType)){
+					nURL = nURL.substr(knownType.length());
+					break;
+				}
+			}
+
+			if(startsWith(nURL, ";")){
+				nURL = nURL.substr(1);
+			}
+
+			bool isBase64 = false;
+			if(startsWith(nURL, "base64")){
+				nURL = nURL.substr(7);
+				isBase64 = true;
+			}
+
+			if(startsWith(nURL, ",")){
+				nURL = nURL.substr(1);
+			}
+
+			if(isBase64){
+				if(nURL.length() == 0){
+					return NULL;
+				}
+
+				int decodeLen = calcDecodeLength(nURL.c_str()), len = 0;
+
+				BIO* bio, *b64;
+				char* buffer = new char[decodeLen + 1];
+
+				b64 = BIO_new(BIO_f_base64());
+
+				bio = BIO_new_mem_buf((void*)nURL.c_str(), nURL.length());
+				bio = BIO_push(b64, bio);
+				BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
+				len = BIO_read(bio, (void*)buffer, nURL.length());
+				buffer[len] = '\0';
+
+				BIO_free_all(bio);
+
+				body->data = buffer;
+				body->size = len;
+
+				return body;
+			}
+
+			char* data = new char[nURL.length() + 1];
+			strcat(data, nURL.c_str());
+			data[nURL.length() + 1] = '\0';
+
+			body->data = data;
+			body->size = strlen(data);
+
+			return body;
+		}
+
 		if(startsWith(url, "res://")){
 			boost::filesystem::path startPath = boost::filesystem::canonical(boost::filesystem::path("res/"));
+			if(!boost::filesystem::exists(startPath)){
+				boost::filesystem::create_directory(startPath);
+			}
+
 			std::string startStr = startPath.generic_string();
 
 			std::string toAdd = url.substr(6);
