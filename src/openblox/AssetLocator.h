@@ -11,6 +11,7 @@ namespace OpenBlox{
 	class AssetLocator{
 		public:
 			static asset_response_body* getAsset(std::string url);
+			static void putAsset(std::string url, std::string content);
 			static bool hasAsset(std::string url);
 	};
 }

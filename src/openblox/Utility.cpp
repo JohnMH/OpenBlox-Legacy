@@ -3,13 +3,10 @@
 namespace OpenBlox{
 	bool startsWith(std::string str, std::string str2){
 		if(str.length() >= str2.length()){
-			const char* cstr = str.c_str();
-			const char* cstr2 = str2.c_str();
-
 			bool matches = true;
 
 			for(int i = 0; i < str2.length(); i++){
-				if(cstr[i] != cstr2[i]){
+				if(str[i] != str2[i]){
 					matches = false;
 					break;
 				}

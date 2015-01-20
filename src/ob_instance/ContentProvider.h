@@ -9,6 +9,8 @@ namespace ob_instance{
 		ContentProvider();
 			virtual ~ContentProvider();
 
+			char* GetContent(std::string url);
+			void PutContent(std::string url, std::string content);
 			void Preload(std::string url);
 
 			DECLARE_CLASS(ContentProvider); //Starts protected block
