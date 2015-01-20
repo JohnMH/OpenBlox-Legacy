@@ -94,6 +94,7 @@ namespace ob_instance{
 			virtual ~Instance();
 
 			ob_type::LuaEvent* Changed;
+			void propertyChanged(const char* property);
 
 			virtual void ClearAllChildren();
 			virtual Instance* Clone();

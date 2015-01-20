@@ -40,6 +40,13 @@ namespace ob_instance{
 		Changed = new ob_type::LuaEvent("Changed", 1);
 	}
 
+	void Instance::propertyChanged(const char* property){
+		std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+		args.push_back(ob_type::VarWrapper(property));
+
+		Changed->Fire(args);
+	}
+
 	Instance::~Instance(){
 		delete Changed;
 	}
