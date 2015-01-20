@@ -56,8 +56,26 @@ namespace OpenBlox {
 		return (int)len*0.75 - padding;
 	}
 
+	std::string stripContentType(std::string origin){
+		std::vector<std::string> knownMimeTypes = {"text/plain", "text/html", "image/png", "image/jpeg"};
+
+		for(std::vector<std::string>::size_type i = 0; i < knownMimeTypes.size(); i++){
+			std::string knownType = knownMimeTypes[i];
+			if(startsWith(origin, knownType)){
+				origin = origin.substr(knownType.length());
+				break;
+			}
+		}
+
+		if(origin[0] == ';'){
+			origin = origin.substr(1);
+		}
+
+		return origin;
+	}
+
 	asset_response_body* AssetLocator::getAsset(std::string url){
-		if(contentCache.count(url)){
+		if(hasAsset(url)){
 			return contentCache[url];
 		}
 
@@ -78,36 +96,23 @@ namespace OpenBlox {
 		if(startsWith(url, "data:")){
 			std::string nURL = url.substr(5);
 
-			std::vector<std::string> knownMimeTypes = {"text/plain", "text/html", "image/png", "image/jpeg"};
+			nURL = stripContentType(nURL);
 
-			for(std::vector<std::string>::size_type i = 0;
-					i < knownMimeTypes.size(); i++){
-				std::string knownType = knownMimeTypes[i];
-				if(startsWith(nURL, knownType)){
-					nURL = nURL.substr(knownType.length());
-					break;
+			bool isBase64 = false;
+			if(startsWith(nURL, "base64,")){
+				nURL = nURL.substr(7);
+				isBase64 = true;
+			}else{
+				if(startsWith(nURL, ",")){
+					nURL = nURL.substr(1);
 				}
 			}
 
-			if(startsWith(nURL, ";")){
-				nURL = nURL.substr(1);
-			}
-
-			bool isBase64 = false;
-			if(startsWith(nURL, "base64")){
-				nURL = nURL.substr(7);
-				isBase64 = true;
-			}
-
-			if(startsWith(nURL, ",")){
-				nURL = nURL.substr(1);
+			if(nURL.length() == 0){
+				return NULL;
 			}
 
 			if(isBase64){
-				if(nURL.length() == 0){
-					return NULL;
-				}
-
 				int decodeLen = calcDecodeLength(nURL.c_str()), len = 0;
 
 				BIO* bio, *b64;
@@ -212,9 +217,81 @@ namespace OpenBlox {
 		return NULL;
 	}
 
-	bool AssetLocator::hasAsset(std::string url){
-		std::string lstring = std::string(convertToLower(url.c_str()));
+	void AssetLocator::putAsset(std::string url, std::string content){
+		asset_response_body* body = new asset_response_body();
+		body->data = "";
+		body->size = 0;
 
-		return contentCache.count(lstring) != 0;
+		if(startsWith(content, "data:")){
+			std::string nURL = content.substr(5);
+
+			nURL = stripContentType(nURL);
+
+			bool isBase64 = false;
+			if(startsWith(nURL, "base64,")){
+				nURL = nURL.substr(7);
+				isBase64 = true;
+			}else{
+				if(startsWith(nURL, ",")){
+					nURL = nURL.substr(1);
+				}
+			}
+			if(nURL.length() == 0){
+				body->data = "";
+				body->size = 0;
+
+				contentCache[url] = body;
+
+				return;
+			}
+
+			if(isBase64){
+				int decodeLen = calcDecodeLength(nURL.c_str()), len = 0;
+
+				BIO* bio, *b64;
+				char* buffer = new char[decodeLen + 1];
+
+				b64 = BIO_new(BIO_f_base64());
+
+				bio = BIO_new_mem_buf((void*)nURL.c_str(), nURL.length());
+				bio = BIO_push(b64, bio);
+				BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
+				len = BIO_read(bio, (void*)buffer, nURL.length());
+				buffer[len] = '\0';
+
+				BIO_free_all(bio);
+
+				body->data = buffer;
+				body->size = len;
+
+				contentCache[url] = body;
+
+				return;
+			}
+
+			char* data = new char[nURL.length()];
+			strcat(data, nURL.c_str());
+			data[nURL.length()] = '\0';
+
+			body->data = data;
+			body->size = strlen(data);
+
+			contentCache[url] = body;
+
+			return;
+		}
+
+		char* new_data = new char[content.length()];
+		strcat(new_data, content.c_str());
+		new_data[content.length()] = '\0';
+
+		body->data = new_data;
+		body->size = strlen(new_data);
+
+		contentCache[url] = body;
+	}
+
+	bool AssetLocator::hasAsset(std::string url){
+		return contentCache.count(url) != 0;
 	}
 }

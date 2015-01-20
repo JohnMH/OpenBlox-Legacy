@@ -9,8 +9,12 @@ namespace ob_instance{
 
 	ContentProvider::~ContentProvider(){}
 
-	char* ContentProvider::LoadAsset(std::string url){
+	char* ContentProvider::GetContent(std::string url){
 		return OpenBlox::AssetLocator::getAsset(url)->data;
+	}
+
+	void ContentProvider::PutContent(std::string url, std::string content){
+		OpenBlox::AssetLocator::putAsset(url, content);
 	}
 
 	void ContentProvider::Preload(std::string url){
@@ -34,18 +38,30 @@ namespace ob_instance{
 				}
 				return luaL_error(L, COLONERR, "Preload");
 			}},
-			{"LoadAsset", [](lua_State* L)->int{
+			{"GetContent", [](lua_State* L)->int{
 				Instance* inst = checkInstance(L, 1);
 				if(ContentProvider* cp = dynamic_cast<ContentProvider*>(inst)){
 					std::string url = std::string(luaL_checkstring(L, 2));
 
-					char* cont = cp->LoadAsset(url);
+					char* cont = cp->GetContent(url);
 
 					lua_pushstring(L, cont);
 
 					return 1;
 				}
-				return luaL_error(L, COLONERR, "LoadAsset");
+				return luaL_error(L, COLONERR, "GetContent");
+			}},
+			{"PutContent", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(ContentProvider* cp = dynamic_cast<ContentProvider*>(inst)){
+					std::string url = std::string(luaL_checkstring(L, 2));
+					std::string content = std::string(luaL_checkstring(L, 3));
+
+					cp->PutContent(url, content);
+
+					return 0;
+				}
+				return luaL_error(L, COLONERR, "PutContent");
 			}},
 			{NULL, NULL}
 		};
