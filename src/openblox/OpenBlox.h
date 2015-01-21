@@ -22,8 +22,11 @@ extern "C"{
 }
 
 #include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/function_types/function_pointer.hpp>
 
 #define lexical_cast boost::lexical_cast
+#define filesystem boost::filesystem
 
 #ifndef OPENBLOX_ANDROID
 
@@ -63,6 +66,7 @@ extern "C"{
 #include "Thread.h"
 #include "ThreadScheduler.h"
 #include "AssetLocator.h"
+#include "SoundManager.h"
 
 #include "BaseGame.h"
 #endif

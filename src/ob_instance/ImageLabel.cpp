@@ -14,7 +14,7 @@ namespace ob_instance{
 		ImageRectSize = new ob_type::Vector2(0, 0);
 		ImageRectOffset = new ob_type::Vector2(0, 0);
 		ImageColor3 = new ob_type::Color3(1, 1, 1);
-		Image = std::string("");
+		Image = "";
 
 		tex_ID = 0;
 		needsReload = false;
