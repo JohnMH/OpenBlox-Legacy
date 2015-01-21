@@ -188,6 +188,20 @@ namespace ob_instance{
 				}
 				return 0;
 			}},
+			{"ImageRectSize", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(ImageLabel* il = dynamic_cast<ImageLabel*>(inst)){
+					return il->ImageRectSize->wrap_lua(L);
+				}
+				return 0;
+			}},
+			{"ImageRectOffset", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(ImageLabel* il = dynamic_cast<ImageLabel*>(inst)){
+					return il->ImageRectOffset->wrap_lua(L);
+				}
+				return 0;
+			}},
 			{NULL, NULL}
 		};
 		luaL_register(L, NULL, props);
@@ -215,6 +229,36 @@ namespace ob_instance{
 
 						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
 						args.push_back(ob_type::VarWrapper("ImageColor3"));
+
+						il->Changed->Fire(args);
+					}
+				}
+				return 0;
+			}},
+			{"ImageRectSize", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(ImageLabel* il = dynamic_cast<ImageLabel*>(inst)){
+					ob_type::Vector2* newVal = ob_type::checkVector2(L, 2);
+					if(il->ImageRectSize != newVal){
+						il->ImageRectSize = newVal;
+
+						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+						args.push_back(ob_type::VarWrapper("ImageRectSize"));
+
+						il->Changed->Fire(args);
+					}
+				}
+				return 0;
+			}},
+			{"ImageRectOffset", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(ImageLabel* il = dynamic_cast<ImageLabel*>(inst)){
+					ob_type::Vector2* newVal = ob_type::checkVector2(L, 2);
+					if(il->ImageRectOffset != newVal){
+						il->ImageRectOffset = newVal;
+
+						std::vector<ob_type::VarWrapper> args = std::vector<ob_type::VarWrapper>();
+						args.push_back(ob_type::VarWrapper("ImageRectOffset"));
 
 						il->Changed->Fire(args);
 					}

@@ -55,7 +55,7 @@ namespace OpenBlox {
 	}
 
 	std::string stripContentType(std::string origin){
-		std::vector<std::string> knownMimeTypes = {"text/plain", "text/html", "image/png", "image/jpeg"};
+		std::vector<std::string> knownMimeTypes = {"text/plain", "text/html", "image/png", "image/jpeg", "audio/mp3"};
 
 		for(std::vector<std::string>::size_type i = 0; i < knownMimeTypes.size(); i++){
 			std::string knownType = knownMimeTypes[i];
