@@ -4,8 +4,6 @@
 
 #include <curl/curl.h>
 
-#include <boost/filesystem.hpp>
-
 #include <boost/archive/iterators/binary_from_base64.hpp>
 #include <boost/archive/iterators/transform_width.hpp>
 
@@ -57,7 +55,7 @@ namespace OpenBlox {
 	}
 
 	std::string stripContentType(std::string origin){
-		std::vector<std::string> knownMimeTypes = {"text/plain", "text/html", "image/png", "image/jpeg"};
+		std::vector<std::string> knownMimeTypes = {"text/plain", "text/html", "image/png", "image/jpeg", "audio/mp3"};
 
 		for(std::vector<std::string>::size_type i = 0; i < knownMimeTypes.size(); i++){
 			std::string knownType = knownMimeTypes[i];
@@ -145,21 +143,21 @@ namespace OpenBlox {
 		}
 
 		if(startsWith(url, "res://")){
-			boost::filesystem::path startPath = boost::filesystem::canonical(boost::filesystem::path("res/"));
-			if(!boost::filesystem::exists(startPath)){
-				boost::filesystem::create_directory(startPath);
+			filesystem::path startPath = filesystem::canonical(filesystem::path("res/"));
+			if(!filesystem::exists(startPath)){
+				filesystem::create_directory(startPath);
 			}
 
 			std::string startStr = startPath.generic_string();
 
 			std::string toAdd = url.substr(6);
-			boost::filesystem::path newPath = boost::filesystem::path(startStr + "/" + toAdd);
-			if(boost::filesystem::exists(newPath)){
-				newPath = boost::filesystem::canonical(newPath);
+			filesystem::path newPath = filesystem::path(startStr + "/" + toAdd);
+			if(filesystem::exists(newPath)){
+				newPath = filesystem::canonical(newPath);
 
 				const char* newPathStr = newPath.generic_string().c_str();
 				if(startsWith(newPathStr, startStr.c_str())){
-					if(boost::filesystem::is_regular_file(newPath)){
+					if(filesystem::is_regular_file(newPath)){
 						char* file_contents;
 						long file_size;
 

@@ -26,6 +26,8 @@ double lastTime = glfwGetTime();
 int nbFrames = 0;
 
 void render(){
+	OpenBlox::SoundManager::update();
+
 	OpenBlox::renderLock = true;
 
 	double currentTime = glfwGetTime();
@@ -167,6 +169,27 @@ void renderLoop(){
 
 #include "../easywsclient/easywsclient.hpp"
 
+void init(){
+	OpenBlox::BaseGame::InstanceFactory = new OpenBlox::Factory();
+
+	game = new OpenBlox::BaseGame();
+
+	static_init::execute();
+
+	L = OpenBlox::BaseGame::newLuaState();
+}
+
+void cleanup(){
+	#ifndef __unix__
+		lua_close(L);
+	#endif
+
+	OpenBlox::SoundManager::cleanup();
+
+	OpenBlox::BaseGame::getInstanceFactory()->releaseTable();
+	delete game;
+}
+
 int main(){
 	#ifdef _WIN32
 		INT rc;
@@ -177,7 +200,7 @@ int main(){
 			LOGW("WSAStartup failed.");
 		}
 
-		timeBeginPeriod(1);
+		//timeBeginPeriod(1);
 	#endif
 
 	#ifndef OPENBLOX_SERVER
@@ -188,11 +211,7 @@ int main(){
 	}
 	#endif
 
-	OpenBlox::BaseGame::InstanceFactory = new OpenBlox::Factory();
-
-	game = new OpenBlox::BaseGame();
-
-	static_init::execute();
+	init();
 
 	#ifndef OPENBLOX_SERVER
 
@@ -248,7 +267,8 @@ int main(){
 	#endif
 	OpenBlox::ThreadScheduler::taskThread->start();
 
-	L = OpenBlox::BaseGame::newLuaState();
+	//TODO: Keep? Test a little more before deciding..
+	//L = OpenBlox::BaseGame::newLuaState();
 
 	OpenBlox::ThreadScheduler::RunOnTaskThread([](va_list args){
 		lua_resume(L, 0);
@@ -287,15 +307,12 @@ int main(){
 	#endif
 	OpenBlox::ThreadScheduler::taskThread->join();
 
-	#ifndef __unix__
-		lua_close(L);
-	#endif
-
 	#ifndef OPENBLOX_SERVER
 	glfwDestroyWindow(window);
 	#endif
-	OpenBlox::BaseGame::getInstanceFactory()->releaseTable();
-	delete game;
+
+	cleanup();
+
 	#ifndef OPENBLOX_SERVER
 	glfwTerminate();
 	#endif
