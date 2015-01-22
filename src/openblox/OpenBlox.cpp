@@ -29,20 +29,23 @@ void render(){
 	OpenBlox::SoundManager::update();
 
 	OpenBlox::renderLock = true;
+	
+	ob_instance::DataModel* dm = game->getDataModel();
 
 	double currentTime = glfwGetTime();
 	nbFrames++;
 	if(currentTime - lastTime >= 1.0){
-		std::string newTitle = "OpenBlox - ";
+		//std::string newTitle = "OpenBlox - ";
 		double tpf = 1000.0/double(nbFrames);//Milliseconds per frame
 		double fps = 1000/tpf;
-		newTitle = newTitle + ((std::ostringstream&)(std::ostringstream() << std::dec << fps)).str() + " FPS";
-		const char* title = game->getDataModel()->getTitle();
-
-		if (title != NULL)
-			newTitle = newTitle + " - " + game->getDataModel()->getTitle();
-
-		glfwSetWindowTitle(OpenBlox::getWindow(), newTitle.c_str());
+		//newTitle = newTitle + ((std::ostringstream&)(std::ostringstream() << std::dec << fps)).str() + " FPS";
+		if(dm){
+			const char* title = dm->getTitle();
+	
+			if(title != NULL){
+				glfwSetWindowTitle(OpenBlox::getWindow(), title);
+			}
+		}
 
 		nbFrames = 0;
 		lastTime += 1.0;
@@ -57,7 +60,6 @@ void render(){
 	glViewport(0, 0, width, height);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	ob_instance::DataModel* dm = game->getDataModel();
 	if(dm){
 		dm->render();
 	}
