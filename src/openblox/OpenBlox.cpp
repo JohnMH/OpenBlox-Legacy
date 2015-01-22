@@ -37,6 +37,10 @@ void render(){
 		double tpf = 1000.0/double(nbFrames);//Milliseconds per frame
 		double fps = 1000/tpf;
 		newTitle = newTitle + ((std::ostringstream&)(std::ostringstream() << std::dec << fps)).str() + " FPS";
+		const char* title = game->getDataModel()->getTitle();
+
+		if (title != NULL)
+			newTitle = newTitle + " - " + game->getDataModel()->getTitle();
 
 		glfwSetWindowTitle(OpenBlox::getWindow(), newTitle.c_str());
 

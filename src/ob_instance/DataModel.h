@@ -17,11 +17,15 @@ namespace ob_instance{
 			StarterGui* starterGui;
 			RunService* runService;
 
+			const char* getTitle();
+
 			DECLARE_CLASS(DataModel);
 
 			static void register_lua_methods(lua_State* L);
 			static void register_lua_property_getters(lua_State* L);
 			static void register_lua_property_setters(lua_State* L);
+		private:
+			const char* gameTitle;
 	};
 }
 #endif

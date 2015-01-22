@@ -190,7 +190,8 @@ namespace OpenBlox{
 
 					if(oL != NULL){
 						lua_State* L = lua_newthread(oL);
-						lua_resume(L, 0);
+						//LOGW("[ThreadScheduler::Tick() tasks - Func Type] %s", lua_typename(L, lua_type(L, -1)));
+						//lua_resume(L, 0);
 
 						lua_rawgeti(L, LUA_REGISTRYINDEX, evt.ref);
 

@@ -35,6 +35,10 @@ namespace ob_instance{
 		return newGuy;
 	}
 
+	const char* DataModel::getTitle(){
+		return gameTitle;
+	}
+
 	void DataModel::render(){
 		starterGui->render();
 	}
@@ -48,6 +52,20 @@ namespace ob_instance{
 	}
 
 	void DataModel::register_lua_methods(lua_State* L){
+		luaL_Reg methods[]{
+				{"SetTitle", [](lua_State* L)->int{
+					Instance* inst = checkInstance(L, 1);
+					if(DataModel* dm = dynamic_cast<DataModel*>(inst)){
+						if (lua_isstring(L, 2)) {
+							dm->gameTitle = luaL_checkstring(L, 2);
+						}
+						return 0;
+					}
+					return luaL_error(L, COLONERR, "SetTitle");
+				}},
+				{NULL,NULL}
+		};
+		luaL_register(L, NULL, methods);
 		ServiceProvider::register_lua_methods(L);
 	}
 }

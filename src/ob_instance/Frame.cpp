@@ -32,10 +32,11 @@ namespace ob_instance{
 	void Frame::render(){
 		#ifndef OPENBLOX_SERVER
 		if(Visible){
+			double RotationAtRender = Rotation;
 			double halfX = AbsolutePosition->x + (AbsoluteSize->x/2);
 			double halfY = AbsolutePosition->y + (AbsoluteSize->y/2);
 			glTranslated(halfX, halfY, 0);
-			glRotated(Rotation, 0, 0, 1);
+			glRotated(RotationAtRender, 0, 0, 1);
 			glTranslated(-halfX, -halfY, 0);
 
 			glColor4d(BackgroundColor3->r, BackgroundColor3->g, BackgroundColor3->b, 1 - BackgroundTransparency);
@@ -82,7 +83,7 @@ namespace ob_instance{
 			}
 
 			glTranslated(halfX, halfY, 0);
-			glRotated(-Rotation, 0, 0, 1);
+			glRotated(-RotationAtRender, 0, 0, 1);
 			glTranslated(-halfX, -halfY, 0);
 		}
 		#endif

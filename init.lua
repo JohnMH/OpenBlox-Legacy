@@ -1,36 +1,25 @@
---print(game:GetService("HttpService"):PostAsync("http://localhost/reqinfo.php", "Hi there.", "TextPlain"));
+local cp = game:GetService("ContentProvider");
+cp:Preload("http://incompetech.com/music/royalty-free/mp3-royaltyfree/Pixel%20Peeker%20Polka%20-%20faster.mp3")
+local p = Instance.new("ScreenGui", game:GetService("StarterGui"))
+local rand = math.random
 
 local snd = Instance.new("Sound");
 snd.SoundId = "http://incompetech.com/music/royalty-free/mp3-royaltyfree/Pixel%20Peeker%20Polka%20-%20faster.mp3";
-snd:Play();
+snd:Play(); -- because yes
 
-local cp = game:GetService("ContentProvider");
---local ns = game:GetService("NetworkServer");
---ns:Start();
+local guis = { }
 
--- Saved for more GUI testing
-local img = Instance.new("ImageLabel");
-img.BackgroundTransparency = 1;
-img.Image = "http://thelasportsnetwork.homestead.com/MISC/moon.png";
-img.Size = UDim2.new(0, 500, 0, 494);
-img.Position = UDim2.new(0.5, -50, 0.5, -100);
-img.Parent = Instance.new("ScreenGui", game:GetService("StarterGui"));
-
-game:GetService("RunService").RenderStepped:connect(function()
-	img.Rotation = img.Rotation + 3;
-	img.ImageColor3 = Color3.new(math.random(), math.random(), math.random());
-end);
-
-local extents = 250;
-
-while true do
-	for i = -extents, extents do
-		img.Position = UDim2.new(0.5, i, 0.5, i/4);
-		wait();
+while true do -- TODO: fix events
+	local f = Instance.new("Frame")
+	f.BackgroundColor3 = Color3.new(rand(),rand(),rand())
+	f.BorderColor3 = Color3.new(rand(),rand(),rand())
+	f.Position = UDim2.new(rand(), 0, rand(), 0)
+	f.Size = UDim2.new(0, rand()*100, 0, rand()*100)
+	f.Parent = p
+	guis[#guis+1] = f
+	for i = 1, #guis do
+		guis[i].Rotation = guis[i].Rotation + 1
 	end
-	wait();
-	for i = extents, -extents, -1 do
-		img.Position = UDim2.new(0.5, i, 0.5, i/4);
-		wait();
-	end
+	game:SetTitle(string.format("%d frames", #guis))
+	wait(1/30)
 end
