@@ -53,6 +53,7 @@ namespace ob_instance{
 		Instance::register_lua_property_getters(L);
 	}
 
+	//TODO: Implement these as methods of DataModel. We want it to be possible to write an OpenBlox game entirely in C++ if desired.
 	void DataModel::register_lua_methods(lua_State* L){
 		luaL_Reg methods[]{
 			{"SetTitle", [](lua_State* L)->int{
