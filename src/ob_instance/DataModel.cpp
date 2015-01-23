@@ -1,5 +1,9 @@
 #include "DataModel.h"
 
+#ifndef OPENBLOX_SERVER
+#include "../openblox/OpenBloxRenderUtil.h"
+#endif
+
 namespace ob_instance{
 	DEFINE_CLASS(DataModel, false, false);
 
@@ -14,6 +18,8 @@ namespace ob_instance{
 		runService = new RunService();
 		runService->setParent(this);
 		runService->parentLock();
+
+		title = "OpenBlox";
 	}
 
 	DataModel::~DataModel(){}
@@ -35,10 +41,6 @@ namespace ob_instance{
 		return newGuy;
 	}
 
-	const char* DataModel::getTitle(){
-		return gameTitle;
-	}
-
 	void DataModel::render(){
 		starterGui->render();
 	}
@@ -53,17 +55,30 @@ namespace ob_instance{
 
 	void DataModel::register_lua_methods(lua_State* L){
 		luaL_Reg methods[]{
-				{"SetTitle", [](lua_State* L)->int{
-					Instance* inst = checkInstance(L, 1);
-					if(DataModel* dm = dynamic_cast<DataModel*>(inst)){
-						if (lua_isstring(L, 2)) {
-							dm->gameTitle = luaL_checkstring(L, 2);
-						}
-						return 0;
-					}
-					return luaL_error(L, COLONERR, "SetTitle");
-				}},
-				{NULL,NULL}
+			{"SetTitle", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(DataModel* dm = dynamic_cast<DataModel*>(inst)){
+					dm->title = std::string(luaL_checkstring(L, 2));
+					#ifndef OPENBLOX_SERVER
+						glfwSetWindowTitle(OpenBlox::getWindow(), dm->title.c_str());
+					#endif
+					return 0;
+				}
+				return luaL_error(L, COLONERR, "SetTitle");
+			}},
+			{"GetTitle", [](lua_State* L)->int{
+				Instance* inst = checkInstance(L, 1);
+				if(DataModel* dm = dynamic_cast<DataModel*>(inst)){
+					lua_pushstring(L, dm->title.c_str());
+					return 1;
+				}
+				return luaL_error(L, COLONERR, "GetTitle");
+			}},
+			{"GetFPS", [](lua_State* L)->int{
+				lua_pushnumber(L, OpenBlox::calculatedFPS);
+				return 1;
+			}},
+			{NULL,NULL}
 		};
 		luaL_register(L, NULL, methods);
 		ServiceProvider::register_lua_methods(L);

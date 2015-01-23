@@ -5,6 +5,7 @@
 
 namespace OpenBlox{
 	extern bool renderLock;
+	extern int calculatedFPS;
 
 	void getFramebufferSize(int* width, int* height);
 	bool createGLContext();

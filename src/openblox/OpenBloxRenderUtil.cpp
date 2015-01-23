@@ -6,6 +6,7 @@
 
 namespace OpenBlox{
 	bool renderLock = false;
+	int calculatedFPS = 0;
 
 #ifndef OPENBLOX_ANDROID
 	static GLFWwindow* window;

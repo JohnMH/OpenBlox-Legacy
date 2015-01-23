@@ -4,7 +4,9 @@
 
 #include "ScreenGui.h"
 
+#ifndef OPENBLOX_SERVER
 #include "../openblox/OpenBloxRenderUtil.h"
+#endif
 
 namespace ob_instance{
 	DEFINE_CLASS(StarterGui, false, isDataModel);

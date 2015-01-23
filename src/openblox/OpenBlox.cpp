@@ -38,14 +38,8 @@ void render(){
 		//std::string newTitle = "OpenBlox - ";
 		double tpf = 1000.0/double(nbFrames);//Milliseconds per frame
 		double fps = 1000/tpf;
-		//newTitle = newTitle + ((std::ostringstream&)(std::ostringstream() << std::dec << fps)).str() + " FPS";
-		if(dm){
-			const char* title = dm->getTitle();
-	
-			if(title != NULL){
-				glfwSetWindowTitle(OpenBlox::getWindow(), title);
-			}
-		}
+
+		OpenBlox::calculatedFPS = fps;
 
 		nbFrames = 0;
 		lastTime += 1.0;
