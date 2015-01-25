@@ -15,6 +15,13 @@
 
 #include <curl/curl.h>
 
+#include <boost/function.hpp>
+
+#if defined(__unix__) || defined(__linux__)
+	#include <Xm/Xm.h>
+	#include <Xm/PushB.h>
+#endif
+
 namespace OpenBlox{
 	static BaseGame* INSTANCE;
 	static long APP_START = currentTimeMillis();
@@ -43,6 +50,45 @@ namespace OpenBlox{
 
 	ob_instance::DataModel* BaseGame::getDataModel(){
 		return datamodel;
+	}
+
+	void BaseGame::alert(std::string output, std::string title){
+		#if defined(OPENBLOX_ANDROID)
+			//TODO: Implement
+		#elif defined(_WIN32)
+			MSGBOXPARAMS msg;
+
+			msg.cbSize = sizeof(MSGBOXPARAMS);
+			msg.hwndOwner = glfwGetWin32Window(getWindow());
+
+			msg.hInstance = GetModuleHandle(NULL);
+			msg.dwStyle = MB_USERICON | MB_OK;
+
+			msg.lpszIcon = MAKEINTRESOURCE(101);
+
+			msg.lpszCaption = title.c_str();
+			msg.lpszText = output.c_str();
+
+			MessageBoxIndirect(&msg)
+		#elif defined(__unix__) || defined(__linux__)
+			Widget top_wid, button;
+			XtAppContext app;
+
+			top_wid = XtVaAppInitialize(&app, "Push", NULL, 0, NULL, NULL, NULL, NULL);
+			button = XmCreatePushButton(top_wid, "Push_me", NULL, 0);
+			XtManageChild(button);
+
+			XtCallbackProc cb_func = [](Widget w, XtPointer client_data, XtPointer cbs){
+				XtDestroyWidget(w);
+			};
+
+			XtAddCallback(button, XmNactivateCallback, cb_func, NULL);
+
+			XtRealizeWidget(top_wid);
+			XtAppMainLoop(app);
+		#elif defined(__APPLE__)
+			//TODO: Implement
+		#endif
 	}
 
 	//TODO: Implement LogService print, warn, error
@@ -96,6 +142,8 @@ namespace OpenBlox{
 		lua_register(L, "wait", lua_wait);
 		lua_register(L, "Wait", lua_wait);
 		lua_register(L, "LoadLibrary", lua_loadlibrary);
+
+		lua_register(L, "alert", lua_alert);
 
 		luaL_Reg instancelib[]{
 			{"new", lua_newInstance},
@@ -325,6 +373,24 @@ namespace OpenBlox{
 
 		if(INSTANCE != NULL){
 			INSTANCE->warn(output);
+		}
+
+		return 0;
+	}
+
+	int BaseGame::lua_alert(lua_State* L){
+		std::string output = std::string(luaL_checkstring(L, 1));
+		if(!lua_isnoneornil(L, 2)){
+			std::string title = std::string(luaL_checkstring(L, 2));
+
+			if(INSTANCE != NULL){
+				INSTANCE->alert(output, title);
+			}
+			return 0;
+		}
+
+		if(INSTANCE != NULL){
+			INSTANCE->alert(output);
 		}
 
 		return 0;

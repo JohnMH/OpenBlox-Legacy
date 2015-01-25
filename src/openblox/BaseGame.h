@@ -20,6 +20,7 @@ namespace OpenBlox{
 			BaseGame();
 			virtual ~BaseGame();
 
+			void alert(std::string output, std::string title = "Alert");
 			void print(std::string output);
 			void warn(std::string output);
 			void print_error(std::string output);
@@ -49,6 +50,8 @@ namespace OpenBlox{
 			static int lua_print(lua_State* L);
 			static int lua_elapsedTime(lua_State* L);
 			static int lua_warn(lua_State* L);
+
+			static int lua_alert(lua_State* L);
 
 			static int lua_newInstance(lua_State* L);
 

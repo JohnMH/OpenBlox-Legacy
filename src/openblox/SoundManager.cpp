@@ -1,7 +1,6 @@
 #include "SoundManager.h"
 
-#define _FMOD_HPP //I'd consider this a hack, but screw it.
-#include <fmod.hpp>
+#include <fmod.h>
 #include <fmod_errors.h>
 
 namespace OpenBlox{
