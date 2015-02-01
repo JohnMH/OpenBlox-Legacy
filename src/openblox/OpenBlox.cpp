@@ -12,7 +12,7 @@
 #endif
 
 #ifdef _WIN32
-#include <winsock2.h>
+//#include <winsock2.h>
 #endif
 
 OpenBlox::BaseGame* game;
@@ -133,12 +133,19 @@ void glfw_window_click_callback(GLFWwindow* window, int btn, int action, int mod
 
 	bool down = action == GLFW_PRESS;
 
+	ob_enum::MouseButton mbtn;
+
 	if(btn == GLFW_MOUSE_BUTTON_LEFT){
-		LOGI("Left state %d", action);
+		mbtn = ob_enum::MouseButton::Left;
 	}else if(btn == GLFW_MOUSE_BUTTON_RIGHT){
-		LOGI("Right state %d", action);
+		mbtn = ob_enum::MouseButton::Right;
 	}else if(btn == GLFW_MOUSE_BUTTON_MIDDLE){
-		LOGI("Middle state %d", action);
+		mbtn = ob_enum::MouseButton::Middle;
+	}
+
+	ob_instance::DataModel* dm = game->getDataModel();
+	if(dm->starterGui){
+		dm->starterGui->onClick(x, y, mbtn, down);
 	}
 }
 
@@ -158,7 +165,7 @@ void renderLoop(){
 		LOGI("[GL] Shading Language Version: %s", shading_version);
 	}
 
-	while(!glfwWindowShouldClose(window)){
+	while(!shouldClose){
 		render();
 
 		glfwSwapBuffers(window);

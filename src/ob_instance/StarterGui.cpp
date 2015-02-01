@@ -4,6 +4,8 @@
 
 #include "ScreenGui.h"
 
+#include "GuiObject.h"
+
 #ifndef OPENBLOX_SERVER
 #include "../openblox/OpenBloxRenderUtil.h"
 #endif
@@ -35,21 +37,6 @@ namespace ob_instance{
 		}
 
 		delete sizeVec;
-	}
-
-	bool StarterGui::isMouseCaptured(int x, int y){
-		for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
-			Instance* kid = children[i];
-			if(kid != NULL){
-				if(ScreenGui* sg = dynamic_cast<ScreenGui*>(kid)){
-					if(sg->isMouseCaptured(x, y)){
-						return true;
-					}
-				}
-			}
-		}
-
-		return false;
 	}
 
 	void StarterGui::Destroy(){}
@@ -111,6 +98,52 @@ namespace ob_instance{
 
 				delete newVec2;
 			}
+		}
+	}
+
+	void StarterGui::onClick(int x, int y, ob_enum::MouseButton button, bool down){
+		std::vector<GuiObject*> kids = std::vector<GuiObject*>();
+
+		for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
+			Instance* kid = children[i];
+			if(kid != NULL){
+				if(ScreenGui* sg = dynamic_cast<ScreenGui*>(kid)){
+					sg->giveUpKids(&kids);
+				}
+			}
+		}
+
+		std::sort(kids.begin(), kids.end(), [](GuiObject* go1, GuiObject* go2){
+			return go1->ZIndex < go2->ZIndex;
+		});
+
+		GuiObject* clickedOn = NULL;
+
+		for(std::vector<GuiObject*>::size_type i = 0; i != kids.size(); i++){
+			GuiObject* go = kids[i];
+			if(go != NULL){ //You can never be too careful :)
+				if(go->containsPoint(x, y)){
+					Instance* parent = go->getParent();
+					while(parent != NULL){
+						if(GuiObject* pgo = dynamic_cast<GuiObject*>(parent)){
+							if(pgo->ClipsDescendants){
+								if(!pgo->containsPoint(x, y)){
+									continue;
+								}
+							}
+							parent = pgo->getParent();
+						}else{
+							parent = NULL;
+						}
+					}
+					clickedOn = go;
+					break;
+				}
+			}
+		}
+
+		if(clickedOn != NULL){
+			clickedOn->BackgroundColor3 = new ob_type::Color3(1, 0, 0);
 		}
 	}
 }

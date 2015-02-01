@@ -105,6 +105,67 @@ namespace ob_instance{
 		return seed;
 	}
 
+	void GuiObject::giveUpKids(std::vector<GuiObject*>* kids){
+		if(Visible && Active){
+			kids->push_back(this);
+
+			for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
+				Instance* kid = children[i];
+				if(kid != NULL){
+					if(GuiObject* go = dynamic_cast<GuiObject*>(kid)){
+						go->giveUpKids(kids);
+					}
+				}
+			}
+		}
+	}
+
+	ob_type::Vector2* rotVec2(ob_type::Vector2* p, double rot){
+		double s = sin(rot);
+		double c = cos(rot);
+
+		double nx = 0;
+		double ny = 0;
+
+		nx -= p->x;
+		ny -= p->y;
+
+		nx = nx * c + ny * s;
+		ny = -nx * s + ny * c;
+
+		nx = nx + p->x;
+		ny = ny + p->y;
+
+		return new ob_type::Vector2(nx, ny);
+	}
+
+	bool GuiObject::containsPoint(int x, int y){
+		double rot = Rotation;
+		rot = (M_PI * rot) / 180;
+
+		ob_type::Vector2* ap = AbsolutePosition;
+		ob_type::Vector2* as = AbsoluteSize;
+
+		//ap = rotVec2(ap, rot);
+		//as = rotVec2(as, rot);
+
+		ob_type::Vector2* p2 = new ob_type::Vector2(x, y);
+		//ob_type::Vector2* p2 = rotVec2(point, rot);
+
+		bool isIn = false;
+
+		if(p2->x < (ap->x + (.5*as->x)) && p2->x > (ap->x - (.5*as->x)) && p2->y < (ap->y + (.5*as->y)) && p2->y > (ap->y - (.5*as->y))){
+			isIn = true;
+		}
+
+		//delete ap;
+		//delete as;
+		//delete point;
+		delete p2;
+
+		return isIn;
+	}
+
 	void GuiObject::register_lua_property_setters(lua_State* L){
 		luaL_Reg properties[]{
 			{"Active", [](lua_State* L)->int{

@@ -306,6 +306,10 @@ namespace ob_instance{
 		propertyChanged("Parent");
 	}
 
+	Instance* Instance::getParent(){
+		return Parent;
+	}
+
 	void Instance::removeChild(Instance* kid){
 		if(kid != NULL){
 			std::vector<Instance*>::size_type min1 = -1;

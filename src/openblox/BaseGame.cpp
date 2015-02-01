@@ -17,9 +17,14 @@
 
 #include <boost/function.hpp>
 
-#if defined(__unix__) || defined(__linux__)
-	#include <Xm/Xm.h>
-	#include <Xm/PushB.h>
+#ifndef OPENBLOX_SERVER
+	#if defined(_WIN32)
+		#include "WindowUtils.h"
+		#include "OpenBloxRenderUtil.h"
+	#elif defined(__unix__) || defined(__linux__)
+		#include <Xm/Xm.h>
+		#include <Xm/PushB.h>
+	#endif
 #endif
 
 namespace OpenBlox{
@@ -53,7 +58,9 @@ namespace OpenBlox{
 	}
 
 	void BaseGame::alert(std::string output, std::string title){
-		#if defined(OPENBLOX_ANDROID)
+		#if defined(OPENBLOX_SERVER)
+			//TODO: Implement
+		#elif defined(OPENBLOX_ANDROID)
 			//TODO: Implement
 		#elif defined(_WIN32)
 			MSGBOXPARAMS msg;
@@ -69,7 +76,7 @@ namespace OpenBlox{
 			msg.lpszCaption = title.c_str();
 			msg.lpszText = output.c_str();
 
-			MessageBoxIndirect(&msg)
+			MessageBoxIndirect(&msg);
 		#elif defined(__unix__) || defined(__linux__)
 			Widget top_wid, button;
 			XtAppContext app;

@@ -26,19 +26,15 @@ namespace ob_instance{
 		}
 	}
 
-	bool ScreenGui::isMouseCaptured(int x, int y){
+	void ScreenGui::giveUpKids(std::vector<GuiObject*>* kids){
 		for(std::vector<Instance*>::size_type i = 0; i != children.size(); i++){
 			Instance* kid = children[i];
 			if(kid != NULL){
 				if(GuiObject* go = dynamic_cast<GuiObject*>(kid)){
-					if(go->isMouseCaptured(x, y)){
-						return true;
-					}
+					go->giveUpKids(kids);
 				}
 			}
 		}
-
-		return false;
 	}
 
 	void ScreenGui::addChild(Instance* kid){

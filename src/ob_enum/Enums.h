@@ -32,6 +32,12 @@ namespace ob_enum{
 		TextXml = 4
 	};
 
+	LENUM(MouseButton){
+		Left = 0,
+		Right = 1,
+		Middle = 2
+	};
+
 	void registerEnums(lua_State* L);
 };
 #endif

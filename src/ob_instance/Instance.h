@@ -124,6 +124,7 @@ namespace ob_instance{
 
 			virtual std::string toString();
 			virtual void setParent(Instance* parent);
+			Instance* getParent();
 
 			virtual int wrap_lua(lua_State* L) = 0;
 

@@ -4,6 +4,8 @@
 #include "LayerCollector.h"
 
 namespace ob_instance{
+	class GuiObject;
+
 	class ScreenGui: public LayerCollector{
 		public:
 			ScreenGui();
@@ -11,7 +13,7 @@ namespace ob_instance{
 
 			virtual void render();
 
-			bool isMouseCaptured(int x, int y);
+			void giveUpKids(std::vector<GuiObject*>* kids);
 
 			DECLARE_CLASS(ScreenGui);
 

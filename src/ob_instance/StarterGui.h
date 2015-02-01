@@ -11,11 +11,11 @@ namespace ob_instance{
 
 			void sizeChanged(int width, int height);
 
-			bool isMouseCaptured(int x, int y);
-
 			virtual void Destroy();
 
 			virtual void render();
+
+			void onClick(int x, int y, ob_enum::MouseButton button, bool down);
 
 			DECLARE_CLASS(StarterGui);
 

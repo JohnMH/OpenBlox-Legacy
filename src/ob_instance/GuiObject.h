@@ -19,7 +19,8 @@ namespace ob_instance{
 			ob_type::Vector2* calculateRenderPosision(ob_type::Vector2* seed);
 			ob_type::Vector2* calculateRenderSize(ob_type::Vector2* seed);
 
-			DECLARE_CLASS(GuiObject);
+			void giveUpKids(std::vector<GuiObject*>* kids);
+			bool containsPoint(int x, int y);
 
 			ob_type::LuaEvent* DragBegin; //UDim2 initialPosition
 			ob_type::LuaEvent* DragStopped; //int x, int y
@@ -54,6 +55,8 @@ namespace ob_instance{
 			//Enum SizeConstraint
 			bool Visible;
 			int ZIndex;
+
+			DECLARE_CLASS(GuiObject);
 
 			static void register_lua_methods(lua_State* L);
 			static void register_lua_property_setters(lua_State* L);

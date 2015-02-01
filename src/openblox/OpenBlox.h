@@ -12,6 +12,7 @@
 #include <stdexcept>
 
 #include <cstdlib>
+#include <cmath>
 #include <cstring>
 #include <cstdarg>
 
@@ -20,6 +21,10 @@ extern "C"{
 	#include "../lua/lualib.h"
 	#include "../lua/lauxlib.h"
 }
+
+#ifndef MI_PI
+	#define M_PI 3.14159265358979323846
+#endif
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
