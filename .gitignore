@@ -2,3 +2,5 @@
 /Resources/
 /Release/
 .DS_Store
+*.dll
+.settings
